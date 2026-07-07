@@ -1,0 +1,1830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin Panel — The Funded Best</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#378ADD;--blue-dark:#185FA5;--blue-glow:rgba(55,138,221,.18);
+  --green:#1D9E75;--green-glow:rgba(29,158,117,.18);
+  --red:#e05252;--red-glow:rgba(224,82,82,.15);
+  --amber:#f59e0b;
+  --bg:#07090f;--bg2:#0d1220;--bg3:#111827;
+  --border:rgba(255,255,255,.08);--border-blue:rgba(55,138,221,.35);
+  --text:#f0f4ff;--muted:rgba(240,244,255,.5);
+  --font-display:'Space Grotesk',sans-serif;--font-body:'Inter',sans-serif;
+  --radius:14px;--radius-sm:8px;
+}
+body{margin:0;background:var(--bg);font-family:var(--font-body);color:var(--text);min-height:100vh}
+
+/* ── LOGIN GATE ── */
+#loginGate{
+  display:flex;justify-content:center;align-items:center;min-height:100vh;
+  background:var(--bg);padding:20px;
+  background-image:radial-gradient(ellipse at 50% 0%,rgba(55,138,221,.1) 0%,transparent 60%)}
+.login-card{
+  width:100%;max-width:400px;background:var(--bg2);border:1px solid var(--border-blue);
+  border-radius:24px;padding:40px;text-align:center;
+  box-shadow:0 0 60px rgba(55,138,221,.15),0 40px 80px rgba(0,0,0,.5);
+  animation:fadeInUp .3s ease}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.lock-icon{font-size:52px;margin-bottom:16px}
+.login-card h2{font-family:var(--font-display);font-size:22px;margin-bottom:8px}
+.login-card p{font-size:14px;color:var(--muted);margin-bottom:28px}
+.login-card input{
+  width:100%;padding:13px 16px;border-radius:var(--radius-sm);margin-bottom:12px;
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  color:var(--text);font-size:15px;font-family:var(--font-body);outline:none;
+  transition:border-color .2s,box-shadow .2s}
+.login-card input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(55,138,221,.12)}
+.login-card input.error-input{border-color:var(--red)}
+.btn-primary{
+  width:100%;padding:13px;border:none;border-radius:var(--radius-sm);
+  background:var(--blue);color:#fff;font-size:15px;font-weight:600;
+  font-family:var(--font-body);cursor:pointer;transition:background .2s,transform .15s}
+.btn-primary:hover{background:var(--blue-dark);transform:translateY(-1px)}
+.error-text{font-size:13px;color:var(--red);margin-top:10px;display:none}
+.error-text.show{display:block}
+.attempts-left{font-size:12px;color:var(--amber);margin-top:8px;display:none}
+
+/* ── PANEL ── */
+#adminPanel{display:none}
+.topbar{
+  height:60px;background:rgba(13,18,32,.95);border-bottom:.5px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;padding:0 28px;
+  position:sticky;top:0;z-index:100;backdrop-filter:blur(16px)}
+.topbar-logo{font-family:var(--font-display);font-size:16px;font-weight:700;display:flex;align-items:center;gap:10px}
+.topbar-logo .admin-badge{background:var(--red);color:#fff;font-size:11px;padding:2px 8px;border-radius:99px;font-family:var(--font-body);font-weight:600}
+.logout-btn{background:none;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--muted);padding:7px 14px;font-size:13px;cursor:pointer;transition:border-color .2s,color .2s;font-family:var(--font-body)}
+.logout-btn:hover{border-color:var(--red);color:var(--red)}
+.refresh-btn:hover{border-color:var(--blue);color:var(--blue)}
+.refresh-btn:disabled{opacity:.55;cursor:wait}
+.refresh-btn.loading i{animation:spin .8s linear infinite}
+
+.content{padding:32px;max-width:1300px;margin:0 auto}
+.page-title{font-family:var(--font-display);font-size:1.6rem;font-weight:700;margin-bottom:6px}
+.page-sub{font-size:14px;color:var(--muted);margin-bottom:28px}
+
+/* stats */
+.stats-row{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:28px}
+.stat-card{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--radius);padding:20px;transition:border-color .2s}
+.stat-card:hover{border-color:var(--border-blue)}
+.stat-num{font-family:var(--font-display);font-size:1.8rem;font-weight:700;line-height:1;margin-bottom:6px}
+.stat-label{font-size:12px;color:var(--muted)}
+.stat-num.green{color:var(--green)}
+.stat-num.amber{color:var(--amber)}
+.stat-num.red{color:var(--red)}
+
+/* filter tabs */
+.filter-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.filter-tab{padding:8px 18px;border-radius:99px;font-size:13px;font-weight:500;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;transition:all .2s;font-family:var(--font-body)}
+.filter-tab:hover{border-color:var(--border-blue);color:var(--text)}
+.filter-tab.active{background:var(--blue-glow);border-color:var(--blue);color:var(--blue)}
+.filter-tab .count{background:var(--blue);color:#fff;font-size:10px;padding:1px 6px;border-radius:99px;margin-left:6px;font-weight:700}
+.filter-tab.active.amber-tab{background:rgba(245,158,11,.12);border-color:var(--amber);color:var(--amber)}
+.filter-tab.active.amber-tab .count{background:var(--amber)}
+.filter-tab.active.green-tab{background:var(--green-glow);border-color:var(--green);color:var(--green)}
+.filter-tab.active.green-tab .count{background:var(--green)}
+.filter-tab.active.red-tab{background:var(--red-glow);border-color:var(--red);color:var(--red)}
+.filter-tab.active.red-tab .count{background:var(--red)}
+
+/* card / table */
+.card{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:.5px solid var(--border)}
+.card-title{font-family:var(--font-display);font-size:15px;font-weight:600}
+.search-box{padding:8px 14px;border-radius:var(--radius-sm);background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text);font-size:13px;font-family:var(--font-body);outline:none;width:240px;transition:border-color .2s}
+.search-box:focus{border-color:var(--blue)}
+table{width:100%;border-collapse:collapse}
+thead tr{background:rgba(255,255,255,.02)}
+th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:12px 20px;font-weight:600}
+td{padding:14px 20px;border-bottom:.5px solid rgba(255,255,255,.04);font-size:14px;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+
+.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:600}
+.badge-pending{background:var(--blue-glow);color:var(--blue);border:.5px solid var(--border-blue)}
+.badge-active{background:var(--green-glow);color:var(--green);border:.5px solid rgba(29,158,117,.3)}
+.badge-rejected{background:var(--red-glow);color:var(--red);border:.5px solid rgba(224,82,82,.3)}
+.badge-failed{background:rgba(224,82,82,.2);color:#ff8080;border:.5px solid rgba(224,82,82,.4)}
+.badge-dot{width:5px;height:5px;border-radius:50%;background:currentColor}
+
+.action-btn{padding:6px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:var(--font-body);transition:all .2s;white-space:nowrap}
+.approve-btn{background:var(--green-glow);color:var(--green);border:.5px solid rgba(29,158,117,.3)}
+.approve-btn:hover{background:var(--green);color:#fff}
+.reject-btn{background:var(--red-glow);color:var(--red);border:.5px solid rgba(224,82,82,.3)}
+.reject-btn:hover{background:var(--red);color:#fff}
+.undo-btn{background:rgba(255,255,255,.07);color:var(--muted);border:.5px solid var(--border)}
+.undo-btn:hover{border-color:var(--amber);color:var(--amber)}
+.cred-btn{background:var(--blue-glow);color:var(--blue);border:.5px solid var(--border-blue)}
+.cred-btn:hover{background:var(--blue);color:#fff}
+.actions-cell{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+
+.empty-msg{text-align:center;padding:50px;color:var(--muted);font-size:14px}
+.empty-msg i{font-size:40px;display:block;margin-bottom:12px;opacity:.3}
+
+/* ── MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;z-index:999;padding:20px;
+  opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{
+  background:var(--bg2);border:1px solid var(--border-blue);border-radius:20px;
+  padding:32px;max-width:520px;width:100%;
+  transform:translateY(20px);transition:transform .25s}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal h3{font-family:var(--font-display);font-size:18px;margin-bottom:8px}
+.modal p{font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.6}
+.modal-detail{background:var(--bg3);border-radius:var(--radius-sm);padding:16px;margin-bottom:20px;display:flex;flex-direction:column;gap:10px}
+.modal-detail-row{display:flex;justify-content:space-between;font-size:13px}
+.modal-detail-row span{color:var(--muted)}
+.modal-detail-row strong{font-weight:500}
+.modal-actions{display:flex;gap:10px;margin-top:20px}
+.modal-actions button{flex:1;padding:11px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font-body);border:none;transition:all .2s}
+.modal-confirm-approve{background:var(--green);color:#fff}
+.modal-confirm-approve:hover{background:#17855f}
+.modal-confirm-reject{background:var(--red);color:#fff}
+.modal-confirm-reject:hover{background:#c44}
+.modal-confirm-creds{background:var(--blue);color:#fff}
+.modal-confirm-creds:hover{background:var(--blue-dark)}
+.modal-cancel{background:rgba(255,255,255,.07);color:var(--muted)}
+.modal-cancel:hover{background:rgba(255,255,255,.12);color:var(--text)}
+
+/* credential form fields inside modal */
+.cred-form-field{margin-bottom:14px}
+.cred-form-field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:500;text-transform:uppercase;letter-spacing:.05em}
+.cred-form-field input{
+  width:100%;padding:11px 14px;border-radius:var(--radius-sm);
+  background:rgba(255,255,255,.05);border:1px solid var(--border);
+  color:var(--text);font-size:14px;font-family:monospace;outline:none;
+  transition:border-color .2s,box-shadow .2s}
+.cred-form-field input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(55,138,221,.1)}
+.cred-form-field select.edit-select{
+  width:100%;padding:11px 14px;border-radius:var(--radius-sm);
+  background:rgba(255,255,255,.05);border:1px solid var(--border);
+  color:var(--text);font-size:14px;font-family:var(--font-body);outline:none;
+  transition:border-color .2s,box-shadow .2s}
+.cred-form-field select.edit-select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(55,138,221,.1)}
+.cred-form-field select.edit-select option{background:var(--bg2);color:var(--text)}
+.cred-form-hint{font-size:11px;color:var(--muted);margin-top:4px}
+
+/* existing creds display */
+.existing-creds{
+  background:linear-gradient(135deg,rgba(29,158,117,.1),rgba(55,138,221,.07));
+  border:.5px solid rgba(29,158,117,.3);border-radius:var(--radius-sm);
+  padding:12px 14px;margin-bottom:16px;font-size:12px;
+}
+.existing-creds h5{font-size:12px;font-weight:600;color:var(--green);margin-bottom:8px}
+.existing-creds .ec-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:.5px solid rgba(255,255,255,.05)}
+.existing-creds .ec-row:last-child{border-bottom:none}
+.existing-creds .ec-row span{color:var(--muted)}
+.existing-creds .ec-row strong{font-family:monospace;color:var(--text)}
+
+/* toast */
+.toast{position:fixed;bottom:24px;right:24px;background:#1a2235;border:1px solid var(--border-blue);border-radius:var(--radius-sm);padding:12px 18px;font-size:13px;transform:translateY(80px);opacity:0;transition:all .3s;z-index:9999}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.green-toast{border-color:rgba(29,158,117,.5);background:#0d1f18}
+.toast.red-toast{border-color:rgba(224,82,82,.5);background:#1f1215}
+
+/* lockout */
+.lockout-overlay{position:fixed;inset:0;background:rgba(0,0,0,.95);display:none;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:12px;text-align:center}
+.lockout-overlay.show{display:flex}
+
+/* ── TRADES MODAL ── */
+.trades-modal-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.tm-metric{background:var(--bg3);border:.5px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;text-align:center}
+.tm-metric .tm-val{font-family:var(--font-display);font-size:1.05rem;font-weight:700;line-height:1.2}
+.tm-metric .tm-lbl{font-size:10px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.05em}
+.tm-metric .tm-val.green{color:var(--green)}
+.tm-metric .tm-val.red{color:var(--red)}
+.tm-metric .tm-val.amber{color:var(--amber)}
+
+.trade-add-row{display:grid;grid-template-columns:1.2fr .8fr .7fr .9fr .9fr .9fr auto;gap:8px;margin-bottom:14px;align-items:end}
+.trade-add-row .cred-form-field{margin-bottom:0}
+.trade-add-row label{font-size:10px}
+.trade-add-row input,.trade-add-row select{padding:9px 10px;font-size:13px}
+.trade-add-btn{
+  background:var(--blue);color:#fff;border:none;border-radius:var(--radius-sm);
+  padding:10px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font-body);
+  transition:background .2s;white-space:nowrap;height:fit-content;
+}
+.trade-add-btn:hover{background:var(--blue-dark)}
+
+.trades-list-wrap{max-height:260px;overflow-y:auto;border:.5px solid var(--border);border-radius:var(--radius-sm)}
+.trades-list-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.trades-list-table th{position:sticky;top:0;background:var(--bg3);text-align:left;padding:8px 10px;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600;border-bottom:.5px solid var(--border)}
+.trades-list-table td{padding:8px 10px;border-bottom:.5px solid rgba(255,255,255,.04)}
+.trades-list-table tr:last-child td{border-bottom:none}
+.trades-list-table .pnl-pos{color:var(--green);font-weight:700}
+.trades-list-table .pnl-neg{color:var(--red);font-weight:700}
+.trade-type-badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:99px}
+.trade-type-badge.buy{background:rgba(29,158,117,.15);color:var(--green)}
+.trade-type-badge.sell{background:rgba(224,82,82,.12);color:var(--red)}
+.trade-del-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:2px;transition:color .15s}
+.trade-del-btn:hover{color:var(--red)}
+.trades-empty-row{text-align:center;padding:30px;color:var(--muted);font-size:13px}
+
+@media(max-width:768px){
+  .stats-row{grid-template-columns:1fr 1fr 1fr}
+  .search-box{width:150px}
+  th:nth-child(5),td:nth-child(5){display:none}
+  .content{padding:16px}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginGate">
+  <div class="login-card">
+    <div class="lock-icon">🔐</div>
+    <h2>Admin Access Only</h2>
+    <p>This panel is restricted. Enter admin credentials to continue.</p>
+    <input type="email" id="adminEmail" placeholder="Admin email" autocomplete="off"/>
+    <input type="password" id="adminPass" placeholder="Admin password" autocomplete="off" onkeydown="if(event.key==='Enter') attemptLogin()"/>
+    <button class="btn-primary" onclick="attemptLogin()">Enter Admin Panel</button>
+    <div class="error-text" id="loginError">Incorrect credentials. Access denied.</div>
+    <div class="attempts-left" id="attemptsLeft"></div>
+  </div>
+</div>
+
+<!-- LOCKOUT -->
+<div class="lockout-overlay" id="lockoutScreen">
+  <div style="font-size:64px">🚫</div>
+  <div style="font-family:var(--font-display);font-size:1.5rem;font-weight:700">Access Locked</div>
+  <div style="color:var(--muted);max-width:300px">Too many failed attempts. Try again in <span id="lockTimer">15:00</span></div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="adminPanel">
+  <div class="topbar">
+    <div class="topbar-logo">
+      <i class="ti ti-shield-lock" style="color:var(--red)"></i>
+      The Funded Best <span class="admin-badge">ADMIN</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:12px;color:var(--muted)" id="adminTimestamp"></span>
+      <button class="logout-btn refresh-btn" id="adminRefreshBtn" onclick="refreshAdminData()"><i class="ti ti-refresh"></i> Refresh</button>
+      <button class="logout-btn" onclick="adminLogout()"><i class="ti ti-logout"></i> Logout</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-title">Orders & Payments</div>
+    <div class="page-sub" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+      <span>Review, approve, and manage user purchase submissions</span>
+      <button class="action-btn cred-btn" style="padding:8px 16px" onclick="openDemoPanel()"><i class="ti ti-device-desktop-analytics"></i> Demo Accounts</button>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-num amber" id="statPending">—</div>
+        <div class="stat-label">Pending Approval</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num green" id="statActive">—</div>
+        <div class="stat-label">Active Accounts</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num red" id="statRejected">—</div>
+        <div class="stat-label">Rejected</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num red" id="statFailed">—</div>
+        <div class="stat-label">Failed Challenges</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num amber" id="statKyc">0</div>
+        <div class="stat-label">KYC Requests</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="statTotal">—</div>
+        <div class="stat-label">Total Orders</div>
+      </div>
+    </div>
+
+
+    <div class="filter-tabs">
+
+      <button class="filter-tab active amber-tab" onclick="setFilter('pending',this)">
+        Pending <span class="count" id="cntPending">0</span>
+      </button>
+      <button class="filter-tab" onclick="setFilter('active',this)">
+        Active <span class="count" id="cntActive">0</span>
+      </button>
+      <button class="filter-tab" onclick="setFilter('rejected',this)">
+        Rejected <span class="count" id="cntRejected">0</span>
+      </button>
+      <button class="filter-tab" onclick="setFilter('failed',this)">
+        Failed <span class="count" id="cntFailed">0</span>
+      </button>
+      <button class="filter-tab" onclick="setFilter('payout',this)">
+        Payout Requests <span class="count" id="cntPayout">0</span>
+      </button>
+      <button class="filter-tab" onclick="setFilter('funding',this)">
+        Funded Requests <span class="count" id="cntFunding">0</span>
+      </button>
+      <button class="filter-tab" onclick="setFilter('kyc',this)">
+        KYC Requests <span class="count" id="cntKyc">0</span>
+      </button>
+      <button class="filter-tab" onclick="setFilter('all',this)">
+        All Orders <span class="count" id="cntAll">0</span>
+      </button>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Orders</span>
+        <input class="search-box" id="searchBox" placeholder="🔍  Search user or order ID…" oninput="renderTable()"/>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>User</th>
+              <th>Challenge</th>
+              <th>Size</th>
+              <th>Payment</th>
+              <th>Date</th>
+              <th>MT5 Creds</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="ordersBody">
+            <tr><td colspan="9" class="empty-msg"><i class="ti ti-loader"></i>Loading orders…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL (approve/reject) -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal">
+    <h3 id="modalTitle">Approve Payment?</h3>
+    <p id="modalDesc">This will activate the user's challenge account immediately.</p>
+    <div class="modal-detail" id="modalDetail"></div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeModal()">Cancel</button>
+      <button id="modalConfirmBtn" onclick="confirmAction()">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- CREDENTIALS MODAL -->
+<div class="modal-overlay" id="credsModal">
+  <div class="modal" style="max-width:480px">
+    <h3>🔑 Set MT5 Credentials</h3>
+    <p id="credsModalDesc" style="margin-bottom:16px">Enter the MT5 trading account details for this user. They will see these on their dashboard once account is active.</p>
+
+    <div class="existing-creds" id="existingCredsBox" style="display:none">
+      <h5><i class="ti ti-check"></i> Credentials already set</h5>
+      <div class="ec-row"><span>Server</span><strong id="ecServer">—</strong></div>
+      <div class="ec-row"><span>Login</span><strong id="ecLogin">—</strong></div>
+      <div class="ec-row"><span>Password</span><strong id="ecPassword">—</strong></div>
+    </div>
+
+    <div class="cred-form-field">
+      <label>MT5 Server</label>
+      <input type="text" id="credInputServer" placeholder="e.g. TFB-Live" autocomplete="off"/>
+      <div class="cred-form-hint">The broker server name shown in MT5 login screen</div>
+    </div>
+    <div class="cred-form-field">
+      <label>MT5 Login / Account Number</label>
+      <input type="text" id="credInputLogin" placeholder="e.g. 1234567" autocomplete="off"/>
+    </div>
+    <div class="cred-form-field">
+      <label>MT5 Password</label>
+      <input type="text" id="credInputPassword" placeholder="e.g. TFBpass#2026" autocomplete="off"/>
+    </div>
+
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeCredsModal()">Cancel</button>
+      <button class="modal-confirm-creds" onclick="saveCredentials()"><i class="ti ti-key"></i> Save Credentials</button>
+    </div>
+  </div>
+</div>
+
+<!-- DEMO ACCOUNT MODAL -->
+<div class="modal-overlay" id="demoModal" onclick="if(event.target===this) closeDemoModal()">
+  <div class="modal" style="max-width:560px">
+    <h3>🧪 Assign Demo Account</h3>
+    <p style="margin-bottom:14px">Create a demo / funded-style account and assign it directly to a user. It will appear on their dashboard like any other account.</p>
+
+    <div class="cred-form-field">
+      <label>User Email</label>
+      <input type="email" id="demoUserEmail" placeholder="user@example.com" autocomplete="off" oninput="demoLookupReset()"/>
+      <div class="cred-form-hint" id="demoLookupStatus">Type the user's registered email, then click "Find user".</div>
+    </div>
+    <button class="action-btn cred-btn" style="margin-bottom:14px" onclick="demoLookupUser()"><i class="ti ti-search"></i> Find user</button>
+
+    <div id="demoFormFields" style="display:none">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="cred-form-field">
+          <label>Challenge Type</label>
+          <select id="demoChallengeType" class="edit-select">
+            <option value="Instant">Instant</option>
+            <option value="One-Step" selected>One-Step</option>
+            <option value="Two-Step">Two-Step</option>
+            <option value="3-Step">3-Step</option>
+          </select>
+        </div>
+        <div class="cred-form-field">
+          <label>Phase</label>
+          <select id="demoPhase" class="edit-select">
+            <option value="Phase 1">Phase 1</option>
+            <option value="Phase 2">Phase 2</option>
+            <option value="Phase 3">Phase 3</option>
+            <option value="Funded">Funded</option>
+          </select>
+        </div>
+        <div class="cred-form-field">
+          <label>Account Size (display)</label>
+          <input type="text" id="demoAccountSize" placeholder="$100,000" value="$100,000"/>
+        </div>
+        <div class="cred-form-field">
+          <label>Starting Balance ($)</label>
+          <input type="number" id="demoStartBalance" placeholder="100000" value="100000"/>
+        </div>
+        <div class="cred-form-field">
+          <label>Current Balance ($)</label>
+          <input type="number" id="demoBalance" placeholder="100000" value="100000"/>
+        </div>
+        <div class="cred-form-field">
+          <label>Status</label>
+          <select id="demoStatus" class="edit-select">
+            <option value="active" selected>Active</option>
+            <option value="pending">Pending</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeDemoModal()">Cancel</button>
+      <button class="modal-confirm-creds" id="demoAssignBtn" onclick="assignDemoAccount()" disabled style="opacity:.5"><i class="ti ti-plus"></i> Create & Assign</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT ACCOUNT MODAL -->
+<div class="modal-overlay" id="editModal" onclick="if(event.target===this) closeEditModal()">
+  <div class="modal" style="max-width:560px">
+    <h3>✏️ Edit Account</h3>
+    <p id="editModalDesc" style="margin-bottom:14px">Edit any detail of this user's account. Changes reflect on their dashboard immediately.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;max-height:60vh;overflow-y:auto;padding-right:4px">
+      <div class="cred-form-field">
+        <label>Status</label>
+        <select id="editStatus" class="edit-select">
+          <option value="pending">Pending</option>
+          <option value="active">Active</option>
+          <option value="rejected">Rejected</option>
+          <option value="failed">Failed</option>
+        </select>
+      </div>
+      <div class="cred-form-field">
+        <label>Phase</label>
+        <select id="editPhase" class="edit-select">
+          <option value="Phase 1">Phase 1</option>
+          <option value="Phase 2">Phase 2</option>
+          <option value="Phase 3">Phase 3</option>
+          <option value="Funded">Funded</option>
+        </select>
+      </div>
+      <div class="cred-form-field">
+        <label>Challenge Type</label>
+        <select id="editChallengeType" class="edit-select">
+          <option value="Instant">Instant</option>
+          <option value="One-Step">One-Step</option>
+          <option value="Two-Step">Two-Step</option>
+          <option value="3-Step">3-Step</option>
+        </select>
+      </div>
+      <div class="cred-form-field">
+        <label>Account Size (display)</label>
+        <input type="text" id="editAccountSize" placeholder="e.g. $100,000"/>
+      </div>
+      <div class="cred-form-field">
+        <label>Starting Balance ($)</label>
+        <input type="number" id="editStartBalance" placeholder="100000"/>
+      </div>
+      <div class="cred-form-field">
+        <label>Current Balance ($) <span style="color:var(--blue);text-transform:none;letter-spacing:0">· auto from trades</span></label>
+        <input type="number" id="editBalance" placeholder="100000" readonly style="opacity:.6;cursor:not-allowed"/>
+        <div class="cred-form-hint">Calculated from Starting Balance + trade P&amp;L. Add/edit trades via the 📊 Trades button.</div>
+      </div>
+      <div class="cred-form-field">
+        <label>Profit Target ($)</label>
+        <input type="number" id="editProfitTarget" placeholder="10000"/>
+        <div class="cred-form-hint">Leave blank to use default for challenge type</div>
+      </div>
+      <div class="cred-form-field">
+        <label>Max Daily Loss Limit ($)</label>
+        <input type="number" id="editMaxDailyLoss" placeholder="3000"/>
+        <div class="cred-form-hint">The allowed daily loss. Leave blank to use default for challenge type</div>
+      </div>
+      <div class="cred-form-field">
+        <label>Daily Loss Used ($) <span style="color:var(--blue);text-transform:none;letter-spacing:0">· auto from trades</span></label>
+        <input type="number" id="editDailyLossUsed" placeholder="0" readonly style="opacity:.6;cursor:not-allowed"/>
+        <div class="cred-form-hint">Recalculated each time a trade is added for today.</div>
+      </div>
+      <div class="cred-form-field">
+        <label>Max Drawdown Limit ($)</label>
+        <input type="number" id="editMaxDrawdown" placeholder="10000"/>
+        <div class="cred-form-hint">The allowed max drawdown. Leave blank to use default for challenge type</div>
+      </div>
+      <div class="cred-form-field">
+        <label>Max Drawdown Used ($) <span style="color:var(--blue);text-transform:none;letter-spacing:0">· auto from trades</span></label>
+        <input type="number" id="editMaxDrawdownUsed" placeholder="0" readonly style="opacity:.6;cursor:not-allowed"/>
+        <div class="cred-form-hint">Peak-to-trough equity drop based on trade history.</div>
+      </div>
+      <div class="cred-form-field">
+        <label>Leverage</label>
+        <input type="text" id="editLeverage" placeholder="1:100"/>
+      </div>
+      <div class="cred-form-field">
+        <label>Profit Split (%)</label>
+        <input type="number" id="editProfitSplit" placeholder="80"/>
+      </div>
+      <div class="cred-form-field" style="grid-column:1/-1">
+        <label>Platform</label>
+        <input type="text" id="editPlatform" placeholder="MetaTrader 5"/>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeEditModal()">Cancel</button>
+      <button class="modal-confirm-creds" onclick="saveEditAccount()"><i class="ti ti-device-floppy"></i> Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- TRADES MODAL -->
+<div class="modal-overlay" id="tradesModal" onclick="if(event.target===this) closeTradesModal()">
+  <div class="modal" style="max-width:760px">
+    <h3>📊 Manage Trades</h3>
+    <p id="tradesModalDesc" style="margin-bottom:14px">Add closed trades for this account. Balance, drawdown, daily loss, and consistency score recalculate automatically.</p>
+
+    <div class="trades-modal-metrics" id="tradesMetrics">
+      <div class="tm-metric"><div class="tm-val" id="tmBalance">—</div><div class="tm-lbl">Balance</div></div>
+      <div class="tm-metric"><div class="tm-val" id="tmProfit">—</div><div class="tm-lbl">Profit / Loss</div></div>
+      <div class="tm-metric"><div class="tm-val" id="tmDailyDD">—</div><div class="tm-lbl">Daily DD Used</div></div>
+      <div class="tm-metric"><div class="tm-val" id="tmMaxDD">—</div><div class="tm-lbl">Max DD Used</div></div>
+      <div class="tm-metric"><div class="tm-val" id="tmRemainingDaily">—</div><div class="tm-lbl">Daily DD Remaining</div></div>
+      <div class="tm-metric"><div class="tm-val" id="tmRemainingMax">—</div><div class="tm-lbl">Max DD Remaining</div></div>
+      <div class="tm-metric"><div class="tm-val" id="tmWinRate">—</div><div class="tm-lbl">Win Rate</div></div>
+      <div class="tm-metric"><div class="tm-val" id="tmConsistency">—</div><div class="tm-lbl">Consistency Score</div></div>
+    </div>
+
+    <div class="trade-add-row">
+      <div class="cred-form-field">
+        <label>Pair</label>
+        <input type="text" id="tradePair" placeholder="EURUSD"/>
+      </div>
+      <div class="cred-form-field">
+        <label>Type</label>
+        <select id="tradeType" class="edit-select">
+          <option value="buy">Buy</option>
+          <option value="sell">Sell</option>
+        </select>
+      </div>
+      <div class="cred-form-field">
+        <label>Lots</label>
+        <input type="number" id="tradeLots" placeholder="1.0" step="0.01"/>
+      </div>
+      <div class="cred-form-field">
+        <label>Open Price</label>
+        <input type="number" id="tradeOpen" placeholder="1.0850" step="0.00001"/>
+      </div>
+      <div class="cred-form-field">
+        <label>Close Price</label>
+        <input type="number" id="tradeClose" placeholder="1.0900" step="0.00001"/>
+      </div>
+      <div class="cred-form-field">
+        <label>P&amp;L ($)</label>
+        <input type="number" id="tradePnl" placeholder="e.g. 250 or -120" step="0.01"/>
+      </div>
+      <button class="trade-add-btn" onclick="addTrade()"><i class="ti ti-plus"></i> Add Trade</button>
+    </div>
+    <div class="cred-form-hint" style="margin-top:-8px;margin-bottom:14px">
+      Enter P&amp;L directly (profit positive, loss negative). Open/Close price are optional — for display only.
+    </div>
+
+    <div class="trades-list-wrap">
+      <table class="trades-list-table">
+        <thead>
+          <tr><th>Pair</th><th>Type</th><th>Lots</th><th>Open</th><th>Close</th><th>Date</th><th style="text-align:right">P&amp;L</th><th></th></tr>
+        </thead>
+        <tbody id="tradesListBody"></tbody>
+      </table>
+    </div>
+
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeTradesModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROOF MODAL -->
+<div class="modal-overlay" id="proofModal" onclick="if(event.target===this) closeProofModal()">
+  <div class="modal" style="max-width:520px">
+    <h3>📎 Payment Proof</h3>
+    <p id="proofMeta" style="margin-bottom:14px"></p>
+    <div style="background:var(--bg3);border-radius:var(--radius-sm);padding:12px;text-align:center;margin-bottom:20px">
+      <img id="proofImage" src="" alt="Payment proof" style="max-width:100%;max-height:60vh;border-radius:8px;border:1px solid var(--border-blue)"/>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeProofModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+// ── ADMIN CONFIG ──
+// Admin status is verified against a hardcoded UID below (matches the
+// isAdmin() check in firestore.rules). Update both places if the admin
+// account ever changes.
+const ADMIN_UID = "Q3C7blJlgCdgMCPLLYgZDNokkYg2";
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_MINS = 15;
+
+firebase.apps.length ? firebase.app() : firebase.initializeApp(FIREBASE_CONFIG);
+const auth = firebase.auth();
+const db   = firebase.firestore();
+
+let allOrders     = [];
+let currentFilter = 'pending';
+let pendingAction = null;
+let credsTarget   = null;   // {userId, orderId} for credentials modal
+let tradesTarget  = null;   // {userId, orderId} for trades modal
+// ── CLEAR legacy boolean lockout key from old code version ──
+localStorage.removeItem('_fb_adminLocked');
+
+// Use localStorage (not sessionStorage) so lockout persists across new tabs/private windows
+let loginAttempts = parseInt(localStorage.getItem('_fb_adminAttempts')||'0');
+const _lockUntil  = parseInt(localStorage.getItem('_fb_adminLockUntil')||'0');
+let isLocked      = _lockUntil > 0 && Date.now() < _lockUntil;
+// Clear stale lock that already expired while the page was closed
+if (_lockUntil > 0 && Date.now() >= _lockUntil) {
+  localStorage.removeItem('_fb_adminLockUntil');
+  localStorage.removeItem('_fb_adminAttempts');
+  loginAttempts = 0;
+  isLocked = false;
+}
+
+// ── RULE SETS PER CHALLENGE TYPE (kept in sync with dashboard.html / rules.html) ─
+const RULE_SETS = {
+  'Instant':  { profitTargetPct: 0,  dailyLossPct: 3, maxDDPct: 5,  leverage: '1:50'  },
+  'One-Step': { profitTargetPct: 10, dailyLossPct: 4, maxDDPct: 6,  leverage: '1:50'  },
+  'Two-Step': { profitTargetPct: 8,  dailyLossPct: 5, maxDDPct: 10, leverage: '1:100' },
+  '3-Step':   { profitTargetPct: 6,  dailyLossPct: 3, maxDDPct: 7,  leverage: '1:100', minTradingDays: 3 },
+};
+function getRuleSet(challengeType) {
+  if (!challengeType) return RULE_SETS['One-Step'];
+  const t = challengeType.toLowerCase();
+  if (t.includes('instant')) return RULE_SETS['Instant'];
+  if (t.includes('3-step') || t.includes('3 step') || t.includes('three')) return RULE_SETS['3-Step'];
+  if (t.includes('two'))     return RULE_SETS['Two-Step'];
+  return RULE_SETS['One-Step'];
+}
+
+// ── ACCOUNT METRICS — derives balance, drawdown, daily loss, consistency, etc.
+// from startBalance + trades[]. Mirrors the logic in dashboard.html so both
+// admin and trader views always agree.
+function computeAccountMetrics(acc) {
+  const startBal = parseFloat(acc.startBalance) || 100000;
+  const trades = Array.isArray(acc.trades) ? acc.trades.slice() : [];
+  trades.sort((a,b) => new Date(a.closedAt) - new Date(b.closedAt));
+
+  let balance = startBal;
+  let peak    = startBal;
+  let maxDDUsed = 0; // largest peak-to-trough equity drop in $
+
+  const today = new Date(); today.setHours(0,0,0,0);
+  const todayTime = today.getTime();
+
+  // Balance at the start of "today" (before any of today's trades)
+  let balanceBeforeToday = startBal;
+  trades.forEach(t => {
+    const d = new Date(t.closedAt); d.setHours(0,0,0,0);
+    if (d.getTime() < todayTime) balanceBeforeToday += (parseFloat(t.pnl) || 0);
+  });
+
+  // Total drawdown: peak advances only at EOD boundaries, not intraday.
+  // This prevents a win earlier in the day from inflating the peak and making
+  // a small net daily loss appear as a large drawdown.
+  const dailyNetMap = {};
+  trades.forEach(t => {
+    const d = new Date(t.closedAt); d.setHours(0,0,0,0);
+    const k = d.getTime();
+    dailyNetMap[k] = (dailyNetMap[k] || 0) + (parseFloat(t.pnl) || 0);
+  });
+  const sortedDays = Object.keys(dailyNetMap).map(Number).sort((a,b)=>a-b);
+  sortedDays.forEach(dayTs => {
+    if (dayTs === todayTime) return;
+    balance += dailyNetMap[dayTs];
+    if (balance > peak) peak = balance;
+    const dd = peak - balance;
+    if (dd > maxDDUsed) maxDDUsed = dd;
+  });
+
+  // Daily loss used = drop from today's opening balance to the lowest running balance today
+  let runningToday = balanceBeforeToday;
+  let minToday      = balanceBeforeToday;
+  trades.forEach(t => {
+    const d = new Date(t.closedAt); d.setHours(0,0,0,0);
+    if (d.getTime() === todayTime) {
+      runningToday += (parseFloat(t.pnl) || 0);
+      if (runningToday < minToday) minToday = runningToday;
+    }
+  });
+  const dailyLossUsed = Math.max(0, balanceBeforeToday - minToday);
+
+  // Finalise balance including today, then check if today creates a new peak/DD
+  balance = runningToday;
+  if (balance > peak) peak = balance;
+  const todayDD = peak - balance;
+  if (todayDD > maxDDUsed) maxDDUsed = todayDD;
+
+  const splitRate = Math.max(0, (Number(acc.profitSplit != null ? acc.profitSplit : 80) || 80) / 100);
+  const storedPayoutDebited = Number(acc.totalPayoutDebited);
+  const legacyPayoutDebited = splitRate > 0 ? Number(acc.totalWithdrawn || 0) / splitRate : 0;
+  const payoutDebited = Math.max(0, Number.isFinite(storedPayoutDebited) && storedPayoutDebited > 0 ? storedPayoutDebited : legacyPayoutDebited);
+  const payoutDebitApplied = Math.min(payoutDebited, Math.max(0, balance - startBal));
+  balance -= payoutDebitApplied;
+
+  const profit = balance - startBal;
+
+  const wins   = trades.filter(t => (parseFloat(t.pnl)||0) > 0);
+  const losses = trades.filter(t => (parseFloat(t.pnl)||0) < 0);
+  const winRate = trades.length ? (wins.length / trades.length * 100) : 0;
+  const grossWin  = wins.reduce((s,t)=>s+parseFloat(t.pnl||0),0);
+  const grossLoss = Math.abs(losses.reduce((s,t)=>s+parseFloat(t.pnl||0),0));
+  const profitFactor = grossLoss > 0 ? (grossWin/grossLoss) : (grossWin > 0 ? Infinity : 0);
+  const best  = trades.reduce((m,t)=>Math.max(m, parseFloat(t.pnl)||0), 0);
+  const worst = trades.reduce((m,t)=>Math.min(m, parseFloat(t.pnl)||0), 0);
+
+  // Consistency rule: no profitable trading day may exceed 15% of total profit.
+  const dailyPnL = {};
+  trades.forEach(t => {
+    const d = new Date(t.closedAt);
+    if (Number.isNaN(d.getTime())) return;
+    const dayKey = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    dailyPnL[dayKey] = (dailyPnL[dayKey] || 0) + (parseFloat(t.pnl) || 0);
+  });
+  const bestDayProfit = Math.max(0, ...Object.values(dailyPnL));
+  const consistencyPct = profit > 0 ? (bestDayProfit / profit * 100) : 0;
+  const consistencyPass = profit <= 0 || consistencyPct <= 15;
+
+  return {
+    startBal, balance, profit, maxDDUsed, dailyLossUsed,
+    winRate, profitFactor, best, worst, grossWin, grossLoss,
+    consistencyPct, consistencyPass, tradeCount: trades.length
+  };
+}
+
+// Timestamp
+setInterval(() => {
+  const el = document.getElementById('adminTimestamp');
+  if (el) el.textContent = new Date().toLocaleTimeString('en-IN',{hour12:true,hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}, 1000);
+
+window.addEventListener('load', () => { if (isLocked) startLockoutTimer(); });
+
+// ── LOGIN ────────────────────────────────────────────────────
+async function attemptLogin() {
+  if (isLocked) return;
+  const email = document.getElementById('adminEmail').value.trim();
+  const pass  = document.getElementById('adminPass').value;
+  const errEl = document.getElementById('loginError');
+  const attEl = document.getElementById('attemptsLeft');
+  errEl.classList.remove('show');
+  try {
+    const cred = await auth.signInWithEmailAndPassword(email, pass);
+    if (cred.user.uid !== ADMIN_UID) {
+      await auth.signOut();
+      loginAttempts++;
+      localStorage.setItem('_fb_adminAttempts', loginAttempts);
+      document.getElementById('adminEmail').classList.add('error-input');
+      document.getElementById('adminPass').classList.add('error-input');
+      errEl.textContent = 'Access denied.';
+      errEl.classList.add('show');
+      const remaining = MAX_ATTEMPTS - loginAttempts;
+      if (remaining <= 2 && remaining > 0) {
+        attEl.style.display = 'block';
+        attEl.textContent = `⚠ ${remaining} attempt${remaining===1?'':'s'} left before lockout.`;
+      }
+      if (loginAttempts >= MAX_ATTEMPTS) {
+        isLocked = true;
+        localStorage.setItem('_fb_adminLockUntil', Date.now() + LOCKOUT_MINS * 60 * 1000);
+        startLockoutTimer();
+      }
+      return;
+    }
+    localStorage.removeItem('_fb_adminAttempts');
+    localStorage.removeItem('_fb_adminLockUntil');
+    showPanel();
+  } catch(err) {
+    loginAttempts++;
+    localStorage.setItem('_fb_adminAttempts', loginAttempts);
+    document.getElementById('adminEmail').classList.add('error-input');
+    document.getElementById('adminPass').classList.add('error-input');
+    const msgs = {
+      'auth/invalid-credential': 'Invalid email or password.',
+      'auth/user-not-found':     'Invalid email or password.',
+      'auth/wrong-password':     'Invalid email or password.',
+      'auth/too-many-requests':  'Too many attempts. Try again later.',
+    };
+    errEl.textContent = msgs[err.code] || 'Login error: ' + err.message;
+    errEl.classList.add('show');
+    const remaining = MAX_ATTEMPTS - loginAttempts;
+    if (remaining <= 2 && remaining > 0) {
+      attEl.style.display = 'block';
+      attEl.textContent = `⚠ ${remaining} attempt${remaining===1?'':'s'} left before lockout.`;
+    }
+    if (loginAttempts >= MAX_ATTEMPTS) {
+      isLocked = true;
+      localStorage.setItem('_fb_adminLockUntil', Date.now() + LOCKOUT_MINS * 60 * 1000);
+      startLockoutTimer();
+    }
+  }
+}
+
+function showPanel() {
+  document.getElementById('loginGate').style.display  = 'none';
+  document.getElementById('adminPanel').style.display = 'block';
+  loadOrders();
+}
+
+// Restore admin session on page refresh without re-login
+auth.onAuthStateChanged(async user => {
+  if (user && user.uid === ADMIN_UID &&
+      document.getElementById('adminPanel').style.display === 'none') {
+    showPanel();
+  }
+});
+
+function adminLogout() {
+  auth.signOut().catch(()=>{});
+  document.getElementById('loginGate').style.display  = 'flex';
+  document.getElementById('adminPanel').style.display = 'none';
+  document.getElementById('adminPass').value = '';
+}
+
+function startLockoutTimer() {
+  document.getElementById('loginGate').style.display = 'none';
+  document.getElementById('lockoutScreen').classList.add('show');
+  const lockUntil = parseInt(localStorage.getItem('_fb_adminLockUntil') || '0');
+  let secs = Math.max(0, Math.ceil((lockUntil - Date.now()) / 1000));
+  const timerEl = document.getElementById('lockTimer');
+  const interval = setInterval(() => {
+    secs--;
+    const m = String(Math.floor(secs/60)).padStart(2,'0');
+    const s = String(secs%60).padStart(2,'0');
+    timerEl.textContent = `${m}:${s}`;
+    if (secs <= 0) {
+      clearInterval(interval);
+      localStorage.removeItem('_fb_adminLockUntil');
+      localStorage.removeItem('_fb_adminAttempts');
+      isLocked = false;
+      location.reload();
+    }
+  }, 1000);
+}
+
+// ── LOAD ORDERS ──────────────────────────────────────────────
+async function loadOrders() {
+  allOrders = [];
+  document.getElementById('ordersBody').innerHTML = '<tr><td colspan="9" class="empty-msg"><i class="ti ti-loader"></i>Loading…</td></tr>';
+  try {
+    const usersSnap = await db.collection('users').get();
+    const promises = [];
+    usersSnap.forEach(userDoc => {
+      const userData = userDoc.data();
+      const uid = userDoc.id;
+      promises.push(
+        db.collection('users').doc(uid).collection('accounts').get()
+          .then(accSnap => {
+            accSnap.forEach(accDoc => {
+              allOrders.push({
+                ...accDoc.data(), userId: uid,
+                userName:  userData.name  || 'Unknown',
+                userEmail: userData.email || '',
+                userKycStatus: userData.kycStatus || userData.kyc?.status || 'unsubmitted',
+                userKyc: userData.kyc || null,
+                docRef:    accDoc.ref
+              });
+            });
+          })
+      );
+    });
+    await Promise.all(promises);
+    allOrders.sort((a,b) => {
+      const ta = a.createdAt?.toDate?.() || new Date(a.createdAt||0);
+      const tb = b.createdAt?.toDate?.() || new Date(b.createdAt||0);
+      return tb - ta;
+    });
+    updateStats();
+    renderTable();
+  } catch(err) {
+    console.error(err);
+    document.getElementById('ordersBody').innerHTML =
+      `<tr><td colspan="9" class="empty-msg"><i class="ti ti-alert-triangle"></i>Error: ${err.message}</td></tr>`;
+  }
+}
+
+function updateStats() {
+  const pending  = allOrders.filter(o => o.status==='pending').length;
+  const active   = allOrders.filter(o => o.status==='active').length;
+  const rejected = allOrders.filter(o => o.status==='rejected').length;
+  const failed   = allOrders.filter(o => o.status==='failed').length;
+  const payouts  = allOrders.filter(o => o.payoutStatus==='pending').length;
+  const funding  = allOrders.filter(o => o.fundingStatus==='pending').length;
+  const kycUsers = new Set(allOrders.filter(o => o.userKycStatus === 'pending').map(o => o.userId));
+  const kyc      = kycUsers.size;
+  document.getElementById('statPending').textContent  = pending;
+  document.getElementById('statActive').textContent   = active;
+  document.getElementById('statRejected').textContent = rejected;
+  document.getElementById('statFailed').textContent   = failed;
+  document.getElementById('statKyc').textContent      = kyc;
+  document.getElementById('statTotal').textContent    = allOrders.length;
+  document.getElementById('cntPending').textContent   = pending;
+  document.getElementById('cntActive').textContent    = active;
+  document.getElementById('cntRejected').textContent  = rejected;
+  document.getElementById('cntFailed').textContent    = failed;
+  document.getElementById('cntPayout').textContent    = payouts;
+  document.getElementById('cntFunding').textContent   = funding;
+  document.getElementById('cntKyc').textContent       = kyc;
+  document.getElementById('cntAll').textContent       = allOrders.length;
+}
+
+function setFilter(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active','amber-tab','green-tab','red-tab'));
+  btn.classList.add('active');
+  if (filter==='pending')  btn.classList.add('amber-tab');
+  if (filter==='active')   btn.classList.add('green-tab');
+  if (filter==='rejected') btn.classList.add('red-tab');
+  if (filter==='failed')   btn.classList.add('red-tab');
+  if (filter==='payout')   btn.classList.add('amber-tab');
+  if (filter==='funding')  btn.classList.add('amber-tab');
+  if (filter==='kyc')      btn.classList.add('amber-tab');
+  renderTable();
+}
+
+function renderTable() {
+  const q = document.getElementById('searchBox').value.toLowerCase();
+  let orders = allOrders;
+  if (currentFilter === 'payout') orders = orders.filter(o => o.payoutStatus === 'pending');
+  else if (currentFilter === 'funding') orders = orders.filter(o => o.fundingStatus === 'pending');
+  else if (currentFilter === 'kyc') {
+    const seenKycUsers = new Set();
+    orders = orders.filter(o => {
+      if (o.userKycStatus !== 'pending' || seenKycUsers.has(o.userId)) return false;
+      seenKycUsers.add(o.userId);
+      return true;
+    });
+  }
+  else if (currentFilter !== 'all') orders = orders.filter(o => o.status === currentFilter);
+  if (q) orders = orders.filter(o =>
+    (o.orderId||'').toLowerCase().includes(q) ||
+    (o.userName||'').toLowerCase().includes(q) ||
+    (o.userEmail||'').toLowerCase().includes(q)
+  );
+  const tbody = document.getElementById('ordersBody');
+  if (!orders.length) {
+    tbody.innerHTML = `<tr><td colspan="9" class="empty-msg"><i class="ti ti-inbox"></i>No ${currentFilter==='all'?'':''+currentFilter} orders found.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = orders.map(o => {
+    const date = o.createdAt?.toDate?.()
+      ? o.createdAt.toDate().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})
+      : (o.createdAt ? new Date(o.createdAt).toLocaleDateString('en-IN') : '—');
+    const badge = currentFilter==='payout'
+      ? `<span class="badge badge-pending"><span class="badge-dot"></span>Payout $${Number(o.payoutAmount||0).toLocaleString('en-US',{minimumFractionDigits:2})}</span>`
+      : currentFilter==='funding'
+      ? `<span class="badge badge-pending"><span class="badge-dot"></span>${o.fundingRequestedPhase || 'Funded'} Request</span>`
+      : currentFilter==='kyc'
+      ? `<span class="badge badge-pending"><span class="badge-dot"></span>KYC Review</span>`
+      : o.status==='active'
+      ? `<span class="badge badge-active"><span class="badge-dot"></span>Active</span>`
+      : o.status==='rejected'
+      ? `<span class="badge badge-rejected"><span class="badge-dot"></span>Rejected</span>`
+      : o.status==='failed'
+      ? `<span class="badge badge-failed"><span class="badge-dot"></span>Failed · ${o.phase||'Phase 1'}</span>`
+      : `<span class="badge badge-pending"><span class="badge-dot"></span>Pending</span>`;
+    const orderIdx = allOrders.indexOf(o);
+    const proofBtn = o.paymentProofImage
+      ? `<button class="action-btn undo-btn" onclick="openProofModal(${orderIdx})"><i class="ti ti-photo"></i> Proof</button>`
+      : `<span style="font-size:11px;color:var(--muted)">No proof</span>`;
+    const hasCreds = !!(o.mt5Login);
+    const credsIndicator = hasCreds
+      ? `<span style="color:var(--green);font-size:12px;font-weight:600"><i class="ti ti-check"></i> Set</span>`
+      : `<span style="color:var(--muted);font-size:12px">—</span>`;
+    const { paymentProofImage, userKyc, docRef, createdAt, activatedAt, ...orderLite } = o;
+    const orderJson = JSON.stringify(orderLite).replace(/'/g,"&#39;");
+    const actions = currentFilter==='kyc'
+      ? `<div class="actions-cell">
+           <button class="action-btn approve-btn" onclick="openKycReview(${orderIdx},'approve')">Approve KYC</button>
+           <button class="action-btn reject-btn" onclick="openKycReview(${orderIdx},'reject')">Reject KYC</button>
+         </div>`
+      : currentFilter==='payout'
+      ? `<div class="actions-cell">
+           <button class="action-btn approve-btn" onclick='openPayoutDecision(${orderJson},"approve")'>✓ Approve Payout</button>
+           <button class="action-btn reject-btn" onclick='openPayoutDecision(${orderJson},"reject")'>✕ Reject Payout</button>
+          </div>`
+      : currentFilter==='funding'
+      ? `<div class="actions-cell">
+           <button class="action-btn approve-btn" onclick='openFundingDecision(${orderJson},"approve")'>Approve ${o.fundingRequestedPhase || 'Funded'}</button>
+           <button class="action-btn reject-btn" onclick='openFundingDecision(${orderJson},"reject")'>Reject Request</button>
+           <button class="action-btn cred-btn" onclick='openTradesModal(${orderJson})'><i class="ti ti-chart-candle"></i> Trades</button>
+         </div>`
+      : o.status==='pending'
+      ? `<div class="actions-cell">
+           <button class="action-btn approve-btn" onclick='openApprove(${orderJson})'>✓ Approve</button>
+           <button class="action-btn reject-btn"  onclick='openReject(${orderJson})'>✗ Reject</button>
+           <button class="action-btn cred-btn"    onclick='openCredsModal(${orderJson})'><i class="ti ti-key"></i></button>
+           <button class="action-btn undo-btn"    onclick='openEditModal(${orderJson})'><i class="ti ti-edit"></i> Edit</button>
+           <button class="action-btn cred-btn"    onclick='openTradesModal(${orderJson})'><i class="ti ti-chart-candle"></i> Trades</button>
+           ${proofBtn}
+         </div>`
+      : o.status==='active'
+      ? `<div class="actions-cell">
+           <button class="action-btn reject-btn"  onclick='openReject(${orderJson})'>Revoke</button>
+           <button class="action-btn reject-btn"  onclick='openFail(${orderJson})'>✗ Fail</button>
+           <button class="action-btn cred-btn"    onclick='openCredsModal(${orderJson})'><i class="ti ti-key"></i> Creds</button>
+           <button class="action-btn undo-btn"    onclick='openEditModal(${orderJson})'><i class="ti ti-edit"></i> Edit</button>
+           <button class="action-btn cred-btn"    onclick='openTradesModal(${orderJson})'><i class="ti ti-chart-candle"></i> Trades</button>
+           ${proofBtn}
+         </div>`
+      : o.status==='failed'
+      ? `<div class="actions-cell">
+           <button class="action-btn approve-btn" onclick='openApprove(${orderJson})'>Re-activate</button>
+           <button class="action-btn cred-btn"    onclick='openCredsModal(${orderJson})'><i class="ti ti-key"></i></button>
+           <button class="action-btn undo-btn"    onclick='openEditModal(${orderJson})'><i class="ti ti-edit"></i> Edit</button>
+           <button class="action-btn cred-btn"    onclick='openTradesModal(${orderJson})'><i class="ti ti-chart-candle"></i> Trades</button>
+         </div>`
+      : `<div class="actions-cell">
+           <button class="action-btn approve-btn" onclick='openApprove(${orderJson})'>Re-approve</button>
+           <button class="action-btn cred-btn"    onclick='openCredsModal(${orderJson})'><i class="ti ti-key"></i></button>
+           <button class="action-btn undo-btn"    onclick='openEditModal(${orderJson})'><i class="ti ti-edit"></i> Edit</button>
+           <button class="action-btn cred-btn"    onclick='openTradesModal(${orderJson})'><i class="ti ti-chart-candle"></i> Trades</button>
+         </div>`;
+    return `<tr>
+      <td style="font-family:monospace;font-size:12px;color:var(--blue)">${o.orderId||o.id||'—'}</td>
+      <td>
+        <div style="font-weight:500">${o.userName||'—'}</div>
+        <div style="font-size:11px;color:var(--muted)">${o.userEmail||''}</div>
+      </td>
+      <td>${o.challengeType||'—'}</td>
+      <td style="font-weight:600">${o.accountSize||'—'}</td>
+      <td>${o.paymentMethod||'—'}</td>
+      <td style="font-size:12px;color:var(--muted)">${date}</td>
+      <td>${credsIndicator}</td>
+      <td>${badge}</td>
+      <td>${actions}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── APPROVE / REJECT MODAL ────────────────────────────────────
+function openApprove(order) {
+  pendingAction = { type:'approve', order };
+  const full = allOrders.find(o => o.userId===order.userId && (o.orderId||o.id)===(order.orderId||order.id));
+  document.getElementById('modalTitle').textContent = '✅ Approve Payment';
+  document.getElementById('modalDesc').textContent  = 'This will activate the challenge account and the user will see it on their dashboard.';
+  document.getElementById('modalDetail').innerHTML = `
+    <div class="modal-detail-row"><span>User</span><strong>${order.userName} (${order.userEmail})</strong></div>
+    <div class="modal-detail-row"><span>Challenge</span><strong>${order.challengeType}</strong></div>
+    <div class="modal-detail-row"><span>Account Size</span><strong>${order.accountSize}</strong></div>
+    <div class="modal-detail-row"><span>Fee Paid</span><strong>${order.entryFee}</strong></div>
+    <div class="modal-detail-row"><span>Order ID</span><strong style="font-family:monospace;color:var(--blue)">${order.orderId||order.id}</strong></div>
+    <div class="modal-detail-row"><span>MT5 Credentials</span><strong style="color:${order.mt5Login?'var(--green)':'var(--amber)'}">${order.mt5Login ? '✓ Already set' : '⚠ Not set yet — set them via 🔑 button'}</strong></div>
+    ${full&&full.paymentProofImage?`<div style="text-align:center;margin-top:8px"><img src="${full.paymentProofImage}" style="max-width:100%;max-height:140px;border-radius:8px;border:1px solid var(--border-blue)"/></div>`:''}`;
+  const btn = document.getElementById('modalConfirmBtn');
+  btn.textContent = 'Approve & Activate'; btn.className = 'modal-confirm-approve';
+  document.getElementById('confirmModal').classList.add('open');
+}
+
+function openFail(order) {
+  pendingAction = { type:'fail', order };
+  document.getElementById('modalTitle').textContent = '⚠️ Mark Challenge Failed';
+  document.getElementById('modalDesc').textContent  = 'This marks the account as having failed its evaluation/funded phase (e.g. breached daily loss or max drawdown). The user will see "Failed" status on their dashboard. Credentials are kept but trading should stop.';
+  document.getElementById('modalDetail').innerHTML = `
+    <div class="modal-detail-row"><span>User</span><strong>${order.userName}</strong></div>
+    <div class="modal-detail-row"><span>Order ID</span><strong style="font-family:monospace;color:var(--red)">${order.orderId||order.id}</strong></div>
+    <div class="modal-detail-row"><span>Current Phase</span><strong>${order.phase||'Phase 1'}</strong></div>`;
+  const btn = document.getElementById('modalConfirmBtn');
+  btn.textContent = 'Confirm Fail'; btn.className = 'modal-confirm-reject';
+  document.getElementById('confirmModal').classList.add('open');
+}
+
+function openReject(order) {
+  pendingAction = { type:'reject', order };
+  document.getElementById('modalTitle').textContent = '❌ Reject / Revoke';
+  document.getElementById('modalDesc').textContent  = 'This will mark the account as rejected. The user will see "Rejected" status on their dashboard.';
+  document.getElementById('modalDetail').innerHTML = `
+    <div class="modal-detail-row"><span>User</span><strong>${order.userName}</strong></div>
+    <div class="modal-detail-row"><span>Order ID</span><strong style="font-family:monospace;color:var(--red)">${order.orderId||order.id}</strong></div>`;
+  const btn = document.getElementById('modalConfirmBtn');
+  btn.textContent = 'Confirm Reject'; btn.className = 'modal-confirm-reject';
+  document.getElementById('confirmModal').classList.add('open');
+}
+
+function openFundingDecision(order, decision) {
+  pendingAction = { type: decision === 'approve' ? 'fundingApprove' : 'fundingReject', order };
+  const approve = decision === 'approve';
+  const requestedPhase = order.fundingRequestedPhase || 'Funded';
+  document.getElementById('modalTitle').textContent = approve ? `Approve ${requestedPhase} Request` : `Reject ${requestedPhase} Request`;
+  document.getElementById('modalDesc').textContent = approve
+    ? `This moves the account to ${requestedPhase} and resets balance, profit, drawdown, and trade history.`
+    : 'This rejects the phase/funded request and lets the user request again after review.';
+  document.getElementById('modalDetail').innerHTML = `
+    <div class="modal-detail-row"><span>User</span><strong>${order.userName} (${order.userEmail})</strong></div>
+    <div class="modal-detail-row"><span>Account</span><strong>${order.challengeType} Â· ${order.accountSize}</strong></div>
+    <div class="modal-detail-row"><span>Current Phase</span><strong>${order.phase || 'Phase 1'}</strong></div>
+    <div class="modal-detail-row"><span>Requested Phase</span><strong style="color:var(--green)">${requestedPhase}</strong></div>
+    <div class="modal-detail-row"><span>Order ID</span><strong>${order.orderId||order.id}</strong></div>`;
+  const btn = document.getElementById('modalConfirmBtn');
+  btn.textContent = approve ? `Approve ${requestedPhase}` : 'Reject Request';
+  btn.className = approve ? 'modal-confirm-approve' : 'modal-confirm-reject';
+  document.getElementById('confirmModal').classList.add('open');
+}
+
+async function refreshAdminData() {
+  const btn = document.getElementById('adminRefreshBtn');
+  if (!btn || btn.disabled) return;
+  btn.disabled = true;
+  btn.classList.add('loading');
+  btn.innerHTML = '<i class="ti ti-refresh"></i> Refreshing...';
+  try {
+    await loadOrders();
+    showToast('Admin data refreshed', 'green');
+  } finally {
+    btn.disabled = false;
+    btn.classList.remove('loading');
+    btn.innerHTML = '<i class="ti ti-refresh"></i> Refresh';
+  }
+}
+
+function openKycReview(orderIdx, decision) {
+  const order = allOrders[orderIdx];
+  if (!order || !order.userKyc) return showToast('KYC data not found for this user.', 'red');
+  const approve = decision === 'approve';
+  pendingAction = { type: approve ? 'kycApprove' : 'kycReject', order };
+  const kyc = order.userKyc || {};
+  const docPreview = kyc.documentData
+    ? (String(kyc.documentData).startsWith('data:image/')
+      ? `<div style="text-align:center;margin-top:8px"><img src="${kyc.documentData}" style="max-width:100%;max-height:220px;border-radius:8px;border:1px solid var(--border-blue)"/></div>`
+      : `<div style="margin-top:8px"><a href="${kyc.documentData}" target="_blank" class="action-btn cred-btn" style="display:inline-block;text-decoration:none">Open uploaded document</a></div>`)
+    : `<div style="font-size:12px;color:var(--muted);margin-top:8px">No document uploaded.</div>`;
+  document.getElementById('modalTitle').textContent = approve ? 'Approve KYC Verification' : 'Reject KYC Verification';
+  document.getElementById('modalDesc').textContent = approve
+    ? 'This verifies the user and unlocks payout requests for eligible accounts.'
+    : 'This rejects the KYC submission and lets the user upload corrected details.';
+  document.getElementById('modalDetail').innerHTML = `
+    <div class="modal-detail-row"><span>User</span><strong>${order.userName} (${order.userEmail})</strong></div>
+    <div class="modal-detail-row"><span>Legal Name</span><strong>${kyc.fullName || '—'}</strong></div>
+    <div class="modal-detail-row"><span>Date of Birth</span><strong>${kyc.dob || '—'}</strong></div>
+    <div class="modal-detail-row"><span>Country</span><strong>${kyc.country || '—'}</strong></div>
+    <div class="modal-detail-row"><span>ID</span><strong>${kyc.idType || 'ID'} · ${kyc.idNumber || '—'}</strong></div>
+    <div class="modal-detail-row"><span>File</span><strong>${kyc.documentName || '—'}</strong></div>
+    ${docPreview}`;
+  const btn = document.getElementById('modalConfirmBtn');
+  btn.textContent = approve ? 'Approve KYC' : 'Reject KYC';
+  btn.className = approve ? 'modal-confirm-approve' : 'modal-confirm-reject';
+  document.getElementById('confirmModal').classList.add('open');
+}
+
+function openPayoutDecision(order, decision) {
+  pendingAction = { type: decision === 'approve' ? 'payoutApprove' : 'payoutReject', order };
+  const approve = decision === 'approve';
+  const payoutNet = Number(order.payoutAmount || 0);
+  const splitRate = Math.max(0, Number(order.payoutSplit || order.profitSplit || 80) / 100);
+  const payoutGross = Number(order.payoutGrossAmount || 0) || (splitRate > 0 ? payoutNet / splitRate : payoutNet);
+  document.getElementById('modalTitle').textContent = approve ? 'Approve Payout Request' : 'Reject Payout Request';
+  document.getElementById('modalDesc').textContent = approve
+    ? 'This accepts the user payout request and removes the gross profit from account balance.'
+    : 'This rejects the payout request and lets the user submit again later.';
+  document.getElementById('modalDetail').innerHTML = `
+    <div class="modal-detail-row"><span>User</span><strong>${order.userName} (${order.userEmail})</strong></div>
+    <div class="modal-detail-row"><span>Account</span><strong>${order.challengeType} · ${order.accountSize}</strong></div>
+    <div class="modal-detail-row"><span>Order ID</span><strong>${order.orderId||order.id}</strong></div>
+    <div class="modal-detail-row"><span>Payout Amount</span><strong style="color:var(--green)">$${payoutNet.toLocaleString('en-US',{minimumFractionDigits:2})}</strong></div>
+    <div class="modal-detail-row"><span>Balance/Profit Deduction</span><strong style="color:var(--red)">$${payoutGross.toLocaleString('en-US',{minimumFractionDigits:2})}</strong></div>`;
+  const btn = document.getElementById('modalConfirmBtn');
+  btn.textContent = approve ? 'Approve Payout' : 'Reject Payout';
+  btn.className = approve ? 'modal-confirm-approve' : 'modal-confirm-reject';
+  document.getElementById('confirmModal').classList.add('open');
+}
+
+function closeModal() { document.getElementById('confirmModal').classList.remove('open'); pendingAction = null; }
+
+async function confirmAction() {
+  if (!pendingAction) return;
+  const { type, order } = pendingAction;
+  closeModal();
+  try {
+    if (type === 'kycApprove' || type === 'kycReject') {
+      const approved = type === 'kycApprove';
+      const status = approved ? 'approved' : 'rejected';
+      await db.collection('users').doc(order.userId).update({
+        kycStatus: status,
+        'kyc.status': status,
+        'kyc.reviewedAt': firebase.firestore.FieldValue.serverTimestamp(),
+        'kyc.reviewedNote': approved ? '' : 'KYC was rejected by admin. Please submit clear, valid details again.'
+      });
+      allOrders.forEach(o => {
+        if (o.userId === order.userId) {
+          o.userKycStatus = status;
+          if (o.userKyc) {
+            o.userKyc.status = status;
+            o.userKyc.reviewedNote = approved ? '' : 'KYC was rejected by admin. Please submit clear, valid details again.';
+          }
+        }
+      });
+      updateStats(); renderTable();
+      showToast(`KYC ${status} for ${order.userName}`, approved ? 'green' : 'red');
+      return;
+    }
+    if (type === 'fundingApprove' || type === 'fundingReject') {
+      const fundingStatus = type === 'fundingApprove' ? 'approved' : 'rejected';
+      const requestedPhase = order.fundingRequestedPhase || 'Funded';
+      const accountRef = db.collection('users').doc(order.userId)
+                           .collection('accounts').doc(order.orderId||order.id);
+      await db.runTransaction(async transaction => {
+        const accountSnap = await transaction.get(accountRef);
+        if (!accountSnap.exists) throw new Error('Account not found.');
+        const data = accountSnap.data();
+        if (data.fundingStatus !== 'pending') {
+          throw new Error('This funding request has already been decided.');
+        }
+        const update = {
+          fundingStatus,
+          fundingDecidedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        if (type === 'fundingApprove') {
+          const startBalance = Number(data.startBalance || order.startBalance || 100000);
+          update.phase = requestedPhase;
+          update.status = 'active';
+          update.trades = [];
+          update.balance = startBalance;
+          update.profit = 0;
+          update.dailyLossUsed = 0;
+          update.maxDrawdownUsed = 0;
+          update.totalDrawdownUsed = 0;
+          update.totalPayoutDebited = 0;
+          update.totalWithdrawn = 0;
+          update.payoutStatus = firebase.firestore.FieldValue.delete();
+          update.payoutAmount = firebase.firestore.FieldValue.delete();
+          update.payoutGrossAmount = firebase.firestore.FieldValue.delete();
+          update.payoutSplit = firebase.firestore.FieldValue.delete();
+          update.fundedApprovedAt = firebase.firestore.FieldValue.serverTimestamp();
+        }
+        transaction.update(accountRef, update);
+      });
+      const idx = allOrders.findIndex(o => (o.orderId||o.id)===(order.orderId||order.id) && o.userId===order.userId);
+      if (idx !== -1) {
+        allOrders[idx].fundingStatus = fundingStatus;
+        if (type === 'fundingApprove') {
+          Object.assign(allOrders[idx], {
+            phase: requestedPhase,
+            status: 'active',
+            trades: [],
+            balance: Number(allOrders[idx].startBalance || 100000),
+            profit: 0,
+            dailyLossUsed: 0,
+            maxDrawdownUsed: 0,
+            totalDrawdownUsed: 0,
+            totalPayoutDebited: 0,
+            totalWithdrawn: 0
+          });
+        }
+      }
+      updateStats(); renderTable();
+      showToast(`${requestedPhase} request ${fundingStatus} for ${order.userName}`, type==='fundingApprove'?'green':'red');
+      return;
+    }
+    if (type === 'payoutApprove' || type === 'payoutReject') {
+      const payoutStatus = type === 'payoutApprove' ? 'approved' : 'rejected';
+      const payoutUpdate = {
+        payoutStatus,
+        payoutDecidedAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+      if (type === 'payoutApprove') {
+        const splitRate = Math.max(0, Number(order.payoutSplit || order.profitSplit || 80) / 100);
+        const payoutAmount = Math.max(0, Number(order.payoutAmount || 0));
+        const requestedGross = Math.max(0, Number(order.payoutGrossAmount || 0) || (splitRate > 0 ? payoutAmount / splitRate : payoutAmount));
+        payoutUpdate.totalWithdrawn = firebase.firestore.FieldValue.increment(payoutAmount);
+        payoutUpdate.totalPayoutDebited = firebase.firestore.FieldValue.increment(requestedGross);
+        payoutUpdate.balance = firebase.firestore.FieldValue.increment(-requestedGross);
+        payoutUpdate.profit = firebase.firestore.FieldValue.increment(-requestedGross);
+      }
+      const payoutUserRef = db.collection('users').doc(order.userId);
+      const payoutRef = db.collection('users').doc(order.userId)
+                          .collection('accounts').doc(order.orderId||order.id);
+      await db.runTransaction(async transaction => {
+        const payoutUserSnap = await transaction.get(payoutUserRef);
+        const payoutSnap = await transaction.get(payoutRef);
+        const kycStatus = payoutUserSnap.data()?.kycStatus || payoutUserSnap.data()?.kyc?.status || 'unsubmitted';
+        if (type === 'payoutApprove' && kycStatus !== 'approved') {
+          throw new Error('KYC must be approved before approving payout.');
+        }
+        if (!payoutSnap.exists) throw new Error('Account not found.');
+        if (payoutSnap.data().payoutStatus !== 'pending') {
+          throw new Error('This payout request has already been decided.');
+        }
+        transaction.update(payoutRef, payoutUpdate);
+      });
+      const idx = allOrders.findIndex(o => (o.orderId||o.id)===(order.orderId||order.id) && o.userId===order.userId);
+      if (idx !== -1) allOrders[idx].payoutStatus = payoutStatus;
+      updateStats(); renderTable();
+      showToast(`Payout ${payoutStatus} for ${order.userName}`, type==='payoutApprove'?'green':'red');
+      return;
+    }
+    let newStatus;
+    if (type==='approve') newStatus = 'active';
+    else if (type==='fail') newStatus = 'failed';
+    else newStatus = 'rejected';
+    const updateData = { status: newStatus };
+    if (type==='approve') updateData.activatedAt = firebase.firestore.FieldValue.serverTimestamp();
+    if (type==='fail')    updateData.failedAt = firebase.firestore.FieldValue.serverTimestamp();
+    await db.collection('users').doc(order.userId)
+            .collection('accounts').doc(order.orderId||order.id)
+            .update(updateData);
+    const idx = allOrders.findIndex(o => o.orderId===order.orderId && o.userId===order.userId);
+    if (idx !== -1) allOrders[idx].status = newStatus;
+    const emailStatus = type==='approve' ? 'Approved' : type==='fail' ? 'Failed' : 'Rejected';
+    await sendStatusEmail(order, emailStatus);
+    updateStats(); renderTable();
+    const msg = type==='approve' ? `✅ Account activated for ${order.userName}`
+              : type==='fail'    ? `⚠️ Challenge marked failed for ${order.userName}`
+              : `❌ Order rejected for ${order.userName}`;
+    showToast(msg, type==='approve'?'green':'red');
+  } catch(err) { showToast('Error: '+err.message,'red'); }
+}
+
+// ── CREDENTIALS MODAL ─────────────────────────────────────────
+function openCredsModal(order) {
+  credsTarget = { userId: order.userId, orderId: order.orderId || order.id, order };
+  document.getElementById('credsModalDesc').textContent =
+    `MT5 credentials for ${order.userName} (${order.accountSize} · ${order.challengeType})`;
+
+  // Show existing creds if any
+  const hasCreds = !!(order.mt5Login);
+  const ecBox = document.getElementById('existingCredsBox');
+  ecBox.style.display = hasCreds ? '' : 'none';
+  if (hasCreds) {
+    document.getElementById('ecServer').textContent   = order.mt5Server   || '—';
+    document.getElementById('ecLogin').textContent    = order.mt5Login    || '—';
+    document.getElementById('ecPassword').textContent = order.mt5Password || '—';
+  }
+
+  // Pre-fill if existing
+  document.getElementById('credInputServer').value   = order.mt5Server   || '';
+  document.getElementById('credInputLogin').value    = order.mt5Login    || '';
+  document.getElementById('credInputPassword').value = order.mt5Password || '';
+
+  document.getElementById('credsModal').classList.add('open');
+}
+
+function closeCredsModal() {
+  document.getElementById('credsModal').classList.remove('open');
+  credsTarget = null;
+}
+
+async function saveCredentials() {
+  if (!credsTarget) return;
+  const server   = document.getElementById('credInputServer').value.trim();
+  const login    = document.getElementById('credInputLogin').value.trim();
+  const password = document.getElementById('credInputPassword').value.trim();
+  if (!server || !login || !password) {
+    showToast('Please fill in all three credential fields.','red');
+    return;
+  }
+  try {
+    await db.collection('users').doc(credsTarget.userId)
+            .collection('accounts').doc(credsTarget.orderId)
+            .update({ mt5Server: server, mt5Login: login, mt5Password: password });
+    // Update local cache
+    const idx = allOrders.findIndex(o => (o.orderId||o.id)===credsTarget.orderId && o.userId===credsTarget.userId);
+    if (idx !== -1) {
+      allOrders[idx].mt5Server   = server;
+      allOrders[idx].mt5Login    = login;
+      allOrders[idx].mt5Password = password;
+    }
+    closeCredsModal();
+    renderTable();
+    showToast(`🔑 Credentials saved for ${credsTarget.order.userName}`, 'green');
+  } catch(err) {
+    showToast('Error saving credentials: '+err.message,'red');
+  }
+}
+
+// ── DEMO ACCOUNT ASSIGNMENT ─────────────────────────────────────
+let demoTargetUser = null; // {uid, name, email}
+
+function openDemoPanel() {
+  document.getElementById('demoUserEmail').value = '';
+  document.getElementById('demoFormFields').style.display = 'none';
+  document.getElementById('demoAssignBtn').disabled = true;
+  document.getElementById('demoAssignBtn').style.opacity = '.5';
+  document.getElementById('demoLookupStatus').textContent = "Type the user's registered email, then click \"Find user\".";
+  document.getElementById('demoLookupStatus').style.color = 'var(--muted)';
+  demoTargetUser = null;
+  document.getElementById('demoModal').classList.add('open');
+}
+function closeDemoModal() {
+  document.getElementById('demoModal').classList.remove('open');
+}
+function demoLookupReset() {
+  document.getElementById('demoFormFields').style.display = 'none';
+  document.getElementById('demoAssignBtn').disabled = true;
+  document.getElementById('demoAssignBtn').style.opacity = '.5';
+  demoTargetUser = null;
+}
+
+async function demoLookupUser() {
+  const email = document.getElementById('demoUserEmail').value.trim().toLowerCase();
+  const statusEl = document.getElementById('demoLookupStatus');
+  if (!email) { statusEl.textContent = 'Enter an email first.'; statusEl.style.color = 'var(--red)'; return; }
+  statusEl.textContent = 'Searching…'; statusEl.style.color = 'var(--muted)';
+  try {
+    const snap = await db.collection('users').where('email','==',email).limit(1).get();
+    if (snap.empty) {
+      statusEl.textContent = '❌ No user found with that email.'; statusEl.style.color = 'var(--red)';
+      demoLookupReset();
+      return;
+    }
+    const doc = snap.docs[0];
+    demoTargetUser = { uid: doc.id, name: doc.data().name || 'Trader', email: doc.data().email || email };
+    statusEl.textContent = `✓ Found: ${demoTargetUser.name} (${demoTargetUser.email})`;
+    statusEl.style.color = 'var(--green)';
+    document.getElementById('demoFormFields').style.display = '';
+    document.getElementById('demoAssignBtn').disabled = false;
+    document.getElementById('demoAssignBtn').style.opacity = '1';
+  } catch(err) {
+    statusEl.textContent = 'Error: ' + err.message; statusEl.style.color = 'var(--red)';
+  }
+}
+
+async function assignDemoAccount() {
+  if (!demoTargetUser) return;
+  const orderId = 'DEMO-' + Date.now().toString(36).toUpperCase().slice(-6);
+  const startBalance = parseFloat(document.getElementById('demoStartBalance').value) || 100000;
+  const balance      = parseFloat(document.getElementById('demoBalance').value) || startBalance;
+  try {
+    await db.collection('users').doc(demoTargetUser.uid)
+            .collection('accounts').doc(orderId).set({
+      orderId,
+      challengeType: document.getElementById('demoChallengeType').value,
+      accountSize:   document.getElementById('demoAccountSize').value.trim() || ('$'+startBalance.toLocaleString()),
+      startBalance,
+      balance,
+      profit: balance - startBalance,
+      status: document.getElementById('demoStatus').value,
+      phase:  document.getElementById('demoPhase').value,
+      isDemo: true,
+      platform: 'MT5',
+      profitSplit: 80,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      activatedAt: document.getElementById('demoStatus').value === 'active' ? firebase.firestore.FieldValue.serverTimestamp() : null,
+    });
+    closeDemoModal();
+    showToast(`✓ Demo account assigned to ${demoTargetUser.name}`, 'green');
+    loadOrders();
+  } catch(err) {
+    showToast('Error assigning demo account: '+err.message, 'red');
+  }
+}
+
+
+let editTarget = null; // {userId, orderId}
+
+function openEditModal(order) {
+  const full = allOrders.find(o => o.userId===order.userId && (o.orderId||o.id)===(order.orderId||order.id)) || order;
+  editTarget = { userId: full.userId, orderId: full.orderId || full.id };
+
+  document.getElementById('editModalDesc').textContent =
+    `Editing account for ${full.userName} (${full.userEmail}) · Order ${full.orderId||full.id}`;
+
+  const m = computeAccountMetrics(full);
+
+  document.getElementById('editStatus').value         = full.status || 'pending';
+  document.getElementById('editPhase').value          = full.phase || 'Phase 1';
+  document.getElementById('editChallengeType').value  = (full.challengeType||'One-Step').includes('Instant') ? 'Instant'
+                                                          : (full.challengeType||'One-Step').includes('3-Step') ? '3-Step'
+                                                          : (full.challengeType||'One-Step').includes('Two')  ? 'Two-Step'
+                                                          : 'One-Step';
+  document.getElementById('editAccountSize').value    = full.accountSize || '';
+  document.getElementById('editStartBalance').value   = full.startBalance ?? '';
+  document.getElementById('editBalance').value        = m.balance.toFixed(2);
+  document.getElementById('editProfitTarget').value   = full.profitTarget ?? '';
+  document.getElementById('editMaxDailyLoss').value   = full.maxDailyLoss ?? '';
+  document.getElementById('editDailyLossUsed').value  = m.dailyLossUsed.toFixed(2);
+  document.getElementById('editMaxDrawdown').value    = full.maxDrawdown ?? '';
+  document.getElementById('editMaxDrawdownUsed').value = m.maxDDUsed.toFixed(2);
+  document.getElementById('editLeverage').value       = full.leverage || '';
+  document.getElementById('editProfitSplit').value    = full.profitSplit ?? '';
+  document.getElementById('editPlatform').value       = full.platform || '';
+
+  document.getElementById('editModal').classList.add('open');
+}
+
+function closeEditModal() {
+  document.getElementById('editModal').classList.remove('open');
+  editTarget = null;
+}
+
+async function saveEditAccount() {
+  if (!editTarget) return;
+  const numOrNull = id => {
+    const v = document.getElementById(id).value;
+    return v === '' ? null : parseFloat(v);
+  };
+  const textOrEmpty = id => document.getElementById(id).value.trim();
+
+  const update = {
+    status:        document.getElementById('editStatus').value,
+    phase:         document.getElementById('editPhase').value,
+    challengeType: document.getElementById('editChallengeType').value,
+    accountSize:   textOrEmpty('editAccountSize'),
+    leverage:      textOrEmpty('editLeverage'),
+    platform:      textOrEmpty('editPlatform'),
+  };
+
+  // Numeric fields — only include if provided (null clears the override so dashboard falls back to defaults)
+  // Note: balance, dailyLossUsed and maxDrawdownUsed are NOT included here — they are
+  // derived automatically from startBalance + trades (see computeAccountMetrics / Trades modal).
+  const numFields = {
+    startBalance:  numOrNull('editStartBalance'),
+    profitTarget:  numOrNull('editProfitTarget'),
+    maxDailyLoss:  numOrNull('editMaxDailyLoss'),
+    maxDrawdown:   numOrNull('editMaxDrawdown'),
+    profitSplit:   numOrNull('editProfitSplit'),
+  };
+
+  Object.keys(numFields).forEach(k => {
+    if (numFields[k] === null) {
+      update[k] = firebase.firestore.FieldValue.delete();
+    } else {
+      update[k] = numFields[k];
+    }
+  });
+
+  // Clean blank strings so we don't overwrite with empty (delete instead, falls back to defaults)
+  ['accountSize','leverage','platform'].forEach(k => {
+    if (update[k] === '') update[k] = firebase.firestore.FieldValue.delete();
+  });
+
+  try {
+    const full = allOrders.find(o => (o.orderId||o.id)===editTarget.orderId && o.userId===editTarget.userId);
+
+    // If starting balance changed, recompute balance/profit/DD off the (unchanged) trades
+    const newStartBalance = numFields.startBalance !== null ? numFields.startBalance : (full?.startBalance ?? 100000);
+    if (full && newStartBalance !== (full.startBalance ?? 100000)) {
+      const recalcSrc = { ...full, startBalance: newStartBalance };
+      const m = computeAccountMetrics(recalcSrc);
+      update.balance           = m.balance;
+      update.profit            = m.profit;
+      update.dailyLossUsed      = m.dailyLossUsed;
+      update.totalDrawdownUsed  = m.maxDDUsed;
+      update.consistencyPct     = m.consistencyPct;
+    }
+
+    await db.collection('users').doc(editTarget.userId)
+            .collection('accounts').doc(editTarget.orderId)
+            .update(update);
+
+    // Update local cache
+    const idx = allOrders.findIndex(o => (o.orderId||o.id)===editTarget.orderId && o.userId===editTarget.userId);
+    if (idx !== -1) {
+      Object.keys(update).forEach(k => {
+        if (update[k] instanceof firebase.firestore.FieldValue) delete allOrders[idx][k];
+        else allOrders[idx][k] = update[k];
+      });
+    }
+
+    closeEditModal();
+    updateStats(); renderTable();
+    showToast('✓ Account updated', 'green');
+  } catch(err) {
+    showToast('Error saving: '+err.message,'red');
+  }
+}
+
+// ── TRADES MODAL ─────────────────────────────────────────────
+function openTradesModal(order) {
+  const full = allOrders.find(o => o.userId===order.userId && (o.orderId||o.id)===(order.orderId||order.id)) || order;
+  tradesTarget = { userId: full.userId, orderId: full.orderId || full.id };
+
+  document.getElementById('tradesModalDesc').textContent =
+    `Trades for ${full.userName} (${full.userEmail}) · ${full.challengeType||'Challenge'} · ${full.accountSize||''}`;
+
+  // Clear add-trade inputs
+  ['tradePair','tradeLots','tradeOpen','tradeClose','tradePnl'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('tradeType').value = 'buy';
+
+  renderTradesModal(full);
+  document.getElementById('tradesModal').classList.add('open');
+}
+
+function closeTradesModal() {
+  document.getElementById('tradesModal').classList.remove('open');
+  tradesTarget = null;
+}
+
+function renderTradesModal(acc) {
+  const trades = Array.isArray(acc.trades) ? acc.trades.slice() : [];
+  const m = computeAccountMetrics(acc);
+  const ruleSet  = getRuleSet(acc.challengeType);
+  const maxDaily = parseFloat(acc.maxDailyLoss) || (m.startBal * ruleSet.dailyLossPct/100);
+  const maxDD    = parseFloat(acc.maxDrawdown)  || (m.startBal * ruleSet.maxDDPct/100);
+
+  document.getElementById('tmBalance').textContent = '$'+m.balance.toLocaleString('en-US',{minimumFractionDigits:2});
+  const profitEl = document.getElementById('tmProfit');
+  profitEl.textContent = (m.profit>=0?'+':'−')+'$'+Math.abs(m.profit).toLocaleString('en-US',{minimumFractionDigits:2});
+  profitEl.className = 'tm-val ' + (m.profit>=0?'green':'red');
+
+  document.getElementById('tmDailyDD').textContent = '$'+m.dailyLossUsed.toLocaleString('en-US',{maximumFractionDigits:0});
+  document.getElementById('tmDailyDD').className = 'tm-val ' + (m.dailyLossUsed >= maxDaily ? 'red' : m.dailyLossUsed/maxDaily > 0.7 ? 'amber' : '');
+
+  document.getElementById('tmMaxDD').textContent = '$'+m.maxDDUsed.toLocaleString('en-US',{maximumFractionDigits:0});
+  document.getElementById('tmMaxDD').className = 'tm-val ' + (m.maxDDUsed >= maxDD ? 'red' : m.maxDDUsed/maxDD > 0.7 ? 'amber' : '');
+
+  document.getElementById('tmRemainingDaily').textContent = '$'+Math.max(0,maxDaily - m.dailyLossUsed).toLocaleString('en-US',{maximumFractionDigits:0});
+  document.getElementById('tmRemainingMax').textContent   = '$'+Math.max(0,maxDD - m.maxDDUsed).toLocaleString('en-US',{maximumFractionDigits:0});
+
+  document.getElementById('tmWinRate').textContent = m.tradeCount ? m.winRate.toFixed(1)+'%' : '—';
+
+  const consEl = document.getElementById('tmConsistency');
+  consEl.textContent = m.tradeCount && m.profit > 0 ? m.consistencyPct.toFixed(1)+'% / 15%' : '—';
+  consEl.className = 'tm-val ' + (!m.tradeCount ? '' : m.consistencyPass ? 'green' : 'red');
+
+  // Trades list (most recent first)
+  const tbody = document.getElementById('tradesListBody');
+  if (!trades.length) {
+    tbody.innerHTML = `<tr><td colspan="8" class="trades-empty-row"><i class="ti ti-chart-candle" style="font-size:28px;display:block;margin-bottom:6px;opacity:.4"></i>No trades added yet.</td></tr>`;
+    return;
+  }
+  const sorted = trades.slice().sort((a,b)=> new Date(b.closedAt) - new Date(a.closedAt));
+  tbody.innerHTML = sorted.map(t => {
+    const pnl = parseFloat(t.pnl)||0;
+    const dateStr = t.closedAt ? new Date(t.closedAt).toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : '—';
+    return `<tr>
+      <td style="font-weight:600">${t.pair||'—'}</td>
+      <td><span class="trade-type-badge ${t.type}">${(t.type||'buy').toUpperCase()}</span></td>
+      <td>${t.lots ?? '—'}</td>
+      <td>${t.openPrice ?? '—'}</td>
+      <td>${t.closePrice ?? '—'}</td>
+      <td style="font-size:11px;color:var(--muted)">${dateStr}</td>
+      <td style="text-align:right" class="${pnl>=0?'pnl-pos':'pnl-neg'}">${pnl>=0?'+':''}$${pnl.toLocaleString('en-US',{minimumFractionDigits:2})}</td>
+      <td><button class="trade-del-btn" onclick="deleteTrade('${t.id}')" title="Delete trade"><i class="ti ti-trash"></i></button></td>
+    </tr>`;
+  }).join('');
+}
+
+async function addTrade() {
+  if (!tradesTarget) return;
+  const pair  = document.getElementById('tradePair').value.trim().toUpperCase();
+  const type  = document.getElementById('tradeType').value;
+  const lots  = document.getElementById('tradeLots').value;
+  const open  = document.getElementById('tradeOpen').value;
+  const close = document.getElementById('tradeClose').value;
+  const pnl   = document.getElementById('tradePnl').value;
+
+  if (!pair) { showToast('Enter a pair (e.g. EURUSD).','red'); return; }
+  if (pnl === '' || isNaN(parseFloat(pnl))) { showToast('Enter a P&L amount.','red'); return; }
+
+  const trade = {
+    id: 'T-' + Date.now().toString(36).toUpperCase() + Math.floor(Math.random()*1000),
+    pair, type,
+    lots:       lots  !== '' ? parseFloat(lots)  : null,
+    openPrice:  open  !== '' ? parseFloat(open)  : null,
+    closePrice: close !== '' ? parseFloat(close) : null,
+    pnl: parseFloat(pnl),
+    closedAt: new Date().toISOString(),
+  };
+
+  try {
+    const full = allOrders.find(o => o.userId===tradesTarget.userId && (o.orderId||o.id)===tradesTarget.orderId);
+    const trades = Array.isArray(full.trades) ? full.trades.slice() : [];
+    trades.push(trade);
+
+    await persistTradesAndMetrics(full, trades);
+    ['tradePair','tradeLots','tradeOpen','tradeClose','tradePnl'].forEach(id => document.getElementById(id).value = '');
+    showToast('✓ Trade added', 'green');
+  } catch(err) {
+    showToast('Error adding trade: '+err.message,'red');
+  }
+}
+
+async function deleteTrade(tradeId) {
+  if (!tradesTarget) return;
+  try {
+    const full = allOrders.find(o => o.userId===tradesTarget.userId && (o.orderId||o.id)===tradesTarget.orderId);
+    const trades = (Array.isArray(full.trades) ? full.trades : []).filter(t => t.id !== tradeId);
+    await persistTradesAndMetrics(full, trades);
+    showToast('✓ Trade removed', 'green');
+  } catch(err) {
+    showToast('Error removing trade: '+err.message,'red');
+  }
+}
+
+// Persist trades array + recomputed metrics (balance, profit, dailyLossUsed, totalDrawdownUsed,
+// consistency percentage) to Firestore, update local cache, and re-render.
+async function persistTradesAndMetrics(full, trades) {
+  const accForCalc = { ...full, trades };
+  const m = computeAccountMetrics(accForCalc);
+
+  const update = {
+    trades,
+    balance:            m.balance,
+    profit:             m.profit,
+    dailyLossUsed:      m.dailyLossUsed,
+    totalDrawdownUsed:  m.maxDDUsed,
+    consistencyPct:     m.consistencyPct,
+    winRate:            m.winRate,
+    profitFactor:       isFinite(m.profitFactor) ? m.profitFactor : null,
+    bestTrade:          m.best,
+    worstTrade:         m.worst,
+    tradeCount:         m.tradeCount,
+    lastTradeAt:        firebase.firestore.FieldValue.serverTimestamp(),
+  };
+
+  await db.collection('users').doc(tradesTarget.userId)
+          .collection('accounts').doc(tradesTarget.orderId)
+          .update(update);
+
+  // Update local cache
+  const idx = allOrders.findIndex(o => (o.orderId||o.id)===tradesTarget.orderId && o.userId===tradesTarget.userId);
+  if (idx !== -1) {
+    Object.assign(allOrders[idx], { ...update, lastTradeAt: undefined });
+    delete allOrders[idx].lastTradeAt;
+  }
+
+  renderTradesModal(allOrders[idx]);
+}
+
+
+function openProofModal(index) {
+  const order = allOrders[index];
+  if (!order||!order.paymentProofImage) { showToast('No payment proof uploaded.','red'); return; }
+  document.getElementById('proofImage').src = order.paymentProofImage;
+  document.getElementById('proofMeta').textContent =
+    `${order.userName||'Unknown'} · ${order.orderId||order.id} · ${order.paymentMethod||''}${order.paymentProofName?' · '+order.paymentProofName:''}`;
+  document.getElementById('proofModal').classList.add('open');
+}
+function closeProofModal() { document.getElementById('proofModal').classList.remove('open'); }
+
+// ── EMAIL ─────────────────────────────────────────────────────
+async function sendStatusEmail(order, status) {
+  try {
+    await emailjs.send("service_zr9qw4g","template_dd7jrnq",{
+      to_email:     order.userEmail,
+      user_name:    order.userName  || 'Trader',
+      order_id:     order.orderId   || order.id,
+      account_size: order.accountSize,
+      status
+    });
+  } catch(err) { console.error('Email error:',err); }
+}
+
+// ── TOAST ─────────────────────────────────────────────────────
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show'+(type?' '+type+'-toast':'');
+  setTimeout(()=>t.classList.remove('show'),4000);
+}
+
+// close modals on overlay click
+document.getElementById('confirmModal').addEventListener('click', e => { if(e.target===e.currentTarget) closeModal(); });
+document.getElementById('credsModal').addEventListener('click', e => { if(e.target===e.currentTarget) closeCredsModal(); });
+document.getElementById('editModal').addEventListener('click', e => { if(e.target===e.currentTarget) closeEditModal(); });
+document.getElementById('demoModal').addEventListener('click', e => { if(e.target===e.currentTarget) closeDemoModal(); });
+document.getElementById('tradesModal').addEventListener('click', e => { if(e.target===e.currentTarget) closeTradesModal(); });
+
+// Auto-refresh every 60s
+setInterval(() => {
+  if (document.getElementById('adminPanel').style.display === 'block') loadOrders();
+}, 60000);
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>emailjs.init("u2kE0F7KSKO-V-T5n");</script>
+</body>
+</html>

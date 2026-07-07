@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Checkout — The Funded Best</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --blue: #378ADD;
+  --blue-dark: #185FA5;
+  --blue-bright: #5ba3f5;
+  --blue-glow: rgba(55,138,221,0.15);
+  --blue-glow-strong: rgba(55,138,221,0.28);
+  --green: #22c55e;
+  --green-glow: rgba(34,197,94,0.12);
+  --bg: #060810;
+  --bg2: #0b0f1c;
+  --bg3: #0f1526;
+  --border: rgba(255,255,255,0.07);
+  --border-blue: rgba(55,138,221,0.3);
+  --text: #eef2ff;
+  --muted: rgba(200,210,240,0.5);
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --radius: 18px;
+  --radius-sm: 10px;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --t: 0.3s;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── ANIMATED BG ── */
+.bg-canvas {
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 0; overflow: hidden;
+}
+.orb {
+  position: absolute; border-radius: 50%;
+  filter: blur(90px); opacity: 0.3;
+  animation: orbFloat 14s ease-in-out infinite;
+}
+.orb-1 { width: 520px; height: 520px; top: -160px; left: -80px;
+  background: radial-gradient(circle, rgba(55,138,221,0.45) 0%, transparent 70%); animation-delay: 0s; }
+.orb-2 { width: 380px; height: 380px; top: 40%; right: -80px;
+  background: radial-gradient(circle, rgba(91,163,245,0.3) 0%, transparent 70%); animation-delay: -6s; }
+.orb-3 { width: 300px; height: 300px; bottom: 5%; left: 25%;
+  background: radial-gradient(circle, rgba(34,197,94,0.18) 0%, transparent 70%); animation-delay: -10s; }
+@keyframes orbFloat {
+  0%,100% { transform: translate(0,0) scale(1); }
+  33%  { transform: translate(25px,-35px) scale(1.06); }
+  66%  { transform: translate(-18px,28px) scale(0.94); }
+}
+.bg-grid {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image:
+    linear-gradient(rgba(55,138,221,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(55,138,221,0.035) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 40%, black, transparent);
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  background: rgba(6,8,16,0.72);
+  backdrop-filter: blur(22px) saturate(180%);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px;
+  animation: navIn 0.6s var(--ease) both;
+}
+@keyframes navIn { from { transform: translateY(-100%); opacity:0; } to { transform: translateY(0); opacity:1; } }
+.nav-logo {
+  font-family: var(--font-display); font-size: 1.05rem; font-weight: 700;
+  color: var(--text); text-decoration: none;
+  display: flex; align-items: center; gap: 9px; letter-spacing: -0.01em;
+}
+.nav-logo .dot {
+  width: 8px; height: 8px; background: var(--blue); border-radius: 50%;
+  box-shadow: 0 0 10px var(--blue);
+  animation: dotPulse 2s ease-in-out infinite;
+}
+@keyframes dotPulse {
+  0%,100% { box-shadow: 0 0 6px var(--blue); transform: scale(1); }
+  50% { box-shadow: 0 0 18px var(--blue), 0 0 32px rgba(55,138,221,0.35); transform: scale(1.15); }
+}
+.nav-links { display: flex; align-items: center; gap: 1.75rem; }
+.nav-links a {
+  color: var(--muted); text-decoration: none; font-size: 14px;
+  transition: color var(--t); position: relative;
+}
+.nav-links a::after {
+  content: ''; position: absolute; bottom: -4px; left: 0; right: 0;
+  height: 1px; background: var(--blue);
+  transform: scaleX(0); transition: transform var(--t);
+}
+.nav-links a:hover { color: var(--text); }
+.nav-links a:hover::after { transform: scaleX(1); }
+.nav-actions { display: flex; gap: 10px; align-items: center; }
+.btn-ghost {
+  background: transparent; color: var(--text);
+  border: 1px solid var(--border); padding: 8px 20px;
+  border-radius: var(--radius-sm); font-size: 14px;
+  font-family: var(--font-body); cursor: pointer; text-decoration: none;
+  transition: all var(--t); display: inline-block;
+}
+.btn-ghost:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); }
+.nav-cta {
+  background: var(--blue); color: #fff; border: none;
+  padding: 8px 20px; border-radius: var(--radius-sm);
+  font-size: 14px; font-family: var(--font-body); font-weight: 500;
+  cursor: pointer; text-decoration: none;
+  transition: all var(--t); box-shadow: 0 0 20px rgba(55,138,221,0.3);
+  display: inline-block;
+}
+.nav-cta:hover { background: var(--blue-dark); box-shadow: 0 0 30px rgba(55,138,221,0.5); transform: translateY(-1px); }
+
+/* ── HERO ── */
+.checkout-hero {
+  position: relative; z-index: 1;
+  text-align: center;
+  padding: 120px 1.5rem 50px;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--green-glow); color: var(--green);
+  font-size: 12px; padding: 6px 16px; border-radius: 20px;
+  border: 1px solid rgba(34,197,94,0.25); margin-bottom: 1.25rem;
+  letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500;
+  animation: fadeUp 0.7s 0.1s var(--ease) both;
+}
+.hero-badge .lock-icon { font-size: 14px; }
+.checkout-hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 700; line-height: 1.1;
+  letter-spacing: -0.03em; margin-bottom: 0.75rem;
+  background: linear-gradient(130deg, #eef2ff 0%, #a8c5f0 55%, #378ADD 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  animation: fadeUp 0.7s 0.25s var(--ease) both;
+}
+.checkout-hero p {
+  font-size: 1rem; color: var(--muted);
+  animation: fadeUp 0.7s 0.4s var(--ease) both;
+}
+@keyframes fadeUp { from { opacity:0; transform: translateY(22px); } to { opacity:1; transform: translateY(0); } }
+
+/* ── PROGRESS BAR ── */
+.progress-bar {
+  position: relative; z-index: 1;
+  max-width: 480px; margin: 0 auto 50px;
+  padding: 0 1.5rem;
+  animation: fadeUp 0.7s 0.5s var(--ease) both;
+}
+.progress-steps {
+  display: flex; align-items: center; justify-content: center; gap: 0;
+}
+.p-step {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  position: relative; flex: 1;
+}
+.p-step-circle {
+  width: 34px; height: 34px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600; position: relative; z-index: 1;
+  transition: all var(--t);
+}
+.p-step.done .p-step-circle {
+  background: var(--green); border: 2px solid var(--green);
+  color: white; box-shadow: 0 0 16px rgba(34,197,94,0.4);
+}
+.p-step.active .p-step-circle {
+  background: var(--blue); border: 2px solid var(--blue);
+  color: white; box-shadow: 0 0 20px rgba(55,138,221,0.5);
+  animation: stepPulse 2s ease-in-out infinite;
+}
+.p-step.pending .p-step-circle {
+  background: transparent; border: 2px solid var(--border);
+  color: var(--muted);
+}
+@keyframes stepPulse {
+  0%,100% { box-shadow: 0 0 12px rgba(55,138,221,0.4); }
+  50% { box-shadow: 0 0 28px rgba(55,138,221,0.7); }
+}
+.p-step-label { font-size: 11px; color: var(--muted); white-space: nowrap; }
+.p-step.active .p-step-label, .p-step.done .p-step-label { color: var(--text); }
+.p-line {
+  flex: 1; height: 2px; margin: 0 -2px;
+  background: var(--border); margin-bottom: 20px;
+  position: relative; overflow: hidden;
+}
+.p-line.filled { background: var(--green); }
+.p-line.active-line::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(90deg, var(--green), var(--blue));
+  animation: lineGrow 1s var(--ease) both;
+}
+@keyframes lineGrow { from { transform: scaleX(0); transform-origin: left; } to { transform: scaleX(1); } }
+
+/* ── MAIN LAYOUT ── */
+.checkout-layout {
+  position: relative; z-index: 1;
+  max-width: 960px; margin: 0 auto;
+  padding: 0 1.5rem 100px;
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 24px;
+  align-items: start;
+}
+
+/* ── CARDS ── */
+.checkout-card {
+  background: linear-gradient(135deg, rgba(11,15,28,0.97) 0%, rgba(15,21,38,0.93) 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+  transition: border-color var(--t), box-shadow var(--t);
+  animation: fadeUp 0.7s var(--ease) both;
+}
+.checkout-card::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(55,138,221,0.4), transparent);
+}
+.checkout-card:hover { border-color: var(--border-blue); box-shadow: 0 20px 60px rgba(55,138,221,0.08); }
+.checkout-card + .checkout-card { margin-top: 20px; }
+.card-title {
+  font-family: var(--font-display);
+  font-size: 1rem; font-weight: 600;
+  margin-bottom: 1.5rem;
+  display: flex; align-items: center; gap: 10px;
+}
+.card-title .title-icon {
+  width: 32px; height: 32px;
+  background: var(--blue-glow); border: 1px solid var(--border-blue);
+  border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+
+/* ── CHALLENGE SUMMARY ── */
+.summary-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 0; border-bottom: 1px solid var(--border);
+}
+.summary-row:last-child { border-bottom: none; }
+.summary-row .label { font-size: 14px; color: var(--muted); }
+.summary-row .value { font-size: 14px; font-weight: 600; color: var(--text); }
+.summary-row.total-row { padding-top: 16px; }
+.summary-row.total-row .label { font-size: 15px; font-weight: 600; color: var(--text); }
+.summary-row.total-row .value {
+  font-size: 1.5rem; font-family: var(--font-display); font-weight: 700;
+  color: var(--blue-bright);
+}
+
+/* Challenge badge */
+.challenge-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--blue-glow); border: 1px solid var(--border-blue);
+  padding: 6px 14px; border-radius: 20px;
+  font-size: 12px; color: var(--blue-bright); font-weight: 500;
+  margin-bottom: 1.25rem;
+}
+
+/* ── PAYMENT OPTIONS ── */
+.payment-options { display: flex; flex-direction: column; gap: 12px; }
+.payment-option {
+  display: flex; align-items: center; gap: 16px;
+  padding: 18px 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--t);
+  position: relative; overflow: hidden;
+  background: rgba(6,8,16,0.5);
+}
+.payment-option::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, var(--blue-glow) 0%, transparent 60%);
+  opacity: 0; transition: opacity var(--t);
+}
+.payment-option:hover::before { opacity: 1; }
+.payment-option:hover { border-color: var(--border-blue); transform: translateX(4px); }
+.payment-option.active {
+  border-color: var(--blue);
+  background: rgba(55,138,221,0.08);
+  box-shadow: 0 0 0 1px rgba(55,138,221,0.2), 0 8px 30px rgba(55,138,221,0.1);
+}
+.payment-option.active::before { opacity: 1; }
+.pay-icon-wrap {
+  width: 46px; height: 46px; border-radius: 12px;
+  background: var(--bg3); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+  transition: all var(--t);
+}
+.payment-option.active .pay-icon-wrap {
+  background: var(--blue-glow); border-color: var(--border-blue);
+  transform: scale(1.05);
+}
+.pay-info { flex: 1; }
+.pay-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+.pay-desc { font-size: 12px; color: var(--muted); }
+.pay-radio {
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 2px solid var(--border); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--t);
+}
+.payment-option.active .pay-radio {
+  border-color: var(--blue);
+  background: var(--blue);
+  box-shadow: 0 0 12px rgba(55,138,221,0.5);
+}
+.pay-radio::after {
+  content: ''; width: 8px; height: 8px;
+  border-radius: 50%; background: white;
+  opacity: 0; transform: scale(0); transition: all var(--t);
+}
+.payment-option.active .pay-radio::after { opacity: 1; transform: scale(1); }
+
+/* ── RIGHT COLUMN: ORDER SUMMARY ── */
+.order-card {
+  position: sticky; top: 84px;
+  animation-delay: 0.2s;
+}
+.order-divider { border: none; border-top: 1px solid var(--border); margin: 1rem 0; }
+
+/* Trust badges */
+.trust-badges {
+  display: flex; flex-direction: column; gap: 8px;
+  margin-top: 1.25rem;
+}
+.trust-badge {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 12px; color: var(--muted);
+  padding: 8px 12px;
+  background: rgba(6,8,16,0.5);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.trust-badge .tb-icon { font-size: 15px; }
+
+/* ── CHECKOUT BUTTON ── */
+.checkout-btn {
+  width: 100%; padding: 16px;
+  border-radius: var(--radius-sm); border: none;
+  background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%);
+  color: white; font-size: 15px; font-weight: 600;
+  font-family: var(--font-body); cursor: pointer;
+  transition: all var(--t); margin-top: 1.25rem;
+  position: relative; overflow: hidden;
+  box-shadow: 0 4px 24px rgba(55,138,221,0.35);
+  letter-spacing: 0.01em;
+}
+.checkout-btn::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+  transform: translateX(-100%); transition: transform 0.6s ease;
+}
+.checkout-btn:hover::before { transform: translateX(100%); }
+.checkout-btn:hover {
+  box-shadow: 0 8px 36px rgba(55,138,221,0.55);
+  transform: translateY(-2px);
+}
+.checkout-btn:active { transform: translateY(0); }
+.checkout-btn .btn-spinner {
+  display: none; width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.3); border-top-color: white;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.checkout-btn.loading .btn-text { display: none; }
+.checkout-btn.loading .btn-spinner { display: block; margin: 0 auto; }
+
+/* ── TOAST ── */
+#toast {
+  position: fixed; bottom: 32px; right: 32px; z-index: 9999;
+  padding: 14px 22px; border-radius: 12px;
+  font-size: 14px; font-weight: 600;
+  display: flex; align-items: center; gap: 10px;
+  pointer-events: none; transform: translateY(20px); opacity: 0;
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  backdrop-filter: blur(12px);
+}
+#toast.show { opacity: 1; transform: translateY(0); }
+#toast.success { background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.3); color: var(--green); }
+#toast.error { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.25); color: #f87171; }
+
+/* ── FOOTER ── */
+footer {
+  position: relative; z-index: 1;
+  background: var(--bg2); border-top: 1px solid var(--border);
+  padding: 2.5rem 1.5rem;
+}
+.footer-inner { max-width: 1000px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 2rem; justify-content: space-between; align-items: center; }
+.footer-logo { font-family: var(--font-display); font-size: 1rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+.footer-links a { font-size: 13px; color: var(--muted); text-decoration: none; transition: color var(--t); }
+.footer-links a:hover { color: var(--text); }
+.footer-copy { font-size: 12px; color: var(--muted); width: 100%; text-align: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+
+/* ── CURRENCY TOGGLE ── */
+.currency-toggle {
+  position: relative; z-index: 1;
+  display: flex; justify-content: center; align-items: center;
+  gap: 12px; margin-bottom: 28px;
+  animation: fadeUp 0.7s 0.55s var(--ease) both;
+}
+.currency-pill {
+  display: flex; align-items: center;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 40px; padding: 4px; gap: 2px;
+}
+.c-btn {
+  padding: 7px 22px; border-radius: 32px; border: none;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  font-family: var(--font-body); transition: all var(--t);
+  color: var(--muted); background: transparent;
+}
+.c-btn.active { background: var(--blue); color: white; box-shadow: 0 0 16px rgba(55,138,221,0.4); }
+.c-btn:hover:not(.active) { color: var(--text); }
+.c-rate-note {
+  font-size: 11px; color: var(--muted);
+  background: var(--blue-glow); border: 1px solid var(--border-blue);
+  padding: 6px 14px; border-radius: 20px; white-space: nowrap;
+}
+/* INR secondary label shown under USD */
+.inr-sub {
+  font-size: 11px; color: var(--muted);
+  margin-top: 2px; transition: opacity var(--t);
+}
+/* When INR mode: flip which value is primary */
+.price-usd { transition: all var(--t); }
+.price-inr { display: none; transition: all var(--t); }
+body.inr-mode .price-usd { display: none; }
+body.inr-mode .price-inr { display: inline; }
+body.inr-mode .inr-sub { color: var(--blue-bright); font-size: 12px; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 740px) {
+  .checkout-layout { grid-template-columns: 1fr; }
+  .order-card { position: static; }
+  .nav-links { display: none; }
+  .checkout-hero h1 { font-size: 2rem; }
+  nav { padding: 0 1rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- Auth check overlay — shown until Firebase resolves sign-in state -->
+<div id="authCheckOverlay" style="
+  position:fixed; inset:0; z-index:9999; background:var(--bg);
+  display:flex; align-items:center; justify-content:center;">
+  <div style="text-align:center;">
+    <div style="width:36px;height:36px;border:3px solid rgba(55,138,221,.2);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px"></div>
+    <div style="font-size:13px;color:var(--muted)">Checking session…</div>
+  </div>
+</div>
+
+<!-- Bg -->
+<div class="bg-canvas">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+<div class="bg-grid"></div>
+<div id="toast"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo"><span class="dot"></span> The Funded Best</a>
+  <div class="nav-links">
+    <a href="challenges.html">Challenges</a>
+    <a href="rules.html">Rules</a>
+    <a href="faq.html">FAQ</a>
+    <a href="support.html">Support</a>
+  </div>
+  <div class="nav-actions">
+    <a href="signin.html" class="btn-ghost" id="navSignIn">Sign In</a>
+    <a href="dashboard.html" class="btn-ghost" id="navProfile" style="display:none"><i class="ti ti-user"></i> Account</a>
+    <a href="challenges.html" class="nav-cta">Get Funded</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="checkout-hero">
+  <div class="hero-badge"><span class="lock-icon">🔒</span> Secure Checkout</div>
+  <h1>Complete Your Purchase</h1>
+  <p style="color:var(--muted); margin-top: 4px;">Review your challenge and select a payment method.</p>
+</section>
+
+<!-- PROGRESS -->
+<div class="progress-bar">
+  <div class="progress-steps">
+    <div class="p-step done">
+      <div class="p-step-circle">✓</div>
+      <div class="p-step-label">Select Plan</div>
+    </div>
+    <div class="p-line filled"></div>
+    <div class="p-step active">
+      <div class="p-step-circle">2</div>
+      <div class="p-step-label">Checkout</div>
+    </div>
+    <div class="p-line"></div>
+    <div class="p-step pending">
+      <div class="p-step-circle">3</div>
+      <div class="p-step-label">Payment</div>
+    </div>
+    <div class="p-line"></div>
+    <div class="p-step pending">
+      <div class="p-step-circle">4</div>
+      <div class="p-step-label">Funded 🎉</div>
+    </div>
+  </div>
+</div>
+
+<!-- CURRENCY TOGGLE -->
+<div class="currency-toggle">
+  <div class="currency-pill">
+    <button class="c-btn active" id="btnUSD" onclick="setCurrency('USD')">$ USD</button>
+    <button class="c-btn" id="btnINR" onclick="setCurrency('INR')">₹ INR</button>
+  </div>
+  <span class="c-rate-note">1 USD = ₹100</span>
+</div>
+
+<!-- MAIN -->
+<div class="checkout-layout">
+
+  <!-- LEFT COLUMN -->
+  <div class="left-col">
+
+    <!-- Challenge Details -->
+    <div class="checkout-card" style="animation-delay:0.1s">
+      <div class="card-title">
+        <div class="title-icon">📋</div>
+        Selected Challenge
+      </div>
+      <div class="challenge-badge">⚡ Active Selection</div>
+      <div class="summary-row">
+        <span class="label">Challenge Type</span>
+        <span class="value" id="challengeType">Instant Funding</span>
+      </div>
+      <div class="summary-row">
+        <span class="label">Account Size</span>
+        <span class="value" id="accountSize">$100,000</span>
+      </div>
+      <div class="summary-row">
+        <span class="label">Profit Target</span>
+        <span class="value" style="color:var(--green)">10%</span>
+      </div>
+      <div class="summary-row">
+        <span class="label">Max Drawdown</span>
+        <span class="value">5%</span>
+      </div>
+      <div class="summary-row">
+        <span class="label">Profit Split</span>
+        <span class="value" style="color:var(--blue-bright)">Up to 80%</span>
+      </div>
+      <div class="summary-row">
+        <span class="label">Entry Fee</span>
+        <span class="value">
+          <span class="price-usd" id="entryFeeUSD">$499</span>
+          <span class="price-inr" id="entryFeeINR">₹49,900</span>
+          <div class="inr-sub" id="entryFeeSub">≈ ₹49,900</div>
+        </span>
+      </div>
+    </div>
+
+    <!-- Payment Method -->
+    <div class="checkout-card" style="animation-delay:0.2s; margin-top:20px;">
+      <div class="card-title">
+        <div class="title-icon">💳</div>
+        Payment Method
+      </div>
+      <div class="payment-options">
+
+        <div class="payment-option" id="upiOption" onclick="selectPayment('UPI', this)">
+          <div class="pay-icon-wrap">📲</div>
+          <div class="pay-info">
+            <div class="pay-name">UPI</div>
+            <div class="pay-desc">GPay · PhonePe · Paytm · Instant</div>
+          </div>
+          <div class="pay-radio"></div>
+        </div>
+
+        <div class="payment-option" id="cryptoOption" onclick="selectPayment('Crypto', this)">
+          <div class="pay-icon-wrap">₿</div>
+          <div class="pay-info">
+            <div class="pay-name">Cryptocurrency</div>
+            <div class="pay-desc">BTC · ETH · USDT · No conversion fees</div>
+          </div>
+          <div class="pay-radio"></div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT COLUMN: ORDER SUMMARY -->
+  <div class="right-col">
+    <div class="checkout-card order-card" style="animation-delay:0.3s">
+      <div class="card-title">
+        <div class="title-icon">🧾</div>
+        Order Summary
+      </div>
+
+      <div class="summary-row">
+        <span class="label">Payment via</span>
+        <span class="value" id="paymentMethod">UPI</span>
+      </div>
+      <div class="summary-row">
+        <span class="label">Challenge Fee</span>
+        <span class="value">
+          <span class="price-usd" id="summaryFeeUSD">$499</span>
+          <span class="price-inr" id="summaryFeeINR">₹49,900</span>
+        </span>
+      </div>
+      <div class="summary-row">
+        <span class="label">Processing Fee</span>
+        <span class="value" style="color:var(--green)">Free</span>
+      </div>
+
+      <hr class="order-divider" />
+
+      <div class="summary-row total-row">
+        <span class="label">Total Due</span>
+        <span class="value" style="text-align:right;">
+          <span class="price-usd" id="totalFeeUSD">$499</span>
+          <span class="price-inr" id="totalFeeINR">₹49,900</span>
+          <div id="totalFeeSub" style="font-size:11px; font-weight:400; color:var(--muted); margin-top:3px;">≈ ₹49,900</div>
+        </span>
+      </div>
+
+      <button class="checkout-btn" id="payBtn" onclick="proceedPayment()">
+        <span class="btn-text">Complete Purchase →</span>
+        <span class="btn-spinner"></span>
+      </button>
+
+      <div class="trust-badges">
+        <div class="trust-badge"><span class="tb-icon">🔒</span> 256-bit SSL Encrypted Payment</div>
+        <div class="trust-badge"><span class="tb-icon">⚡</span> Instant Account Activation</div>
+        <div class="trust-badge"><span class="tb-icon">↩️</span> Satisfaction Guarantee</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo"><span class="dot"></span> The Funded Best</div>
+    <div class="footer-links">
+      <a href="challenges.html">Challenges</a>
+      <a href="rules.html">Rules</a>
+      <a href="#">Payouts</a>
+      <a href="support.html">Support</a>
+      <a href="#">Terms</a>
+    </div>
+  </div>
+  <p class="footer-copy">© 2026 The Funded Best. All rights reserved. Trading involves risk — only trade what you can afford to lose.</p>
+</footer>
+
+<script>
+const USD_TO_INR = 100;
+
+// ── Parse fee string to number ──
+function parseFee(str) {
+  return parseFloat(str.replace(/[^0-9.]/g, '')) || 0;
+}
+function fmtUSD(n) { return '$' + n.toLocaleString('en-US'); }
+function fmtINR(n) { return '₹' + (n * USD_TO_INR).toLocaleString('en-IN'); }
+
+// ── Load from localStorage ──
+const challengeType = localStorage.getItem('challengeType') || 'Instant Funding';
+const accountSize   = localStorage.getItem('accountSize')   || '$100,000';
+const entryFeeRaw   = localStorage.getItem('entryFee')      || '$499';
+const savedMethod   = localStorage.getItem('paymentMethod') || 'UPI';
+const feeNum        = parseFee(entryFeeRaw);
+
+document.getElementById('challengeType').textContent = challengeType;
+document.getElementById('accountSize').textContent   = accountSize;
+document.getElementById('paymentMethod').textContent = savedMethod;
+
+function updatePrices() {
+  const usd = fmtUSD(feeNum);
+  const inr = fmtINR(feeNum);
+
+  document.getElementById('entryFeeUSD').textContent = usd;
+  document.getElementById('entryFeeINR').textContent = inr;
+  document.getElementById('entryFeeSub').textContent = '≈ ' + inr;
+
+  document.getElementById('summaryFeeUSD').textContent = usd;
+  document.getElementById('summaryFeeINR').textContent = inr;
+
+  document.getElementById('totalFeeUSD').textContent = usd;
+  document.getElementById('totalFeeINR').textContent = inr;
+  // Sub-label always shows the OTHER currency
+  document.getElementById('totalFeeSub').textContent = '≈ ' + inr + ' INR';
+}
+
+updatePrices();
+
+// ── Currency toggle ──
+let currentCurrency = 'USD';
+
+function setCurrency(cur) {
+  currentCurrency = cur;
+  document.body.classList.toggle('inr-mode', cur === 'INR');
+  document.getElementById('btnUSD').classList.toggle('active', cur === 'USD');
+  document.getElementById('btnINR').classList.toggle('active', cur === 'INR');
+  // Flip the sub-label
+  const feeNum2 = parseFee(entryFeeRaw);
+  const sub = document.getElementById('totalFeeSub');
+  sub.textContent = cur === 'INR'
+    ? '≈ ' + fmtUSD(feeNum2) + ' USD'
+    : '≈ ' + fmtINR(feeNum2) + ' INR';
+}
+
+// ── Pre-select saved payment ──
+let currentMethod = savedMethod;
+if (savedMethod === 'Crypto') {
+  document.getElementById('cryptoOption').classList.add('active');
+} else {
+  document.getElementById('upiOption').classList.add('active');
+}
+
+// ── Select payment ──
+function selectPayment(method, el) {
+  document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('active'));
+  el.classList.add('active');
+  currentMethod = method;
+  document.getElementById('paymentMethod').textContent = method;
+  localStorage.setItem('paymentMethod', method);
+}
+
+// ── Toast ──
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = `show ${type}`;
+  setTimeout(() => { t.className = ''; }, 3000);
+}
+
+// ── Proceed ──
+function proceedPayment() {
+  const btn = document.getElementById('payBtn');
+  btn.classList.add('loading');
+  setTimeout(() => {
+    btn.classList.remove('loading');
+    if (currentMethod === 'Crypto') {
+      window.location.href = 'crypto-payment.html';
+    } else {
+      window.location.href = 'upi-payment.html';
+    }
+  }, 1400);
+}
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+firebase.initializeApp(FIREBASE_CONFIG);
+firebase.auth().onAuthStateChanged(user => {
+  const overlay = document.getElementById('authCheckOverlay');
+  if (!user) {
+    // Not signed in — send to sign in, then back to checkout after.
+    sessionStorage.setItem('fb_redirect_after_login', 'checkout.html');
+    window.location.replace('signin.html');
+    return;
+  }
+  document.getElementById('navSignIn').style.display  = 'none';
+  document.getElementById('navProfile').style.display = '';
+  if (overlay) overlay.style.display = 'none';
+});
+</script>
+</body>
+</html>

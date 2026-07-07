@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>UPI Payment — The Funded Best</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#378ADD;--blue-dark:#185FA5;--blue-mid:#2563b0;
+  --blue-glow:rgba(55,138,221,.18);--blue-glow2:rgba(55,138,221,.07);
+  --purple:#7c3aed;--violet:#8b5cf6;
+  --green:#1D9E75;--green-glow:rgba(29,158,117,.15);
+  --red:#e05252;--amber:#f59e0b;
+  --bg:#07090f;--bg2:#0b0f1c;--bg3:#101624;
+  --border:rgba(255,255,255,.07);--border-blue:rgba(55,138,221,.3);
+  --text:#eef2ff;--muted:rgba(238,242,255,.5);--muted2:rgba(238,242,255,.28);
+  --font-display:'Space Grotesk',sans-serif;--font-body:'Inter',sans-serif;
+  --radius:18px;--radius-sm:12px;--radius-xs:8px;
+}
+
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.6;min-height:100vh;overflow-x:hidden}
+
+/* ── CANVAS ── */
+#bgCanvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5}
+
+/* ── NAV ── */
+nav{
+  position:sticky;top:0;z-index:200;
+  background:rgba(7,9,15,.88);backdrop-filter:blur(24px);
+  border-bottom:1px solid rgba(255,255,255,.05);
+  padding:0 2rem;height:64px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.nav-logo{font-family:var(--font-display);font-size:1rem;font-weight:700;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:10px}
+.nav-logo-mark{width:30px;height:30px;border-radius:8px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;box-shadow:0 0 18px rgba(55,138,221,.5)}
+.nav-links{display:flex;align-items:center;gap:1.75rem}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-actions{display:flex;align-items:center;gap:10px}
+.nav-back{color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;padding:7px 16px;border-radius:var(--radius-xs);border:1px solid var(--border);transition:all .2s;display:flex;align-items:center;gap:6px}
+.nav-back:hover{color:var(--text);border-color:var(--border-blue)}
+@media(max-width:640px){.nav-links{display:none}}
+
+/* ── PAGE WRAPPER ── */
+.page{position:relative;z-index:1;min-height:calc(100vh - 64px);display:flex;flex-direction:column;align-items:center;padding:48px 20px 80px}
+
+/* ── ANIMATED ENTRY ── */
+.entry-anim{animation:slideUp .55s cubic-bezier(.4,0,.2,1) both}
+@keyframes slideUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── STEP HEADER ── */
+.page-header{text-align:center;margin-bottom:40px;animation:slideUp .5s .05s cubic-bezier(.4,0,.2,1) both}
+.step-pill{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(55,138,221,.1);border:1px solid rgba(55,138,221,.25);
+  color:#7eb8f5;font-size:12px;font-weight:600;letter-spacing:.06em;
+  padding:6px 16px;border-radius:99px;margin-bottom:14px;
+}
+.step-pill .pulse{width:6px;height:6px;background:var(--blue);border-radius:50%;animation:pulseDot 2s ease-in-out infinite}
+.page-header h1{font-family:var(--font-display);font-size:clamp(1.6rem,4vw,2.2rem);font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
+.page-header p{font-size:14px;color:var(--muted);max-width:420px;margin:0 auto}
+
+/* ── LAYOUT ── */
+.layout{width:100%;max-width:880px;display:grid;grid-template-columns:1fr 360px;gap:20px;align-items:start}
+@media(max-width:780px){.layout{grid-template-columns:1fr}}
+
+/* ── CARD ── */
+.card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:28px;
+  box-shadow:0 20px 60px rgba(0,0,0,.3),0 0 0 1px rgba(255,255,255,.03) inset;
+  animation:slideUp .55s .12s cubic-bezier(.4,0,.2,1) both;
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(55,138,221,.4),transparent);
+}
+.card-title{
+  display:flex;align-items:center;gap:10px;
+  font-family:var(--font-display);font-size:15px;font-weight:700;
+  margin-bottom:22px;
+}
+.card-icon{
+  width:36px;height:36px;border-radius:9px;
+  background:var(--blue-glow);border:1px solid var(--border-blue);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.card-icon i{color:var(--blue);font-size:17px}
+
+/* ── ORDER SUMMARY ── */
+.order-rows{display:flex;flex-direction:column;gap:0}
+.order-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:12px 0;border-bottom:1px solid var(--border);font-size:14px;
+}
+.order-row:last-child{border-bottom:none}
+.order-row .label{color:var(--muted)}
+.order-row .val{font-weight:600}
+.order-row .val.blue{color:var(--blue)}
+.order-row .val.green{color:var(--green)}
+.order-total{
+  margin-top:16px;padding:16px;
+  background:rgba(55,138,221,.07);border:1px solid var(--border-blue);
+  border-radius:var(--radius-xs);
+  display:flex;justify-content:space-between;align-items:center;
+}
+.order-total span{font-size:13px;color:var(--muted);font-weight:500}
+.order-total strong{font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:var(--text)}
+
+/* ── UPI BLOCK ── */
+.upi-id-block{
+  background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-xs);
+  padding:16px 18px;margin:16px 0;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  transition:border-color .2s;
+}
+.upi-id-block:hover{border-color:var(--border-blue)}
+.upi-id-text{font-size:1.1rem;font-weight:700;font-family:var(--font-display);letter-spacing:.01em;color:var(--blue)}
+.copy-btn{
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--blue);color:#fff;
+  border:none;padding:9px 18px;border-radius:var(--radius-xs);
+  font-size:13px;font-weight:600;font-family:var(--font-body);
+  cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0;
+}
+.copy-btn:hover{background:var(--blue-dark);transform:translateY(-1px);box-shadow:0 6px 20px rgba(55,138,221,.35)}
+.copy-btn.copied{background:var(--green);pointer-events:none}
+.copy-btn i{font-size:14px}
+
+.upi-apps{display:flex;gap:10px;margin:16px 0;flex-wrap:wrap}
+.upi-app{
+  display:flex;align-items:center;gap:7px;
+  background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-xs);
+  padding:8px 14px;font-size:12px;font-weight:600;color:var(--muted);
+  transition:all .2s;
+}
+.upi-app i{font-size:15px;color:var(--blue)}
+
+.warn-box{
+  background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.2);
+  border-radius:var(--radius-xs);padding:14px 16px;margin-top:14px;
+  display:flex;gap:10px;align-items:flex-start;
+}
+.warn-box i{color:var(--amber);font-size:16px;flex-shrink:0;margin-top:2px}
+.warn-box p{font-size:13px;color:rgba(238,242,255,.6);line-height:1.6}
+
+/* ── UPLOAD ZONE ── */
+.upload-zone{
+  position:relative;margin-top:6px;
+  border:2px dashed rgba(55,138,221,.3);border-radius:var(--radius-sm);
+  padding:32px 24px;text-align:center;cursor:pointer;
+  transition:all .25s;overflow:hidden;
+}
+.upload-zone::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 0%,rgba(55,138,221,.07),transparent 60%);
+  opacity:0;transition:opacity .25s;
+}
+.upload-zone:hover{border-color:var(--blue);background:rgba(55,138,221,.04)}
+.upload-zone:hover::before{opacity:1}
+.upload-zone.drag-over{border-color:var(--blue);background:rgba(55,138,221,.08);border-style:solid}
+.upload-zone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-icon{
+  width:52px;height:52px;border-radius:50%;
+  background:rgba(55,138,221,.1);border:1px solid rgba(55,138,221,.2);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 14px;
+  transition:all .25s;
+}
+.upload-zone:hover .upload-icon{background:rgba(55,138,221,.18);border-color:var(--border-blue)}
+.upload-icon i{font-size:22px;color:var(--blue)}
+.upload-zone h3{font-size:14px;font-weight:600;margin-bottom:4px}
+.upload-zone p{font-size:12px;color:var(--muted)}
+
+.upload-preview{
+  display:none;margin-top:16px;
+  background:var(--bg);border:1px solid var(--border-blue);border-radius:var(--radius-xs);
+  padding:14px;text-align:center;
+}
+.upload-preview.show{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
+.upload-preview img{max-width:100%;max-height:220px;border-radius:8px;object-fit:cover}
+.upload-filename{font-size:12px;color:var(--muted);margin-top:8px;word-break:break-all}
+.upload-remove{
+  margin-top:10px;background:rgba(224,82,82,.1);border:1px solid rgba(224,82,82,.25);
+  color:var(--red);padding:6px 14px;border-radius:6px;font-size:12px;
+  cursor:pointer;font-family:inherit;transition:all .2s;
+}
+.upload-remove:hover{background:rgba(224,82,82,.2)}
+
+/* ── SUBMIT BUTTON ── */
+.submit-btn{
+  width:100%;margin-top:20px;padding:16px;border:none;
+  border-radius:var(--radius-sm);
+  background:linear-gradient(135deg,var(--blue),var(--blue-dark));
+  color:#fff;font-size:15px;font-weight:700;font-family:var(--font-body);
+  cursor:pointer;transition:all .25s;
+  position:relative;overflow:hidden;
+  box-shadow:0 6px 24px rgba(55,138,221,.3);
+}
+.submit-btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.12),transparent);
+  opacity:0;transition:opacity .2s;
+}
+.submit-btn:hover:not(:disabled)::before{opacity:1}
+.submit-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 12px 32px rgba(55,138,221,.45)}
+.submit-btn:active:not(:disabled){transform:translateY(0)}
+.submit-btn:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+.submit-btn.loading{pointer-events:none;opacity:.75}
+
+/* ── PROGRESS STEPS ── */
+.progress-steps{display:flex;align-items:center;gap:0;margin-bottom:32px;width:100%;max-width:880px}
+.prog-step{display:flex;align-items:center;gap:8px;flex:1}
+.prog-step:last-child{flex:0}
+.prog-dot{
+  width:32px;height:32px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;font-family:var(--font-display);
+  border:2px solid var(--border);color:var(--muted);
+  background:var(--bg2);transition:all .3s;
+}
+.prog-dot.done{background:var(--green);border-color:var(--green);color:#fff}
+.prog-dot.active{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 0 0 4px rgba(55,138,221,.2)}
+.prog-label{font-size:12px;color:var(--muted);font-weight:500}
+.prog-label.active{color:var(--text)}
+.prog-line{flex:1;height:1px;background:var(--border);margin:0 8px}
+.prog-line.done{background:var(--green)}
+
+/* ── RIGHT SIDEBAR ── */
+.sidebar{display:flex;flex-direction:column;gap:16px;animation:slideUp .55s .2s cubic-bezier(.4,0,.2,1) both}
+
+/* ── SECURITY BADGE ── */
+.security-card{
+  background:rgba(29,158,117,.06);border:1px solid rgba(29,158,117,.2);
+  border-radius:var(--radius-sm);padding:18px;
+}
+.security-card-title{
+  display:flex;align-items:center;gap:8px;
+  font-size:13px;font-weight:700;color:var(--green);margin-bottom:10px;
+}
+.security-items{display:flex;flex-direction:column;gap:8px}
+.security-item{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.security-item i{font-size:14px;color:var(--green)}
+
+/* ── TIMER ── */
+.timer-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:18px;text-align:center;
+}
+.timer-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.timer-display{
+  font-family:var(--font-display);font-size:2rem;font-weight:700;
+  color:var(--blue);letter-spacing:.05em;
+  text-shadow:0 0 20px rgba(55,138,221,.4);
+}
+.timer-sub{font-size:12px;color:var(--muted);margin-top:4px}
+
+/* ── HELP CARD ── */
+.help-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:18px;
+}
+.help-steps{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+.help-step{display:flex;gap:10px;font-size:13px;color:var(--muted);align-items:flex-start}
+.help-num{
+  width:22px;height:22px;border-radius:50%;background:rgba(55,138,221,.1);
+  border:1px solid rgba(55,138,221,.2);color:var(--blue);
+  font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;
+}
+
+/* ── SPINNER ── */
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:28px;right:28px;
+  background:#111827;border:1px solid var(--border-blue);
+  border-radius:var(--radius-xs);padding:14px 20px;
+  font-size:13px;color:var(--text);font-weight:500;
+  display:flex;align-items:center;gap:9px;
+  transform:translateY(80px);opacity:0;
+  transition:all .35s cubic-bezier(.4,0,.2,1);
+  z-index:999;box-shadow:0 12px 32px rgba(0,0,0,.5);
+}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.green{border-color:rgba(29,158,117,.4);background:#0c1a14}
+.toast i{font-size:16px;color:var(--green)}
+
+/* ── ANIMATIONS ── */
+@keyframes pulseDot{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.6}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+
+/* ── FOOTER ── */
+footer{position:relative;z-index:1;background:var(--bg2);border-top:1px solid var(--border);padding:2rem 1.5rem}
+.footer-inner{max-width:880px;margin:0 auto;display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:center}
+.footer-logo{font-family:var(--font-display);font-size:.9rem;font-weight:700;display:flex;align-items:center;gap:8px}
+.footer-logo-mark{width:22px;height:22px;border-radius:6px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff}
+.footer-links{display:flex;gap:1.25rem;flex-wrap:wrap}
+.footer-links a{font-size:13px;color:var(--muted);text-decoration:none;transition:color .2s}
+.footer-links a:hover{color:var(--text)}
+.footer-copy{max-width:880px;margin:.6rem auto 0;font-size:12px;color:var(--muted2);text-align:center;padding-top:1rem;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+
+<!-- NAV -->
+<nav>
+  <a href="challenges.html" class="nav-logo">
+    <div class="nav-logo-mark">FB</div>
+    The Funded Best
+  </a>
+  <div class="nav-links">
+    <a href="challenges.html">Challenges</a>
+    <a href="rules.html">Rules</a>
+    <a href="faq.html">FAQ</a>
+    <a href="support.html">Support</a>
+  </div>
+  <div class="nav-actions">
+    <a href="checkout.html" class="nav-back"><i class="ti ti-arrow-left"></i> Back</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- PROGRESS -->
+  <div class="progress-steps entry-anim">
+    <div class="prog-step">
+      <div class="prog-dot done"><i class="ti ti-check" style="font-size:13px"></i></div>
+      <span class="prog-label">Select</span>
+    </div>
+    <div class="prog-line done"></div>
+    <div class="prog-step">
+      <div class="prog-dot done"><i class="ti ti-check" style="font-size:13px"></i></div>
+      <span class="prog-label">Checkout</span>
+    </div>
+    <div class="prog-line done"></div>
+    <div class="prog-step">
+      <div class="prog-dot active">3</div>
+      <span class="prog-label active">Pay via UPI</span>
+    </div>
+    <div class="prog-line"></div>
+    <div class="prog-step">
+      <div class="prog-dot">4</div>
+      <span class="prog-label">Confirmed</span>
+    </div>
+  </div>
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="step-pill"><span class="pulse"></span> Step 3 of 4 · UPI Payment</div>
+    <h1>Complete Your Payment</h1>
+    <p>Send the exact amount to our UPI ID and upload your screenshot below.</p>
+  </div>
+
+  <!-- LAYOUT -->
+  <div class="layout">
+
+    <!-- LEFT: MAIN FLOW -->
+    <div style="display:flex;flex-direction:column;gap:18px">
+
+      <!-- ORDER SUMMARY -->
+      <div class="card" style="animation-delay:.08s">
+        <div class="card-title">
+          <div class="card-icon"><i class="ti ti-receipt"></i></div>
+          Order Summary
+        </div>
+        <div class="order-rows">
+          <div class="order-row">
+            <span class="label">Challenge</span>
+            <span class="val blue" id="challengeType">—</span>
+          </div>
+          <div class="order-row">
+            <span class="label">Account Size</span>
+            <span class="val" id="accountSize">—</span>
+          </div>
+          <div class="order-row">
+            <span class="label">Payment Method</span>
+            <span class="val">UPI</span>
+          </div>
+        </div>
+        <div class="order-total">
+          <span>Amount Due</span>
+          <strong id="entryFee">—</strong>
+        </div>
+      </div>
+
+      <!-- UPI DETAILS -->
+      <div class="card" style="animation-delay:.14s">
+        <div class="card-title">
+          <div class="card-icon"><i class="ti ti-qrcode"></i></div>
+          UPI Details
+        </div>
+
+        <p style="font-size:13px;color:var(--muted);margin-bottom:10px">Send to this UPI ID using any app:</p>
+
+        <div class="upi-id-block">
+          <span class="upi-id-text">sagar.raval2008@oksbi</span>
+          <button class="copy-btn" id="copyBtn" onclick="copyUPI()">
+            <i class="ti ti-copy"></i> Copy
+          </button>
+        </div>
+
+        <div class="upi-apps">
+          <div class="upi-app"><i class="ti ti-brand-google"></i> GPay</div>
+          <div class="upi-app"><i class="ti ti-device-mobile"></i> PhonePe</div>
+          <div class="upi-app"><i class="ti ti-wallet"></i> Paytm</div>
+          <div class="upi-app"><i class="ti ti-building-bank"></i> Net Banking</div>
+        </div>
+
+        <div class="warn-box">
+          <i class="ti ti-alert-triangle"></i>
+          <p>Pay the <strong style="color:var(--text)">exact amount</strong> shown above. Do not add a note or memo. Upload your payment screenshot to proceed.</p>
+        </div>
+      </div>
+
+      <!-- UPLOAD PROOF -->
+      <div class="card" style="animation-delay:.2s">
+        <div class="card-title">
+          <div class="card-icon"><i class="ti ti-photo-up"></i></div>
+          Upload Payment Screenshot
+        </div>
+
+        <label class="upload-zone" id="uploadZone">
+          <input type="file" id="paymentProof" accept="image/*"/>
+          <div class="upload-icon"><i class="ti ti-cloud-upload"></i></div>
+          <h3>Drop your screenshot here</h3>
+          <p>or click to browse · JPG, PNG, WebP · Max 10MB</p>
+        </label>
+
+        <div class="upload-preview" id="uploadPreview">
+          <img id="uploadPreviewImg" alt="Payment proof preview"/>
+          <div class="upload-filename" id="uploadFilename"></div>
+          <button type="button" class="upload-remove" onclick="removeProof()"><i class="ti ti-x"></i> Remove</button>
+        </div>
+
+        <button class="submit-btn" id="paidBtn" disabled>
+          I Have Paid — Confirm Payment
+        </button>
+
+        <p style="text-align:center;font-size:12px;color:var(--muted2);margin-top:12px;display:flex;align-items:center;justify-content:center;gap:5px">
+          <i class="ti ti-lock" style="font-size:13px;color:var(--green)"></i>
+          Your order is saved securely · Verified within 5–30 min
+        </p>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: SIDEBAR -->
+    <div class="sidebar">
+
+      <!-- TIMER -->
+      <div class="timer-card entry-anim" style="animation-delay:.25s">
+        <div class="timer-label">Session Expires In</div>
+        <div class="timer-display" id="timerDisplay">29:59</div>
+        <div class="timer-sub">Complete payment before timer ends</div>
+      </div>
+
+      <!-- SECURITY -->
+      <div class="security-card entry-anim" style="animation-delay:.3s">
+        <div class="security-card-title">
+          <i class="ti ti-shield-check"></i> Secure Checkout
+        </div>
+        <div class="security-items">
+          <div class="security-item"><i class="ti ti-check"></i> 256-bit encrypted connection</div>
+          <div class="security-item"><i class="ti ti-check"></i> Payment verified by our team</div>
+          <div class="security-item"><i class="ti ti-check"></i> Instant account activation on pass</div>
+          <div class="security-item"><i class="ti ti-check"></i> 80% profit split from day one</div>
+        </div>
+      </div>
+
+      <!-- HOW TO PAY -->
+      <div class="help-card entry-anim" style="animation-delay:.35s">
+        <div class="card-title" style="margin-bottom:0">
+          <div class="card-icon"><i class="ti ti-info-circle"></i></div>
+          How to pay via UPI
+        </div>
+        <div class="help-steps">
+          <div class="help-step"><div class="help-num">1</div> Copy the UPI ID above</div>
+          <div class="help-step"><div class="help-num">2</div> Open GPay, PhonePe, or Paytm</div>
+          <div class="help-step"><div class="help-num">3</div> Send the exact amount shown</div>
+          <div class="help-step"><div class="help-num">4</div> Take a screenshot of the success screen</div>
+          <div class="help-step"><div class="help-num">5</div> Upload it here and click Confirm</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <i class="ti ti-circle-check"></i>
+  <span id="toastMsg">Copied!</span>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo"><div class="footer-logo-mark">FB</div> The Funded Best</div>
+    <div class="footer-links">
+      <a href="challenges.html">Challenges</a>
+      <a href="rules.html">Rules</a>
+      <a href="support.html">Support</a>
+      <a href="#">Terms</a>
+    </div>
+  </div>
+  <p class="footer-copy">© 2026 The Funded Best. All rights reserved. Trading involves substantial risk.</p>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+// ── AUTH GUARD: redirect to sign-in if not logged in ──
+firebase.apps.length ? firebase.app() : firebase.initializeApp(FIREBASE_CONFIG);
+(function() {
+  const overlay = document.createElement('div');
+  overlay.id = 'authGuardOverlay';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:#07090f;display:flex;align-items:center;justify-content:center;';
+  overlay.innerHTML = '<div style="text-align:center"><div style="width:36px;height:36px;border:3px solid rgba(55,138,221,.2);border-top-color:#378ADD;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px"></div><div style="font-size:13px;color:rgba(238,242,255,.5)">Checking session…</div></div>';
+  document.body.prepend(overlay);
+  firebase.auth().onAuthStateChanged(user => {
+    if (!user) {
+      sessionStorage.setItem('fb_redirect_after_login', 'upi-payment.html');
+      window.location.replace('signin.html');
+      return;
+    }
+    overlay.remove();
+  });
+})();
+
+// ── ORDER DATA GUARD: if no challenge in localStorage, send back to challenges ──
+(function() {
+  if (!localStorage.getItem('challengeType') || !localStorage.getItem('entryFee')) {
+    window.location.replace('challenges.html');
+  }
+})();
+
+// ── CANVAS PARTICLES ──
+(function(){
+  const canvas=document.getElementById('bgCanvas'),ctx=canvas.getContext('2d');
+  let w,h,pts=[];
+  function resize(){w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight}
+  function init(){pts=[];for(let i=0;i<35;i++)pts.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35,r:Math.random()*1.2+.4,a:Math.random()*.3+.08})}
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    // grid
+    ctx.strokeStyle='rgba(55,138,221,0.035)';ctx.lineWidth=1;ctx.beginPath();
+    const cw=w/18,ch=h/10;
+    for(let c=0;c<=18;c++){ctx.moveTo(c*cw,0);ctx.lineTo(c*cw,h)}
+    for(let r=0;r<=10;r++){ctx.moveTo(0,r*ch);ctx.lineTo(w,r*ch)}
+    ctx.stroke();
+    pts.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0||p.x>w)p.vx*=-1;if(p.y<0||p.y>h)p.vy*=-1;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(55,138,221,${p.a})`;ctx.fill();
+    });
+    for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){
+      const d=Math.hypot(pts[i].x-pts[j].x,pts[i].y-pts[j].y);
+      if(d<100){ctx.beginPath();ctx.strokeStyle=`rgba(55,138,221,${.08*(1-d/100)})`;ctx.lineWidth=.6;ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.stroke()}
+    }
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize',()=>{resize();init()});
+  resize();init();draw();
+})();
+
+// ── LOAD ORDER DATA ──
+document.getElementById('challengeType').textContent = localStorage.getItem('challengeType') || 'Instant Funding';
+document.getElementById('accountSize').textContent = localStorage.getItem('accountSize') || '$100,000';
+document.getElementById('entryFee').textContent = localStorage.getItem('entryFee') || '$499';
+
+// ── COPY UPI ──
+function copyUPI(){
+  navigator.clipboard.writeText('fundedbest@upi').then(()=>{
+    const btn = document.getElementById('copyBtn');
+    btn.classList.add('copied');
+    btn.innerHTML = '<i class="ti ti-check"></i> Copied!';
+    showToast('UPI ID copied to clipboard','green');
+    setTimeout(()=>{
+      btn.classList.remove('copied');
+      btn.innerHTML = '<i class="ti ti-copy"></i> Copy';
+    }, 2500);
+  });
+}
+
+// ── TOAST ──
+function showToast(msg, type=''){
+  const t = document.getElementById('toast');
+  const m = document.getElementById('toastMsg');
+  m.textContent = msg;
+  t.className = 'toast show' + (type ? ' '+type : '');
+  setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+// ── COUNTDOWN TIMER ──
+let secs = 30 * 60 - 1;
+const timerEl = document.getElementById('timerDisplay');
+setInterval(()=>{
+  if(secs <= 0) return;
+  secs--;
+  const m = Math.floor(secs/60).toString().padStart(2,'0');
+  const s = (secs%60).toString().padStart(2,'0');
+  timerEl.textContent = m+':'+s;
+  if(secs < 300) timerEl.style.color = '#f59e0b';
+  if(secs < 60) timerEl.style.color = '#e05252';
+}, 1000);
+
+// ── DRAG & DROP ──
+const zone = document.getElementById('uploadZone');
+zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+zone.addEventListener('drop', e => {
+  e.preventDefault();
+  zone.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if(file) handleFile(file);
+});
+
+// ── FILE UPLOAD ──
+document.getElementById('paymentProof').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if(file) handleFile(file);
+});
+
+function handleFile(file){
+  if(!file.type.startsWith('image/')){
+    showToast('Please upload an image file','');
+    return;
+  }
+  if(file.size > 10 * 1024 * 1024){
+    showToast('File too large — max 10 MB','');
+    return;
+  }
+  document.getElementById('uploadFilename').textContent = 'Processing ' + file.name + '…';
+  document.getElementById('uploadPreview').classList.add('show');
+  document.getElementById('paidBtn').disabled = true;
+
+  compressImage(file, 1000, 0.7).then(dataUrl => {
+    document.getElementById('uploadPreviewImg').src = dataUrl;
+    document.getElementById('uploadFilename').textContent = file.name;
+    localStorage.setItem('paymentProofImage', dataUrl);
+    localStorage.setItem('paymentProofName', file.name);
+    document.getElementById('paidBtn').disabled = false;
+    showToast('Screenshot uploaded ✓','green');
+  }).catch(()=>{
+    document.getElementById('uploadFilename').textContent = 'Could not read file — try another image.';
+    document.getElementById('paidBtn').disabled = true;
+  });
+}
+
+function removeProof(){
+  document.getElementById('paymentProof').value = '';
+  document.getElementById('uploadPreview').classList.remove('show');
+  document.getElementById('uploadPreviewImg').src = '';
+  localStorage.removeItem('paymentProofImage');
+  localStorage.removeItem('paymentProofName');
+  document.getElementById('paidBtn').disabled = true;
+}
+
+function compressImage(file, maxDim, quality){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('File read failed'));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error('Image load failed'));
+      img.onload = () => {
+        let {width, height} = img;
+        if(width > maxDim || height > maxDim){
+          if(width > height){ height = Math.round(height*(maxDim/width)); width = maxDim; }
+          else { width = Math.round(width*(maxDim/height)); height = maxDim; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#fff'; ctx.fillRect(0,0,width,height);
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// ── SUBMIT ──
+document.getElementById('paidBtn').addEventListener('click', () => {
+  const btn = document.getElementById('paidBtn');
+  btn.classList.add('loading');
+  btn.innerHTML = '<span class="spinner"></span> Confirming…';
+  btn.disabled = true;
+
+  localStorage.setItem('paymentMethod', 'UPI');
+  if(!sessionStorage.getItem('fb_payment_order_id')){
+    sessionStorage.setItem('fb_payment_order_id', 'FB-' + Date.now().toString(36).toUpperCase().slice(-6));
+  }
+  sessionStorage.setItem('fb_payment_just_submitted', '1');
+  setTimeout(() => window.location.replace('payment-submitted.html'), 600);
+});
+</script>
+</body>
+</html>

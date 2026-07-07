@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Support Center — The Funded Best</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --blue: #378ADD;
+  --blue-dark: #185FA5;
+  --blue-bright: #5ba3f5;
+  --blue-glow: rgba(55,138,221,0.15);
+  --blue-glow-strong: rgba(55,138,221,0.3);
+  --green: #22c55e;
+  --bg: #060810;
+  --bg2: #0b0f1c;
+  --bg3: #0f1526;
+  --border: rgba(255,255,255,0.07);
+  --border-blue: rgba(55,138,221,0.3);
+  --text: #eef2ff;
+  --muted: rgba(200,210,240,0.5);
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── ANIMATED BACKGROUND ── */
+.bg-canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.bg-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.35;
+  animation: orbFloat 12s ease-in-out infinite;
+}
+.bg-orb-1 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(55,138,221,0.4) 0%, transparent 70%);
+  top: -150px; left: -100px;
+  animation-delay: 0s;
+}
+.bg-orb-2 {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(91,163,245,0.25) 0%, transparent 70%);
+  top: 30%; right: -100px;
+  animation-delay: -5s;
+}
+.bg-orb-3 {
+  width: 350px; height: 350px;
+  background: radial-gradient(circle, rgba(34,197,94,0.15) 0%, transparent 70%);
+  bottom: 10%; left: 30%;
+  animation-delay: -8s;
+}
+@keyframes orbFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -40px) scale(1.05); }
+  66% { transform: translate(-20px, 30px) scale(0.95); }
+}
+
+/* Grid overlay */
+.bg-grid {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(55,138,221,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(55,138,221,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent);
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  background: rgba(6,8,16,0.7);
+  backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px;
+  animation: slideDown 0.6s ease both;
+}
+@keyframes slideDown {
+  from { transform: translateY(-100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.nav-logo {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+  display: flex; align-items: center; gap: 9px;
+  letter-spacing: -0.01em;
+}
+.nav-logo .dot {
+  width: 8px; height: 8px;
+  background: var(--blue);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--blue);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 6px var(--blue); transform: scale(1); }
+  50% { box-shadow: 0 0 16px var(--blue), 0 0 30px rgba(55,138,221,0.4); transform: scale(1.15); }
+}
+.nav-links { display: flex; align-items: center; gap: 1.75rem; }
+.nav-links a {
+  color: var(--muted); text-decoration: none; font-size: 14px;
+  transition: color var(--transition);
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute; bottom: -4px; left: 0; right: 0;
+  height: 1px; background: var(--blue);
+  transform: scaleX(0); transition: transform var(--transition);
+}
+.nav-links a:hover { color: var(--text); }
+.nav-links a:hover::after { transform: scaleX(1); }
+.nav-links a.active { color: var(--text); }
+.nav-links a.active::after { transform: scaleX(1); }
+.nav-actions { display: flex; gap: 10px; align-items: center; }
+.btn-ghost {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 8px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-family: var(--font-body);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--transition);
+  display: inline-block;
+}
+.btn-ghost:hover {
+  border-color: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.05);
+}
+.nav-cta {
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  padding: 8px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--transition);
+  box-shadow: 0 0 20px rgba(55,138,221,0.3);
+  display: inline-block;
+}
+.nav-cta:hover {
+  background: var(--blue-dark);
+  box-shadow: 0 0 30px rgba(55,138,221,0.5);
+  transform: translateY(-1px);
+}
+
+/* ── HERO ── */
+.support-hero {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 140px 1.5rem 80px;
+  overflow: hidden;
+}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(55,138,221,0.1);
+  color: var(--blue-bright);
+  font-size: 12px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--border-blue);
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 500;
+  animation: fadeInUp 0.7s 0.2s ease both;
+}
+.hero-eyebrow .dot-pulse {
+  width: 6px; height: 6px;
+  background: var(--green);
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+.support-hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2.8rem, 7vw, 5rem);
+  font-weight: 700;
+  line-height: 1.05;
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.03em;
+  animation: fadeInUp 0.7s 0.35s ease both;
+  background: linear-gradient(135deg, #eef2ff 0%, #a8c5f0 60%, #378ADD 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.support-hero p {
+  font-size: 1.1rem;
+  color: var(--muted);
+  max-width: 520px;
+  margin: 0 auto;
+  animation: fadeInUp 0.7s 0.5s ease both;
+  line-height: 1.7;
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── SUPPORT CARDS GRID ── */
+.support-section {
+  position: relative; z-index: 1;
+  padding: 0 1.5rem 80px;
+}
+.support-grid {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+.support-card {
+  background: linear-gradient(135deg, rgba(11,15,28,0.95) 0%, rgba(15,21,38,0.9) 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  transition: all var(--transition);
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(30px);
+}
+.support-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.support-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, var(--blue-glow) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+.support-card:hover::before { opacity: 1; }
+.support-card:hover {
+  border-color: var(--border-blue);
+  transform: translateY(-5px);
+  box-shadow: 0 20px 60px rgba(55,138,221,0.15), 0 0 0 1px var(--border-blue);
+}
+.card-icon-wrap {
+  width: 52px; height: 52px;
+  background: var(--blue-glow);
+  border: 1px solid var(--border-blue);
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 1.25rem;
+  font-size: 24px;
+  transition: all var(--transition);
+  position: relative;
+  z-index: 1;
+}
+.support-card:hover .card-icon-wrap {
+  background: rgba(55,138,221,0.25);
+  box-shadow: 0 0 20px var(--blue-glow-strong);
+  transform: scale(1.1) rotate(-5deg);
+}
+.support-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+  position: relative; z-index: 1;
+}
+.support-card p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+  margin-bottom: 1.25rem;
+  position: relative; z-index: 1;
+}
+
+/* Contact box */
+.contact-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(6,8,16,0.8);
+  border: 1px solid var(--border);
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  position: relative; z-index: 1;
+}
+.contact-box span {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+}
+.copy-btn {
+  background: var(--blue);
+  border: none;
+  color: white;
+  padding: 7px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all var(--transition);
+  display: flex; align-items: center; gap: 5px;
+}
+.copy-btn:hover {
+  background: var(--blue-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(55,138,221,0.4);
+}
+
+/* Support links */
+.support-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: var(--blue-glow);
+  color: var(--blue-bright);
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid var(--border-blue);
+  transition: all var(--transition);
+  position: relative; z-index: 1;
+}
+.support-link:hover {
+  background: var(--blue);
+  color: white;
+  border-color: var(--blue);
+  box-shadow: 0 4px 20px rgba(55,138,221,0.35);
+  transform: translateY(-1px);
+}
+.support-link svg {
+  width: 14px; height: 14px;
+  transition: transform var(--transition);
+}
+.support-link:hover svg { transform: translateX(4px); }
+
+/* Response badge */
+.response-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+  background: rgba(34,197,94,0.08);
+  border: 1px solid rgba(34,197,94,0.2);
+  color: var(--green);
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  position: relative; z-index: 1;
+}
+.response-badge .badge-dot {
+  width: 8px; height: 8px;
+  background: var(--green);
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+  flex-shrink: 0;
+}
+
+/* ── TICKET FORM ── */
+.ticket-section {
+  position: relative; z-index: 1;
+  padding: 0 1.5rem 100px;
+}
+.ticket-card {
+  max-width: 760px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, rgba(11,15,28,0.98) 0%, rgba(15,21,38,0.95) 100%);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 3rem;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease, border-color var(--transition), box-shadow var(--transition);
+}
+.ticket-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.ticket-card:hover {
+  border-color: var(--border-blue);
+  box-shadow: 0 0 60px rgba(55,138,221,0.1);
+}
+.ticket-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--blue), transparent);
+}
+.ticket-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+.ticket-header h2 {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+}
+.ticket-header p { font-size: 14px; color: var(--muted); }
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.form-row .form-group { margin-bottom: 0; }
+.form-group label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.ticket-card input,
+.ticket-card textarea,
+.ticket-card select {
+  width: 100%;
+  background: rgba(6,8,16,0.8);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  transition: all var(--transition);
+  outline: none;
+  -webkit-appearance: none;
+}
+.ticket-card input:focus,
+.ticket-card textarea:focus,
+.ticket-card select:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(55,138,221,0.15);
+  background: rgba(55,138,221,0.04);
+}
+.ticket-card input::placeholder,
+.ticket-card textarea::placeholder { color: rgba(200,210,240,0.25); }
+.ticket-card textarea {
+  height: 160px;
+  resize: none;
+  margin-bottom: 0;
+}
+.ticket-card select option { background: var(--bg2); }
+.submit-btn {
+  width: 100%;
+  padding: 16px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: var(--blue);
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: all var(--transition);
+  margin-top: 16px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(55,138,221,0.3);
+}
+.submit-btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+.submit-btn:hover::before { transform: translateX(100%); }
+.submit-btn:hover {
+  background: var(--blue-dark);
+  box-shadow: 0 8px 30px rgba(55,138,221,0.5);
+  transform: translateY(-2px);
+}
+.submit-btn:active { transform: translateY(0); }
+
+/* ── TOAST ── */
+#toast {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  z-index: 9999;
+  padding: 14px 22px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: none;
+  transform: translateY(20px);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+#toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+#toast.success {
+  background: rgba(34,197,94,0.15);
+  border: 1px solid rgba(34,197,94,0.35);
+  color: var(--green);
+  backdrop-filter: blur(12px);
+}
+#toast.info {
+  background: var(--blue-glow);
+  border: 1px solid var(--border-blue);
+  color: var(--blue-bright);
+  backdrop-filter: blur(12px);
+}
+#toast.warn {
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.3);
+  color: #f87171;
+  backdrop-filter: blur(12px);
+}
+
+/* ── DIVIDER ── */
+.section-divider {
+  position: relative; z-index: 1;
+  max-width: 800px;
+  margin: 0 auto 60px;
+  display: flex; align-items: center; gap: 20px;
+  padding: 0 1.5rem;
+}
+.section-divider::before,
+.section-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+.section-divider span {
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+/* ── FOOTER ── */
+footer {
+  position: relative; z-index: 1;
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  padding: 2.5rem 1.5rem;
+}
+.footer-inner {
+  max-width: 1000px; margin: 0 auto;
+  display: flex; flex-wrap: wrap; gap: 2rem;
+  justify-content: space-between; align-items: center;
+}
+.footer-logo {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  display: flex; align-items: center; gap: 8px;
+}
+.footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+.footer-links a { font-size: 13px; color: var(--muted); text-decoration: none; transition: color var(--transition); }
+.footer-links a:hover { color: var(--text); }
+.footer-copy {
+  font-size: 12px; color: var(--muted); width: 100%;
+  text-align: center; margin-top: 1.5rem; padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+/* ── SCROLL ANIMATION ── */
+[data-animate] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+[data-animate].visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 700px) {
+  .nav-links { display: none; }
+  .support-hero h1 { font-size: 2.4rem; }
+  .form-row { grid-template-columns: 1fr; }
+  .ticket-card { padding: 2rem 1.5rem; }
+  nav { padding: 0 1rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- Background -->
+<div class="bg-canvas">
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+  <div class="bg-orb bg-orb-3"></div>
+</div>
+<div class="bg-grid"></div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo"><span class="dot"></span> The Funded Best</a>
+  <div class="nav-links">
+    <a href="challenges.html">Challenges</a>
+    <a href="rules.html">Rules</a>
+    <a href="faq.html">FAQ</a>
+    <a href="support.html" class="active">Support</a>
+  </div>
+  <div class="nav-actions">
+    <a href="signin.html" class="btn-ghost" id="navSignIn">Sign In</a>
+    <a href="dashboard.html" class="btn-ghost" id="navProfile" style="display:none"><i class="ti ti-user"></i> Account</a>
+    <a href="challenges.html" class="nav-cta">Get Funded</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="support-hero">
+  <div class="hero-eyebrow">
+    <span class="dot-pulse"></span>
+    Live Support Available
+  </div>
+  <h1>We've Got You<br>Covered</h1>
+  <p>Questions about your challenge, payout, or account? Our team responds fast — reach us however you prefer.</p>
+</section>
+
+<!-- SUPPORT CARDS -->
+<section class="support-section">
+  <div class="support-grid">
+
+    <!-- Email -->
+    <div class="support-card" data-animate style="transition-delay: 0.05s">
+      <div class="card-icon-wrap">📧</div>
+      <h3>Email Support</h3>
+      <p>For payments, account issues, and challenge inquiries. We read every message.</p>
+      <div class="contact-box">
+        <span>support.thefundedbest@gmail.com</span>
+        <button class="copy-btn" onclick="copyEmail()">
+          <svg viewBox="0 0 20 20" fill="currentColor" width="13" height="13"><path d="M7 9a2 2 0 012-2h6a2 2 0 012 2v6a2 2 0 01-2 2H9a2 2 0 01-2-2V9z"/><path d="M5 3a2 2 0 00-2 2v6a2 2 0 002 2V5h8a2 2 0 00-2-2H5z"/></svg>
+          Copy
+        </button>
+      </div>
+    </div>
+
+    <!-- Discord -->
+    <div class="support-card" data-animate style="transition-delay: 0.1s">
+      <div class="card-icon-wrap">💬</div>
+      <h3>Discord Community</h3>
+      <p>Join thousands of funded traders. Get fast answers and connect with our team directly in the server.</p>
+      <a href="https://discord.gg/uVf4kkwbD3" target="_blank" class="support-link">
+        Join Discord
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+      </a>
+    </div>
+
+    <!-- Telegram -->
+    <div class="support-card" data-animate style="transition-delay: 0.15s">
+      <div class="card-icon-wrap">📱</div>
+      <h3>Telegram</h3>
+      <p>Prefer messaging? Chat directly with our support team on Telegram for fast, real-time help.</p>
+      <a href="https://t.me/+OhhSq6i38605ZDNl" target="_blank" class="support-link">
+        Open Telegram
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+      </a>
+    </div>
+
+    <!-- Instagram -->
+    <div class="support-card" data-animate style="transition-delay: 0.2s">
+      <div class="card-icon-wrap">📸</div>
+      <h3>Instagram</h3>
+      <p>Follow for updates, trader milestones, and announcements from The Funded Best team.</p>
+      <a href="https://instagram.com/YOURUSERNAME" target="_blank" class="support-link">
+        Follow Us
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+      </a>
+    </div>
+
+    <!-- Response Time — full width -->
+    <div class="support-card" data-animate style="transition-delay: 0.25s; grid-column: 1 / -1; display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;">
+      <div style="flex: 1; min-width: 200px;">
+        <div class="card-icon-wrap">⚡</div>
+        <h3>Response Time</h3>
+        <p style="margin-bottom: 0;">Most tickets are answered within 12 hours. Payment and account issues are always prioritized and handled first.</p>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 12px; min-width: 240px;">
+        <div class="response-badge">
+          <span class="badge-dot"></span>
+          Average Response: Under 12 Hours
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <span style="font-size:12px; color: var(--muted); background: var(--blue-glow); border: 1px solid var(--border-blue); padding: 4px 12px; border-radius: 20px;">Mon–Fri: 9am–8pm</span>
+          <span style="font-size:12px; color: var(--muted); background: rgba(255,255,255,0.04); border: 1px solid var(--border); padding: 4px 12px; border-radius: 20px;">Weekends: 10am–5pm</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- DIVIDER -->
+<div class="section-divider" data-animate>
+  <span>or submit a ticket</span>
+</div>
+
+<!-- TICKET FORM -->
+<section class="ticket-section">
+  <div class="ticket-card" data-animate>
+    <div class="ticket-header">
+      <h2>Submit a Support Ticket</h2>
+      <p>Fill out the form below and we'll get back to you as soon as possible.</p>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input id="f-name" type="text" placeholder="John Smith" />
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input id="f-email" type="email" placeholder="you@example.com" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Issue Type</label>
+      <select id="f-type">
+        <option value="" disabled selected>Select a category</option>
+        <option>Payment / Payout</option>
+        <option>Challenge Rules</option>
+        <option>Account Access</option>
+        <option>Technical Issue</option>
+        <option>Other</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Subject</label>
+      <input id="f-subject" type="text" placeholder="Brief summary of your issue" />
+    </div>
+
+    <div class="form-group">
+      <label>Description</label>
+      <textarea id="f-desc" placeholder="Describe your issue in detail — include any relevant account info, order IDs, or screenshots."></textarea>
+    </div>
+
+    <button class="submit-btn" onclick="submitTicket()">Submit Ticket →</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo"><span class="dot"></span> The Funded Best</div>
+    <div class="footer-links">
+      <a href="challenges.html">Challenges</a>
+      <a href="rules.html">Rules</a>
+      <a href="#">Payouts</a>
+      <a href="support.html">Support</a>
+      <a href="#">Terms</a>
+    </div>
+  </div>
+  <p class="footer-copy">© 2026 The Funded Best. All rights reserved. Trading involves risk — only trade what you can afford to lose.</p>
+</footer>
+
+<script>
+// ── Scroll reveal ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('[data-animate], .support-card, .ticket-card').forEach(el => {
+  observer.observe(el);
+});
+
+// ── Toast ──
+function showToast(message, type = 'success') {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.className = `show ${type}`;
+  setTimeout(() => { toast.className = ''; }, 3000);
+}
+
+// ── Copy email ──
+function copyEmail() {
+  navigator.clipboard.writeText('support.thefundedbest@gmail.com');
+  showToast('✓ Email copied to clipboard', 'success');
+}
+
+// ── Submit ──
+function submitTicket() {
+  const name    = document.getElementById('f-name').value.trim();
+  const email   = document.getElementById('f-email').value.trim();
+  const type    = document.getElementById('f-type').value;
+  const subject = document.getElementById('f-subject').value.trim();
+  const desc    = document.getElementById('f-desc').value.trim();
+
+  // Basic validation
+  if (!name || !email || !type || !subject || !desc) {
+    showToast('⚠ Please fill in all fields before submitting.', 'warn');
+    // Highlight empty fields
+    ['f-name','f-email','f-type','f-subject','f-desc'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el.value.trim()) {
+        el.style.borderColor = '#ef4444';
+        el.addEventListener('input', () => el.style.borderColor = '', { once: true });
+      }
+    });
+    return;
+  }
+
+  const to      = 'support.thefundedbest@gmail.com';
+  const subLine = encodeURIComponent(`[Support Ticket] ${subject}`);
+  const body    = encodeURIComponent(
+`Support Ticket — The Funded Best
+───────────────────────────────
+Name:        ${name}
+Email:       ${email}
+Issue Type:  ${type}
+Subject:     ${subject}
+───────────────────────────────
+
+${desc}
+
+───────────────────────────────
+Sent via The Funded Best Support Center`
+  );
+
+  const gmailUrl = `https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(to)}&su=${subLine}&body=${body}`;
+  window.open(gmailUrl, '_blank');
+  showToast('✓ Opening Gmail…', 'info');
+}
+
+// ── Mouse glow on cards ──
+document.querySelectorAll('.support-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const rect = card.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    card.style.setProperty('--mouse-x', `${x}%`);
+    card.style.setProperty('--mouse-y', `${y}%`);
+  });
+});
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+firebase.initializeApp(FIREBASE_CONFIG);
+firebase.auth().onAuthStateChanged(user => {
+  document.getElementById('navSignIn').style.display  = user ? 'none' : '';
+  document.getElementById('navProfile').style.display = user ? '' : 'none';
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Challenges — The Funded Best</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#378ADD;--blue-dark:#185FA5;--blue-mid:#2a6fb8;
+  --blue-glow:rgba(55,138,221,.18);--blue-glow2:rgba(55,138,221,.07);
+  --green:#1D9E75;--green-glow:rgba(29,158,117,.15);
+  --amber:#f59e0b;--red:#e05252;
+  --bg:#07090f;--bg2:#0b0f1c;--bg3:#111827;
+  --border:rgba(255,255,255,.07);--border-blue:rgba(55,138,221,.3);
+  --text:#eef2ff;--muted:rgba(238,242,255,.48);--muted2:rgba(238,242,255,.28);
+  --font-display:'Space Grotesk',sans-serif;--font-body:'Inter',sans-serif;
+  --radius:16px;--radius-sm:10px;--radius-xs:6px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.6;min-height:100vh;overflow-x:hidden}
+
+/* ── CANVAS ── */
+#bgCanvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.45}
+
+/* ── NAV ── */
+nav{
+  position:sticky;top:0;z-index:200;
+  background:rgba(7,9,15,.85);backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,255,255,.05);
+  padding:0 2rem;height:64px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.nav-logo{font-family:var(--font-display);font-size:1.05rem;font-weight:700;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:10px}
+.nav-logo-mark{width:30px;height:30px;border-radius:8px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;box-shadow:0 0 18px rgba(55,138,221,.5)}
+.nav-links{display:flex;align-items:center;gap:1.75rem}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-actions{display:flex;align-items:center;gap:10px}
+.nav-signin{color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;padding:7px 16px;border-radius:var(--radius-xs);border:1px solid var(--border);transition:all .2s}
+.nav-signin:hover{color:var(--text);border-color:var(--border-blue)}
+.nav-cta{background:var(--blue);color:#fff;text-decoration:none;padding:8px 20px;border-radius:var(--radius-xs);font-size:14px;font-weight:600;transition:all .2s;box-shadow:0 4px 16px rgba(55,138,221,.3)}
+.nav-cta:hover{background:var(--blue-dark);transform:translateY(-1px)}
+.nav-mobile-btn{display:none;background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer}
+.mobile-nav{display:none;position:fixed;inset:0;top:64px;background:rgba(7,9,15,.97);backdrop-filter:blur(20px);z-index:190;flex-direction:column;align-items:center;justify-content:center;gap:2rem}
+.mobile-nav.open{display:flex}
+.mobile-nav a{color:var(--text);text-decoration:none;font-size:1.3rem;font-weight:600;font-family:var(--font-display)}
+
+/* ── HERO ── */
+.hero{position:relative;z-index:1;padding:5rem 1.5rem 3rem;text-align:center;overflow:hidden}
+.hero-glow{position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:800px;height:400px;background:radial-gradient(ellipse at 50% 30%,rgba(55,138,221,.13) 0%,transparent 65%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(55,138,221,.1);border:1px solid rgba(55,138,221,.25);color:#7eb8f5;font-size:12px;font-weight:600;letter-spacing:.06em;padding:6px 16px;border-radius:99px;margin-bottom:1.6rem;animation:fadeUp .6s ease both}
+.hero-badge .pulse{width:6px;height:6px;background:var(--blue);border-radius:50%;animation:pulseDot 2s ease-in-out infinite}
+.hero h1{font-family:var(--font-display);font-size:clamp(2.4rem,6vw,3.8rem);font-weight:700;line-height:1.08;letter-spacing:-.03em;margin-bottom:1.1rem;animation:fadeUp .7s .1s ease both}
+.hero h1 .grad{background:linear-gradient(135deg,var(--blue) 30%,rgba(29,158,117,.9) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:1.05rem;color:var(--muted);max-width:460px;margin:0 auto 1rem;line-height:1.7;animation:fadeUp .7s .2s ease both}
+
+/* ── CONTAINER ── */
+.container{max-width:1060px;margin:0 auto;position:relative;z-index:1}
+section{position:relative;z-index:1}
+
+/* ── CHALLENGE SELECTOR ── */
+.selector-section{padding:2rem 1.5rem 5rem}
+
+/* TYPE TABS */
+.type-tabs{display:flex;justify-content:center;gap:10px;margin-bottom:2.5rem;flex-wrap:wrap;animation:fadeUp .7s .25s ease both}
+.type-tab{
+  display:flex;align-items:center;gap:9px;
+  background:var(--bg2);border:1px solid var(--border);
+  color:var(--muted);font-size:14px;font-weight:600;font-family:var(--font-body);
+  padding:12px 24px;border-radius:var(--radius-sm);cursor:pointer;
+  transition:all .25s;position:relative;overflow:hidden;
+}
+.type-tab .tab-icon{font-size:16px;transition:color .25s}
+.type-tab::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(55,138,221,.12),transparent);opacity:0;transition:opacity .25s}
+.type-tab:hover{border-color:var(--border-blue);color:var(--text);transform:translateY(-1px)}
+.type-tab:hover::before{opacity:1}
+.type-tab.active{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 6px 22px rgba(55,138,221,.35);transform:translateY(-1px)}
+.type-tab.active .tab-icon{color:#fff}
+.tab-badge{font-size:10px;font-weight:700;background:rgba(255,255,255,.2);padding:2px 7px;border-radius:99px;margin-left:2px}
+
+/* TYPE DESCRIPTION */
+.type-desc-wrap{text-align:center;margin-bottom:2.2rem;min-height:52px}
+.type-desc{font-size:14px;color:var(--muted);max-width:480px;margin:0 auto;line-height:1.7;transition:opacity .2s}
+.type-chips{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:.6rem}
+.type-chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--blue);background:rgba(55,138,221,.08);border:1px solid rgba(55,138,221,.2);border-radius:99px;padding:3px 10px}
+.type-chip i{font-size:12px}
+
+/* ACCOUNT SIZE CARDS */
+.size-label{text-align:center;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem}
+.size-grid{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:2.5rem}
+.size-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:1.2rem 1rem;width:140px;text-align:center;cursor:pointer;
+  transition:all .25s;position:relative;overflow:hidden;
+}
+.size-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(55,138,221,.12),transparent 70%);opacity:0;transition:opacity .25s}
+.size-card:hover{border-color:var(--border-blue);transform:translateY(-3px);box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.size-card:hover::before{opacity:1}
+.size-card.selected{border:2px solid var(--blue);box-shadow:0 0 0 1px rgba(55,138,221,.3),0 14px 40px rgba(55,138,221,.2);background:linear-gradient(145deg,rgba(55,138,221,.1),var(--bg2));transform:translateY(-3px)}
+.size-card.selected::before{opacity:1}
+.size-name{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:.35rem}
+.size-val{font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:var(--text);margin-bottom:.4rem;line-height:1}
+.size-fee{font-size:13px;font-weight:600;color:var(--blue)}
+.size-popular{
+  position:absolute;top:-1px;left:50%;transform:translateX(-50%);
+  background:var(--blue);color:#fff;font-size:9px;font-weight:700;
+  letter-spacing:.06em;padding:3px 10px;border-radius:0 0 8px 8px;white-space:nowrap;
+}
+
+/* ── MAIN LAYOUT ── */
+.main-layout{display:grid;grid-template-columns:1fr 380px;gap:24px;align-items:start}
+
+/* OBJECTIVES CARD */
+.objectives-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:1.75rem;position:sticky;top:80px;
+  box-shadow:0 20px 60px rgba(0,0,0,.3);
+}
+.obj-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.4rem}
+.obj-title{font-family:var(--font-display);font-size:16px;font-weight:700}
+.obj-badge{display:inline-flex;align-items:center;gap:5px;background:var(--green-glow);border:1px solid rgba(29,158,117,.25);color:var(--green);font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px}
+.obj-badge .dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulseDot 2s ease-in-out infinite}
+.obj-table{width:100%;border-collapse:collapse;margin-bottom:1.5rem}
+.obj-table tr{border-bottom:1px solid var(--border);transition:background .15s}
+.obj-table tr:last-child{border-bottom:none}
+.obj-table tr:hover{background:rgba(255,255,255,.03)}
+.obj-table td{padding:13px 6px;font-size:14px;vertical-align:middle}
+.obj-table td:first-child{color:var(--muted)}
+.obj-table td:last-child{text-align:right;font-weight:600;font-family:var(--font-display)}
+.obj-table .green-val{color:var(--green)}
+.obj-table .blue-val{color:var(--blue)}
+.obj-divider{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
+
+/* price display */
+.price-row{display:flex;align-items:baseline;justify-content:center;gap:8px;margin-bottom:.5rem}
+.price-big{font-family:var(--font-display);font-size:2.6rem;font-weight:700;color:var(--text);line-height:1;transition:all .25s}
+.price-sub{font-size:13px;color:var(--muted);text-align:center;margin-bottom:1.4rem}
+
+/* payment buttons */
+.pay-btns{display:flex;flex-direction:column;gap:10px}
+.pay-btn{
+  width:100%;padding:14px;border-radius:var(--radius-sm);
+  font-size:14px;font-weight:700;font-family:var(--font-body);
+  cursor:pointer;border:none;transition:all .22s;
+  display:flex;align-items:center;justify-content:center;gap:9px;
+}
+.pay-btn-upi{background:linear-gradient(135deg,#5f3dc4,#7048e8);color:#fff;box-shadow:0 6px 20px rgba(95,61,196,.35)}
+.pay-btn-upi:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(95,61,196,.45)}
+.pay-btn-crypto{background:linear-gradient(135deg,#c5a200,#f59e0b);color:#000;box-shadow:0 6px 20px rgba(245,158,11,.3)}
+.pay-btn-crypto:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(245,158,11,.4)}
+.pay-btn-card{background:rgba(255,255,255,.05);color:var(--text);border:1px solid var(--border)}
+.pay-btn-card:hover{border-color:var(--border-blue);background:rgba(55,138,221,.07);transform:translateY(-1px)}
+.pay-secure{display:flex;align-items:center;justify-content:center;gap:6px;font-size:11px;color:var(--muted2);margin-top:.75rem}
+.pay-secure i{font-size:13px;color:var(--green)}
+
+/* DETAIL SECTIONS */
+.detail-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1.75rem;margin-bottom:16px}
+.detail-card-header{display:flex;align-items:center;gap:10px;margin-bottom:1.3rem}
+.detail-card-icon{width:38px;height:38px;border-radius:var(--radius-xs);background:var(--blue-glow);border:1px solid var(--border-blue);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.detail-card-icon i{color:var(--blue);font-size:18px}
+.detail-card-title{font-family:var(--font-display);font-size:15px;font-weight:700}
+.detail-card-sub{font-size:12px;color:var(--muted);margin-top:1px}
+
+/* feature list */
+.feat-list{display:flex;flex-direction:column;gap:10px}
+.feat-row{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm)}
+.feat-row i{color:var(--green);font-size:15px;flex-shrink:0;margin-top:2px}
+.feat-row-body{flex:1}
+.feat-row-name{font-size:13.5px;font-weight:500}
+.feat-row-desc{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.5}
+.feat-row-val{font-size:13px;font-weight:700;color:var(--blue);white-space:nowrap;margin-left:auto;padding-left:12px;align-self:center}
+
+/* rules table */
+.rules-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rule-chip{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;text-align:center;transition:border-color .2s}
+.rule-chip:hover{border-color:var(--border-blue)}
+.rule-chip-label{font-size:11px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.rule-chip-val{font-family:var(--font-display);font-size:1.15rem;font-weight:700}
+.rule-chip-val.green{color:var(--green)}
+.rule-chip-val.blue{color:var(--blue)}
+.rule-chip-val.amber{color:var(--amber)}
+
+/* comparison */
+.compare-section{padding:4rem 1.5rem;background:var(--bg2)}
+.compare-table-wrap{overflow-x:auto}
+.compare-table{width:100%;border-collapse:collapse;min-width:560px}
+.compare-table th{font-size:13px;font-weight:700;color:var(--muted);padding:10px 16px;text-align:left;border-bottom:1px solid var(--border);font-family:var(--font-display)}
+.compare-table th.hl{color:var(--blue)}
+.compare-table td{padding:14px 16px;font-size:14px;border-bottom:1px solid rgba(255,255,255,.04)}
+.compare-table tr:last-child td{border-bottom:none}
+.compare-table tr:hover td{background:rgba(255,255,255,.02)}
+.compare-table td:first-child{color:var(--muted);font-size:13px}
+.compare-table td.hl{color:var(--blue);font-weight:600}
+.compare-table .check{color:var(--green)}
+.compare-table .dash{color:var(--muted2)}
+
+/* section label */
+.section-label{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:.5rem}
+.section-label::before{content:'';width:14px;height:1.5px;background:var(--blue);border-radius:2px}
+.section-header{text-align:center;margin-bottom:2.5rem}
+.section-header h2{font-family:var(--font-display);font-size:clamp(1.6rem,3.5vw,2.2rem);font-weight:700;letter-spacing:-.02em;margin-bottom:.5rem}
+.section-header p{color:var(--muted);font-size:15px;max-width:480px;margin:0 auto;line-height:1.7}
+
+/* FAQ */
+.faq-section{padding:4rem 1.5rem}
+.faq-list{max-width:720px;margin:0 auto}
+.faq-item{border-bottom:1px solid var(--border)}
+.faq-q{width:100%;background:none;border:none;color:var(--text);font-family:var(--font-body);font-size:15px;font-weight:500;text-align:left;padding:1.2rem 0;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:1rem;transition:color .2s}
+.faq-q:hover{color:var(--blue)}
+.faq-icon{width:26px;height:26px;border-radius:99px;flex-shrink:0;background:rgba(255,255,255,.05);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all .25s}
+.faq-icon i{font-size:14px;color:var(--muted);transition:transform .25s,color .25s}
+.faq-q.open .faq-icon{background:var(--blue-glow);border-color:var(--border-blue)}
+.faq-q.open .faq-icon i{transform:rotate(45deg);color:var(--blue)}
+.faq-a{font-size:14px;color:var(--muted);line-height:1.8;max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.4,0,.2,1),padding .35s}
+.faq-a.open{max-height:200px;padding-bottom:1.2rem}
+
+/* FOOTER */
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.5rem 1.5rem;position:relative;z-index:1}
+.footer-inner{max-width:1060px;margin:0 auto;display:flex;flex-wrap:wrap;gap:1.5rem;justify-content:space-between;align-items:center}
+.footer-logo{font-family:var(--font-display);font-size:.95rem;font-weight:700;display:flex;align-items:center;gap:8px}
+.footer-logo-mark{width:24px;height:24px;border-radius:6px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
+.footer-links{display:flex;gap:1.25rem;flex-wrap:wrap}
+.footer-links a{font-size:13px;color:var(--muted);text-decoration:none;transition:color .2s}
+.footer-links a:hover{color:var(--text)}
+.footer-copy{max-width:1060px;margin:.75rem auto 0;font-size:12px;color:var(--muted2);text-align:center;padding-top:1.2rem;border-top:1px solid var(--border)}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulseDot{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.6}}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:.08s}
+.reveal-delay-2{transition-delay:.16s}
+.reveal-delay-3{transition-delay:.24s}
+
+/* RESPONSIVE */
+@media(max-width:860px){
+  .main-layout{grid-template-columns:1fr}
+  .objectives-card{position:static;order:-1}
+  .rules-grid{grid-template-columns:repeat(4,1fr)}
+}
+@media(max-width:640px){
+  .nav-links{display:none}
+  .nav-mobile-btn{display:block}
+  nav{padding:0 1.2rem}
+  .size-card{width:calc(33% - 8px);min-width:100px}
+  .rules-grid{grid-template-columns:1fr 1fr}
+  .size-val{font-size:1.25rem}
+}
+@media(max-width:400px){
+  .size-card{width:calc(50% - 6px)}
+}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+
+<!-- NAV -->
+<nav>
+  <a href="SETup.html" class="nav-logo">
+    <div class="nav-logo-mark">FB</div>
+    The Funded Best
+  </a>
+  <div class="nav-links">
+    <a href="SETup.html#plans">Challenges</a>
+    <a href="rules.html">Rules</a>
+    <a href="faq.html">FAQ</a>
+    <a href="support.html">Support</a>
+    <a href="terms.html">Terms</a>
+    <a href="privacy.html">Privacy</a>
+  </div>
+  <div class="nav-actions">
+    <a href="signin.html" class="nav-signin" id="navSignIn">Sign In</a>
+    <a href="dashboard.html" class="nav-cta">Dashboard →</a>
+    <button class="nav-mobile-btn" onclick="toggleMobileNav()"><i class="ti ti-menu-2"></i></button>
+  </div>
+</nav>
+
+<div class="mobile-nav" id="mobileNav">
+  <a href="SETup.html" onclick="toggleMobileNav()">Home</a>
+  <a href="rules.html" onclick="toggleMobileNav()">Rules</a>
+  <a href="faq.html" onclick="toggleMobileNav()">FAQ</a>
+  <a href="support.html" onclick="toggleMobileNav()">Support</a>
+  <a href="signin.html" class="nav-signin" id="navSignInMobile" style="font-size:1.1rem;padding:10px 28px">Sign In</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="container">
+    <div class="hero-badge"><span class="pulse"></span> Choose Your Path to Funding</div>
+    <h1>Pick a challenge.<br><span class="grad">Start trading.</span></h1>
+    <p class="hero-sub">Select your challenge type and account size below. One payment — instant access.</p>
+  </div>
+</section>
+
+<!-- LIMITED TIME OFFER -->
+<section style="padding:0 1.5rem">
+  <div class="container">
+    <div style="
+      background:linear-gradient(135deg, rgba(55,138,221,.14), rgba(29,158,117,.10));
+      border:1px solid var(--border-blue); border-radius:var(--radius);
+      padding:1.4rem 1.6rem; margin-bottom:2.5rem;
+      display:flex; align-items:center; justify-content:space-between; gap:1.5rem;
+      flex-wrap:wrap; animation:fadeUp .7s .15s ease both;">
+      <div style="display:flex; align-items:center; gap:14px; flex:1; min-width:240px;">
+        <div style="font-size:28px;">🔥</div>
+        <div>
+          <div style="font-weight:700; font-family:var(--font-display); font-size:15px; margin-bottom:2px;">
+            Limited-Time Offer — $5K 3-Step for just $5
+          </div>
+          <div style="font-size:13px; color:var(--muted);">
+            Get a $5,000 3-Step challenge account at a massive discount from the regular price. Offer ends soon.
+          </div>
+        </div>
+      </div>
+      <button class="nav-cta" style="font-size:14px; padding:10px 24px; white-space:nowrap;" onclick="claimOffer()">
+        Claim Offer — $5
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- SELECTOR -->
+<section class="selector-section">
+  <div class="container">
+
+    <!-- TYPE TABS -->
+    <div class="type-tabs">
+      <button class="type-tab active" id="tab-instant" onclick="loadChallenge('instant')">
+        <i class="ti ti-bolt tab-icon"></i> Instant Funding <span class="tab-badge">No eval</span>
+      </button>
+      <button class="type-tab" id="tab-onestep" onclick="loadChallenge('onestep')">
+        <i class="ti ti-trending-up tab-icon"></i> One-Step <span class="tab-badge">Popular</span>
+      </button>
+      <button class="type-tab" id="tab-twostep" onclick="loadChallenge('twostep')">
+        <i class="ti ti-stairs tab-icon"></i> Two-Step
+      </button>
+    </div>
+
+    <!-- TYPE DESCRIPTION -->
+    <div class="type-desc-wrap">
+      <p class="type-desc" id="typeDesc">Skip the evaluation — get funded from day one with a live trading account.</p>
+      <div class="type-chips" id="typeChips">
+        <span class="type-chip"><i class="ti ti-bolt"></i> No profit target</span>
+        <span class="type-chip"><i class="ti ti-clock-off"></i> No time limit</span>
+        <span class="type-chip"><i class="ti ti-cash"></i> 80% split</span>
+      </div>
+    </div>
+
+    <!-- ACCOUNT SIZE -->
+    <p class="size-label">Select account size</p>
+    <div class="size-grid">
+      <div class="size-card" id="acc5k" onclick="selectAccount('5k')">
+        <div class="size-name">Kairos</div>
+        <div class="size-val">$5K</div>
+        <div class="size-fee" id="fee5k">$69</div>
+      </div>
+      <div class="size-card" id="acc10k" onclick="selectAccount('10k')">
+        <div class="size-name">Ares</div>
+        <div class="size-val">$10K</div>
+        <div class="size-fee" id="fee10k">$99</div>
+      </div>
+      <div class="size-card" id="acc25k" onclick="selectAccount('25k')">
+        <div class="size-name">Galactus</div>
+        <div class="size-val">$25K</div>
+        <div class="size-fee" id="fee25k">$199</div>
+      </div>
+      <div class="size-card" id="acc50k" onclick="selectAccount('50k')">
+        <div class="size-name">Supreme</div>
+        <div class="size-val">$50K</div>
+        <div class="size-fee" id="fee50k">$299</div>
+      </div>
+      <div class="size-card" id="acc100k" onclick="selectAccount('100k')">
+        <div class="size-popular">Best Value</div>
+        <div class="size-name">Legend</div>
+        <div class="size-val">$100K</div>
+        <div class="size-fee" id="fee100k">$499</div>
+      </div>
+    </div>
+
+    <!-- MAIN 2-COL LAYOUT -->
+    <div class="main-layout">
+
+      <!-- LEFT: DETAIL CARDS -->
+      <div class="left-col">
+
+        <!-- FEATURES -->
+        <div class="detail-card reveal">
+          <div class="detail-card-header">
+            <div class="detail-card-icon"><i class="ti ti-star"></i></div>
+            <div>
+              <div class="detail-card-title">What's included</div>
+              <div class="detail-card-sub" id="detailSub">Instant Funding account features</div>
+            </div>
+          </div>
+          <div class="feat-list" id="featList">
+            <div class="feat-row"><i class="ti ti-check"></i><div class="feat-row-body"><div class="feat-row-name">No profit target</div><div class="feat-row-desc">Start trading funded immediately — no evaluation required.</div></div></div>
+            <div class="feat-row"><i class="ti ti-check"></i><div class="feat-row-body"><div class="feat-row-name">Unlimited trading days</div><div class="feat-row-desc">Trade at your own pace, no time pressure whatsoever.</div></div></div>
+            <div class="feat-row"><i class="ti ti-check"></i><div class="feat-row-body"><div class="feat-row-name">80% profit split</div><div class="feat-row-desc">Keep the majority of every dollar you earn.</div></div></div>
+            <div class="feat-row"><i class="ti ti-check"></i><div class="feat-row-body"><div class="feat-row-name">MT5 access</div><div class="feat-row-desc">Trade forex, indices, crypto and commodities.</div></div></div>
+            <div class="feat-row"><i class="ti ti-check"></i><div class="feat-row-body"><div class="feat-row-name">15% consistency rule</div><div class="feat-row-desc">No single day may account for more than 15% of total profit.</div></div></div>
+          </div>
+        </div>
+
+        <!-- RULES GRID -->
+        <div class="detail-card reveal reveal-delay-1">
+          <div class="detail-card-header">
+            <div class="detail-card-icon"><i class="ti ti-shield-check"></i></div>
+            <div>
+              <div class="detail-card-title">Trading rules</div>
+              <div class="detail-card-sub">Key limits and parameters</div>
+            </div>
+          </div>
+          <div class="rules-grid">
+            <div class="rule-chip">
+              <div class="rule-chip-label">Daily Loss</div>
+              <div class="rule-chip-val amber" id="ruleDaily">3%</div>
+            </div>
+            <div class="rule-chip">
+              <div class="rule-chip-label">Max Drawdown</div>
+              <div class="rule-chip-val amber" id="ruleDD">5%</div>
+            </div>
+            <div class="rule-chip">
+              <div class="rule-chip-label">Profit Split</div>
+              <div class="rule-chip-val green">80%</div>
+            </div>
+            <div class="rule-chip">
+              <div class="rule-chip-label">Leverage</div>
+              <div class="rule-chip-val blue" id="ruleLeverage">1:100</div>
+            </div>
+            <div class="rule-chip">
+              <div class="rule-chip-label">Min. Trade Days</div>
+              <div class="rule-chip-val blue" id="ruleMinDays">7</div>
+            </div>
+            <div class="rule-chip">
+              <div class="rule-chip-label">Time Limit</div>
+              <div class="rule-chip-val green">None</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: STICKY ORDER SUMMARY -->
+      <div class="right-col">
+        <div class="objectives-card reveal">
+          <div class="obj-header">
+            <div class="obj-title">Order Summary</div>
+            <div class="obj-badge"><span class="dot"></span> Live</div>
+          </div>
+
+          <table class="obj-table">
+            <tr><td>Challenge</td><td class="blue-val" id="sumChallenge">Instant Funding</td></tr>
+            <tr><td>Account</td><td class="blue-val" id="sumName">Kairos</td></tr>
+            <tr><td>Virtual Balance</td><td id="sumBalance">$5,000</td></tr>
+            <tr><td>Profit Target</td><td id="sumTarget" class="green-val">None</td></tr>
+            <tr><td>Daily Loss Limit</td><td id="sumDaily">3%</td></tr>
+            <tr><td>Max Drawdown</td><td id="sumDD">5%</td></tr>
+            <tr><td>Profit Split</td><td class="green-val">80%</td></tr>
+            <tr><td>Leverage</td><td id="sumLeverage">1:100</td></tr>
+          </table>
+
+          <hr class="obj-divider"/>
+
+          <div class="price-row">
+            <div class="price-big" id="priceBig">$69</div>
+          </div>
+          <div id="couponLine" style="display:flex;align-items:baseline;justify-content:center;gap:8px;margin-bottom:.4rem;">
+            <span style="font-size:13px;color:var(--muted);text-decoration:line-through;" id="priceOriginal"></span>
+            <span style="font-size:12px;font-weight:700;color:var(--green);background:rgba(29,158,117,.12);border:1px solid var(--green);border-radius:99px;padding:2px 9px;">FUND30 applied</span>
+          </div>
+         
+
+          <div class="pay-btns">
+            <button class="pay-btn pay-btn-upi" onclick="goToCheckout('UPI')">
+              <i class="ti ti-qrcode"></i> Pay via UPI
+            </button>
+            <button class="pay-btn pay-btn-crypto" onclick="goToCheckout('Crypto')">
+              <i class="ti ti-currency-bitcoin"></i> Pay with Crypto
+            </button>
+
+          </div>
+          <div class="pay-secure"><i class="ti ti-lock"></i> Secure checkout · Instant activation</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON TABLE -->
+<section class="compare-section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Compare</div>
+      <h2>All challenges side by side</h2>
+      <p>Same 80% profit split across every account type. Pick the path that fits your style.</p>
+    </div>
+    <div class="compare-table-wrap reveal">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Instant</th>
+            <th class="hl">One-Step</th>
+            <th>Two-Step</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Profit target</td><td>None</td><td class="hl">10%</td><td>8% + 5%</td></tr>
+          <tr><td>Daily loss limit</td><td>3%</td><td class="hl">4%</td><td>5%</td></tr>
+          <tr><td>Max drawdown</td><td>5%</td><td class="hl">6%</td><td>10%</td></tr>
+          <tr><td>Profit split</td><td class="check">80%</td><td class="hl check">80%</td><td class="check">80%</td></tr>
+          <tr><td>Time limit</td><td class="check">None</td><td class="hl check">None</td><td class="check">None</td></tr>
+          <tr><td>Consistency rule</td><td class="check">Yes</td><td class="hl dash">—</td><td class="dash">—</td></tr>
+          <tr><td>Leverage</td><td>1:100</td><td class="hl">1:50</td><td>1:100</td></tr>
+          <tr><td>Min. trading days</td><td>7</td><td class="hl">7</td><td>3</td></tr>
+          <tr><td>Phases</td><td>0 (live immediately)</td><td class="hl">1</td><td>2</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">FAQ</div>
+      <h2>Common questions</h2>
+    </div>
+    <div class="faq-list reveal">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">How quickly can I get funded?<div class="faq-icon"><i class="ti ti-plus"></i></div></button>
+        <div class="faq-a">Once you pass your evaluation (or for Instant, immediately after payment), your funded account is activated the same day. MT5 credentials are emailed straight away.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">What payment methods are accepted?<div class="faq-icon"><i class="ti ti-plus"></i></div></button>
+        <div class="faq-a">We accept UPI (Google Pay, PhonePe, Paytm), cryptocurrency (USDT, BTC, ETH), and international cards. All payments are confirmed within 5–30 minutes.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Is the entry fee refundable?<div class="faq-icon"><i class="ti ti-plus"></i></div></button>
+        <div class="faq-a">Yes — for evaluation accounts (One-Step and Two-Step), the entry fee is refunded with your first profit withdrawal once you get funded. Instant Funding fees are non-refundable.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">What is the consistency rule?<div class="faq-icon"><i class="ti ti-plus"></i></div></button>
+        <div class="faq-a">On Instant and One-Step accounts, no single trading day can account for more than 15% of your total profit. This ensures you're demonstrating repeatable trading skill, not a single lucky trade.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Can I use EAs or copy trading?<div class="faq-icon"><i class="ti ti-plus"></i></div></button>
+        <div class="faq-a">Yes, EAs (expert advisors) and algorithmic trading are permitted. Copy trading is allowed only if you are the signal provider. Prohibited: HFT, latency arbitrage, and toxic flow strategies.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo"><div class="footer-logo-mark">FB</div> The Funded Best</div>
+    <div class="footer-links">
+      <a href="challenges.html">Challenges</a>
+      <a href="rules.html">Rules</a>
+      <a href="support.html">Support</a>
+      <a href="faq.html">FAQ</a>
+      <a href="terms.html">Terms</a>
+      <a href="privacy.html">Privacy</a>
+    </div>
+  </div>
+  <p class="footer-copy">© 2026 The Funded Best. All rights reserved. Trading involves substantial risk — only trade capital you can afford to lose.</p>
+</footer>
+
+<script>
+// ── CANVAS PARTICLES ──────────────────────────────────────────
+(function(){
+  const canvas=document.getElementById('bgCanvas'),ctx=canvas.getContext('2d');
+  let w,h,pts=[],mouse={x:-999,y:-999};
+  function resize(){w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight}
+  function init(){pts=[];for(let i=0;i<45;i++)pts.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,r:Math.random()*1.5+.5,a:Math.random()*.4+.1})}
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    // grid
+    ctx.strokeStyle='rgba(55,138,221,0.04)';ctx.lineWidth=1;ctx.beginPath();
+    const cw=w/16,ch=h/10;
+    for(let c=0;c<=16;c++){ctx.moveTo(c*cw,0);ctx.lineTo(c*cw,h)}
+    for(let r=0;r<=10;r++){ctx.moveTo(0,r*ch);ctx.lineTo(w,r*ch)}
+    ctx.stroke();
+    // particles
+    pts.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0||p.x>w)p.vx*=-1;if(p.y<0||p.y>h)p.vy*=-1;
+      const d=Math.hypot(p.x-mouse.x,p.y-mouse.y),g=d<130?(1-d/130)*.55:0;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(55,138,221,${p.a+g})`;ctx.fill();
+    });
+    for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){
+      const d=Math.hypot(pts[i].x-pts[j].x,pts[i].y-pts[j].y);
+      if(d<110){ctx.beginPath();ctx.strokeStyle=`rgba(55,138,221,${.1*(1-d/110)})`;ctx.lineWidth=.7;ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.stroke()}
+    }
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize',()=>{resize();init()});
+  window.addEventListener('mousemove',e=>{mouse.x=e.clientX;mouse.y=e.clientY});
+  resize();init();draw();
+})();
+
+// ── DATA ─────────────────────────────────────────────────────
+const challengeData = {
+  instant:  { '5k':'$69','10k':'$99','25k':'$199','50k':'$299','100k':'$499' },
+  onestep:  { '5k':'$49','10k':'$79','25k':'$149','50k':'$249','100k':'$399' },
+  twostep:  { '5k':'$39','10k':'$69','25k':'$129','50k':'$199','100k':'$349' }
+};
+const sizeData = {
+  '5k':  { name:'Kairos',  balance:'$5,000'  },
+  '10k': { name:'Ares',    balance:'$10,000' },
+  '25k': { name:'Galactus',balance:'$25,000' },
+  '50k': { name:'Supreme', balance:'$50,000' },
+  '100k':{ name:'Legend',  balance:'$100,000'}
+};
+const typeConfig = {
+  instant: {
+    label:'Instant Funding',
+    desc:'Skip the evaluation — get funded from day one with a live trading account.',
+    chips:[['ti-bolt','No profit target'],['ti-clock-off','No time limit'],['ti-cash','80% split']],
+    target:'None',daily:'3%',dd:'5%',leverage:'1:100',minDays:'7',
+    feats:[
+      ['No profit target','Start trading funded immediately — no evaluation phase required.'],
+      ['Unlimited trading days','Trade whenever you want with zero time pressure.'],
+      ['80% profit split','Keep the majority of every dollar you earn from day one.'],
+      ['MT5 access','Forex, indices, crypto and commodities available.'],
+      ['15% consistency rule','No single day may exceed 15% of your total profit.'],
+    ]
+  },
+  onestep: {
+    label:'One-Step',
+    desc:'One evaluation phase — hit the 10% target then trade funded with real capital.',
+    chips:[['ti-target','10% target'],['ti-clock-off','No time limit'],['ti-cash','80% split']],
+    target:'10%',daily:'4%',dd:'6%',leverage:'1:50',minDays:'7',
+    feats:[
+      ['10% profit target','One challenge phase to prove your consistency.'],
+      ['Unlimited trading days','No deadline — pass when you\'re ready, not the clock.'],
+      ['80% profit split','Maximum profit share from your first funded trade.'],
+      ['MT5 access','Full asset range — forex, indices, crypto, commodities.'],
+      ['No consistency rule','Trade freely — no single-day profit cap applies in Phase 1.'],
+    ]
+  },
+  twostep: {
+    label:'Two-Step',
+    desc:'Lower targets and more drawdown room across two evaluation phases.',
+    chips:[['ti-stairs','8% + 5% targets'],['ti-shield','10% drawdown'],['ti-cash','80% split']],
+    target:'8% then 5%',daily:'5%',dd:'10%',leverage:'1:100',minDays:'3',
+    feats:[
+      ['8% + 5% profit targets','Lower phase targets with looser drawdown rules.'],
+      ['Unlimited trading days','No deadline pressure across either phase.'],
+      ['80% profit split','Same generous split as every other account type.'],
+      ['MT5 access','Full access to forex, indices, crypto and commodities.'],
+      ['No consistency rule','Two-Step has no consistency requirement — trade freely.'],
+    ]
+  }
+};
+
+let currentChallenge = 'instant';
+let currentSize = '5k';
+
+// ── COUPON: FUND30 — 30% off every account, EXCLUDES the $5 3-Step $5K offer ──
+const COUPON_CODE = 'FUND30';
+const COUPON_PCT  = 0.30;
+
+function applyCoupon(amount) {
+  const discounted = Math.round(amount * (1 - COUPON_PCT));
+  return discounted;
+}
+function fmtFee(n) { return '$' + n; }
+
+function loadChallenge(type) {
+  currentChallenge = type;
+  // update tabs
+  document.querySelectorAll('.type-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-'+type).classList.add('active');
+
+  const cfg = typeConfig[type];
+  // update description
+  document.getElementById('typeDesc').textContent = cfg.desc;
+  document.getElementById('typeChips').innerHTML = cfg.chips.map(([icon,label])=>
+    `<span class="type-chip"><i class="ti ${icon}"></i> ${label}</span>`).join('');
+
+  // update all fee badges (30% off applied via FUND30 coupon)
+  ['5k','10k','25k','50k','100k'].forEach(s => {
+    const original = parseInt(challengeData[type][s].replace('$',''), 10);
+    const discounted = applyCoupon(original);
+    document.getElementById('fee'+s).textContent = fmtFee(discounted);
+  });
+
+  // update rules
+  document.getElementById('ruleDaily').textContent = cfg.daily;
+  document.getElementById('ruleDD').textContent = cfg.dd;
+  document.getElementById('ruleLeverage').textContent = cfg.leverage;
+  document.getElementById('ruleMinDays').textContent = cfg.minDays;
+
+  // update detail card subtitle
+  document.getElementById('detailSub').textContent = cfg.label + ' account features';
+  document.getElementById('featList').innerHTML = cfg.feats.map(([n,d])=>
+    `<div class="feat-row"><i class="ti ti-check"></i><div class="feat-row-body"><div class="feat-row-name">${n}</div><div class="feat-row-desc">${d}</div></div></div>`
+  ).join('');
+
+  // re-select current size to update summary
+  selectAccount(currentSize);
+}
+
+function selectAccount(size) {
+  currentSize = size;
+  document.querySelectorAll('.size-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('acc'+size).classList.add('selected');
+
+  const cfg = typeConfig[currentChallenge];
+  const sd = sizeData[size];
+  const originalFee = parseInt(challengeData[currentChallenge][size].replace('$',''), 10);
+  const fee = fmtFee(applyCoupon(originalFee));
+
+  // animate price
+  const priceEl = document.getElementById('priceBig');
+  priceEl.style.transform = 'scale(.92)';
+  priceEl.style.opacity = '.6';
+  setTimeout(() => {
+    priceEl.textContent = fee;
+    priceEl.style.transform = 'scale(1)';
+    priceEl.style.opacity = '1';
+  }, 120);
+  document.getElementById('priceOriginal').textContent = '$' + originalFee;
+  document.getElementById('couponLine').style.display = '';
+
+  // update summary table
+  document.getElementById('sumChallenge').textContent = cfg.label;
+  document.getElementById('sumName').textContent = sd.name;
+  document.getElementById('sumBalance').textContent = sd.balance;
+  document.getElementById('sumTarget').textContent = cfg.target;
+  document.getElementById('sumDaily').textContent = cfg.daily;
+  document.getElementById('sumDD').textContent = cfg.dd;
+  document.getElementById('sumLeverage').textContent = cfg.leverage;
+
+  document.getElementById('entryFeeDisplay') && (document.getElementById('entryFeeDisplay').textContent = fee);
+}
+
+// ── LIMITED-TIME OFFER ─────────────────────────────────────────
+function claimOffer() {
+  document.getElementById('joinedDiscord').checked = false;
+  document.getElementById('joinedTelegram').checked = false;
+  updateClaimBtn();
+  document.getElementById('offerModalOverlay').style.display = 'flex';
+}
+
+function closeOfferModal() {
+  document.getElementById('offerModalOverlay').style.display = 'none';
+}
+
+function updateClaimBtn() {
+  const ok = document.getElementById('joinedDiscord').checked &&
+             document.getElementById('joinedTelegram').checked;
+  const btn = document.getElementById('confirmClaimBtn');
+  btn.disabled = !ok;
+  btn.style.opacity = ok ? '1' : '.5';
+  btn.style.cursor = ok ? 'pointer' : 'not-allowed';
+}
+
+function confirmClaimOffer() {
+  if (document.getElementById('confirmClaimBtn').disabled) return;
+
+  sessionStorage.removeItem('fb_payment_order_id');
+  sessionStorage.removeItem('fb_payment_just_submitted');
+
+  localStorage.setItem('challengeType', '3-Step');
+  localStorage.setItem('accountSize', '$5,000');
+  localStorage.setItem('entryFee', '$5');
+  localStorage.setItem('paymentMethod', 'UPI');
+  localStorage.setItem('offerTag', 'Limited-Time $5 Offer');
+
+  window.location.href = 'checkout.html';
+}
+
+// ── CHECKOUT ─────────────────────────────────────────────────
+function goToCheckout(paymentMethod) {
+  sessionStorage.removeItem('fb_payment_order_id');
+  sessionStorage.removeItem('fb_payment_just_submitted');
+
+  const originalFee = parseInt(challengeData[currentChallenge][currentSize].replace('$',''), 10);
+  const discountedFee = fmtFee(applyCoupon(originalFee));
+
+  localStorage.setItem('challengeType', typeConfig[currentChallenge].label);
+  localStorage.setItem('accountSize', sizeData[currentSize].balance);
+  localStorage.setItem('entryFee', discountedFee);
+  localStorage.setItem('originalEntryFee', '$' + originalFee);
+  localStorage.setItem('couponApplied', COUPON_CODE);
+  localStorage.setItem('paymentMethod', paymentMethod);
+
+  window.location.href = 'checkout.html';
+}
+
+// ── FAQ ───────────────────────────────────────────────────────
+function toggleFaq(btn) {
+  const a = btn.nextElementSibling, open = a.classList.contains('open');
+  document.querySelectorAll('.faq-a.open').forEach(x=>x.classList.remove('open'));
+  document.querySelectorAll('.faq-q.open').forEach(x=>x.classList.remove('open'));
+  if (!open) { a.classList.add('open'); btn.classList.add('open'); }
+}
+
+// ── MOBILE NAV ────────────────────────────────────────────────
+function toggleMobileNav() { document.getElementById('mobileNav').classList.toggle('open'); }
+
+// ── SCROLL REVEAL ─────────────────────────────────────────────
+const ro = new IntersectionObserver(es => {
+  es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); ro.unobserve(e.target); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
+
+// ── INIT ─────────────────────────────────────────────────────
+loadChallenge('instant');
+selectAccount('5k');
+</script>
+<!-- LIMITED-TIME OFFER MODAL -->
+<div id="offerModalOverlay" style="
+  display:none; position:fixed; inset:0; z-index:1000;
+  background:rgba(5,7,13,.75); backdrop-filter:blur(6px);
+  align-items:center; justify-content:center; padding:20px;"
+  onclick="if(event.target===this) closeOfferModal()">
+
+  <div style="
+    background:var(--bg2); border:1px solid var(--border-blue); border-radius:var(--radius);
+    max-width:560px; width:100%; max-height:88vh; overflow-y:auto;
+    padding:1.8rem; box-shadow:0 30px 80px rgba(0,0,0,.5);">
+
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:.4rem;">
+      <div style="font-size:24px;">🔥</div>
+      <h2 style="font-family:var(--font-display); font-size:19px; font-weight:700;">
+        $5K 3-Step Challenge — Rules
+      </h2>
+    </div>
+    <p style="font-size:13px; color:var(--muted); margin-bottom:1.2rem;">
+      Before you claim this $5 offer, review how the 3-Step evaluation works.
+    </p>
+
+    <!-- Evaluation Phases -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius-sm); padding:1rem 1.1rem; margin-bottom:.9rem;">
+      <div style="font-weight:700; font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:var(--blue); margin-bottom:.6rem;">
+        Evaluation Phases
+      </div>
+      <ul style="font-size:13px; color:var(--muted); line-height:1.7; padding-left:1.1rem;">
+        <li><strong style="color:var(--text)">Phase 1 &amp; Phase 2</strong> — 6% profit target each phase.</li>
+        <li><strong style="color:var(--text)">Phase 3</strong> — Final 6% target to prove consistent profitability before going live.</li>
+        <li><strong style="color:var(--text)">Funded</strong> — 15% consistency rule applies (no single day &gt; 15% of total profit).</li>
+      </ul>
+    </div>
+
+    <!-- Risk Management -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius-sm); padding:1rem 1.1rem; margin-bottom:.9rem;">
+      <div style="font-weight:700; font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:var(--blue); margin-bottom:.6rem;">
+        Risk Management
+      </div>
+      <ul style="font-size:13px; color:var(--muted); line-height:1.7; padding-left:1.1rem;">
+        <li><strong style="color:var(--text)">Daily Drawdown:</strong> 3% of starting balance.</li>
+        <li><strong style="color:var(--text)">Max Total Drawdown:</strong> 7% of initial balance.</li>
+        <li><strong style="color:var(--text)">Minimum Trading Days:</strong> 3 separate days per step.</li>
+        <li><strong style="color:var(--text)">Profit Split:</strong> 50%.</li>
+      </ul>
+    </div>
+
+    <!-- Entry Requirements -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius-sm); padding:1rem 1.1rem; margin-bottom:1.3rem;">
+      <div style="font-weight:700; font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:var(--blue); margin-bottom:.6rem;">
+        Entry Requirements
+      </div>
+      <p style="font-size:13px; color:var(--muted); margin-bottom:.8rem;">
+        Join our community channels to unlock checkout for this offer:
+      </p>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <label style="display:flex; align-items:center; gap:10px; font-size:13px; cursor:pointer; padding:8px 10px; border:1px solid var(--border); border-radius:var(--radius-xs);">
+          <input type="checkbox" id="joinedDiscord" onchange="updateClaimBtn()" style="width:16px; height:16px;"/>
+          <a href="https://discord.gg/hYSrP85H" target="_blank" rel="noopener" style="color:var(--blue); text-decoration:none;" onclick="event.stopPropagation()">
+            <i class="ti ti-brand-discord"></i> Join our Discord
+          </a>
+        </label>
+        <label style="display:flex; align-items:center; gap:10px; font-size:13px; cursor:pointer; padding:8px 10px; border:1px solid var(--border); border-radius:var(--radius-xs);">
+          <input type="checkbox" id="joinedTelegram" onchange="updateClaimBtn()" style="width:16px; height:16px;"/>
+          <a href="https://t.me/+OhhSq6i38605ZDNl" target="_blank" rel="noopener" style="color:var(--blue); text-decoration:none;" onclick="event.stopPropagation()">
+            <i class="ti ti-brand-telegram"></i> Join our Telegram
+          </a>
+        </label>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:10px;">
+      <button class="btn-ghost" style="flex:1; text-align:center;" onclick="closeOfferModal()">Cancel</button>
+      <button class="nav-cta" id="confirmClaimBtn" style="flex:1; opacity:.5; cursor:not-allowed;" disabled onclick="confirmClaimOffer()">
+        Continue to Checkout — $5
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+firebase.initializeApp(FIREBASE_CONFIG);
+firebase.auth().onAuthStateChanged(user => {
+  const disp = user ? 'none' : '';
+  document.getElementById('navSignIn').style.display = disp;
+  document.getElementById('navSignInMobile').style.display = disp;
+});
+</script>
+</body>
+</html>

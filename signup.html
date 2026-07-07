@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Create Account — The Funded Best</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#378ADD;--blue-dark:#185FA5;--blue-glow:rgba(55,138,221,.18);
+  --green:#1D9E75;--red:#e05252;
+  --bg:#07090f;--bg2:rgba(13,18,32,.9);
+  --border:rgba(255,255,255,.08);--border-blue:rgba(55,138,221,.35);
+  --text:#f0f4ff;--muted:rgba(240,244,255,.5);
+  --font-display:'Space Grotesk',sans-serif;--font-body:'Inter',sans-serif;
+  --radius:14px;--radius-sm:8px;
+}
+body{margin:0;background:var(--bg);font-family:var(--font-body);color:var(--text);
+  display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px;
+  background-image:radial-gradient(ellipse at 50% 0%, rgba(55,138,221,.08) 0%, transparent 60%)}
+
+.wrapper{width:100%;max-width:460px}
+
+.logo{text-align:center;margin-bottom:28px}
+.logo-mark{font-family:var(--font-display);font-size:42px;font-weight:700;
+  color:var(--blue);text-shadow:0 0 40px rgba(55,138,221,.6);line-height:1}
+.logo-name{font-size:20px;font-weight:700;margin-top:6px;font-family:var(--font-display)}
+
+.card{background:var(--bg2);backdrop-filter:blur(20px);
+  border:1px solid var(--border);border-radius:24px;padding:36px;
+  box-shadow:0 0 80px rgba(55,138,221,.12),0 40px 80px rgba(0,0,0,.4)}
+
+.card h2{font-family:var(--font-display);font-size:24px;text-align:center;margin-bottom:28px}
+
+.field{margin-bottom:16px}
+.field label{display:block;font-size:13px;color:var(--muted);margin-bottom:8px;font-weight:500}
+.field input{
+  width:100%;padding:13px 16px;border-radius:var(--radius-sm);
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  color:var(--text);font-size:15px;font-family:var(--font-body);
+  transition:border-color .2s,box-shadow .2s;outline:none}
+.field input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(55,138,221,.15)}
+.field input.error{border-color:var(--red)}
+.error-msg{font-size:12px;color:var(--red);margin-top:6px;display:none}
+.error-msg.show{display:block}
+
+.strength-bar{height:4px;border-radius:99px;background:var(--border);margin-top:8px;overflow:hidden}
+.strength-fill{height:100%;border-radius:99px;width:0;transition:width .3s,background .3s}
+.strength-label{font-size:11px;color:var(--muted);margin-top:4px}
+
+.terms{font-size:12px;color:var(--muted);margin:16px 0 20px;line-height:1.6}
+.terms a{color:var(--blue);text-decoration:none}
+
+.btn-primary{
+  width:100%;padding:14px;border:none;border-radius:var(--radius-sm);
+  background:var(--blue);color:#fff;font-size:15px;font-weight:600;
+  font-family:var(--font-body);cursor:pointer;
+  transition:background .2s,transform .15s,box-shadow .2s}
+.btn-primary:hover:not(:disabled){background:var(--blue-dark);transform:translateY(-1px);box-shadow:0 8px 24px rgba(55,138,221,.35)}
+.btn-primary:disabled{opacity:.6;cursor:not-allowed}
+
+.divider{text-align:center;margin:20px 0;color:var(--muted);font-size:13px;
+  display:flex;align-items:center;gap:12px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.btn-google{
+  width:100%;padding:13px;border:1px solid var(--border);border-radius:var(--radius-sm);
+  background:rgba(255,255,255,.03);color:var(--text);font-size:14px;font-family:var(--font-body);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;
+  transition:border-color .2s,background .2s}
+.btn-google:hover{border-color:var(--border-blue);background:rgba(55,138,221,.06)}
+.btn-google svg{width:18px;height:18px;flex-shrink:0}
+
+.bottom{text-align:center;margin-top:22px;font-size:14px;color:var(--muted)}
+.bottom a{color:var(--blue);text-decoration:none}
+.bottom a:hover{text-decoration:underline}
+
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:#1a2235;border:1px solid var(--border-blue);border-radius:var(--radius-sm);
+  padding:12px 20px;font-size:13px;color:var(--text);
+  transition:transform .3s;z-index:999;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.red{border-color:var(--red);background:#1f1215}
+
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);
+  border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;
+  vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+  <div class="logo">
+    <div class="logo-mark">FB</div>
+    <div class="logo-name">The Funded Best</div>
+  </div>
+
+  <div class="card">
+    <h2>Create your account</h2>
+
+    <div class="field">
+      <label>Full name</label>
+      <input type="text" id="name" placeholder="Rahul Kumar" autocomplete="name"/>
+      <div class="error-msg" id="nameErr">Please enter your full name.</div>
+    </div>
+
+    <div class="field">
+      <label>Email address</label>
+      <input type="email" id="email" placeholder="you@example.com" autocomplete="email"/>
+      <div class="error-msg" id="emailErr">Please enter a valid email.</div>
+    </div>
+
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="password" placeholder="Min. 8 characters"
+             autocomplete="new-password" oninput="checkStrength()"/>
+      <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+      <div class="strength-label" id="strengthLabel"></div>
+      <div class="error-msg" id="passErr">Password must be at least 8 characters.</div>
+    </div>
+
+    <div class="field">
+      <label>Confirm password</label>
+      <input type="password" id="confirm" placeholder="Re-enter password" autocomplete="new-password"/>
+      <div class="error-msg" id="confirmErr">Passwords do not match.</div>
+    </div>
+
+    <p class="terms">By creating an account you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>. Trading involves risk.</p>
+
+    <button class="btn-primary" id="signUpBtn" onclick="signUp()">Create Account</button>
+
+    <div class="divider">OR</div>
+
+    <button class="btn-google" onclick="signUpGoogle()">
+      <svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20H24v8h11.3C33.7 32.4 29.4 35 24 35c-6.1 0-11-4.9-11-11s4.9-11 11-11c2.8 0 5.3 1 7.2 2.7l5.7-5.7C33.5 7.1 29 5 24 5 13.5 5 5 13.5 5 24s8.5 19 19 19c10.5 0 18-7.6 18-18.3 0-1.2-.1-2.4-.4-4.7z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.5 16 19 13 24 13c2.8 0 5.3 1 7.2 2.7l5.7-5.7C33.5 7.1 29 5 24 5c-7.4 0-13.8 4-17.7 9.7z"/><path fill="#4CAF50" d="M24 43c5.2 0 9.9-1.9 13.5-5l-6.2-5.2C29.5 34.5 27 35.5 24 35.5c-5.3 0-9.8-3.5-11.3-8.3l-6.5 5C9.7 39.2 16.4 43 24 43z"/><path fill="#1976D2" d="M43.6 20H24v8h11.3c-.8 2.2-2.3 4-4.2 5.2l6.2 5.2C40.6 35.3 44 30.1 44 24c0-1.2-.1-2.4-.4-4z"/></svg>
+      Continue with Google
+    </button>
+
+    <div class="bottom">
+      Already have an account? <a href="signin.html">Sign in</a>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Firebase SDKs FIRST -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+firebase.initializeApp(FIREBASE_CONFIG);
+const auth = firebase.auth();
+const db   = firebase.firestore();
+
+// If already signed in, go to dashboard (or wherever they came from)
+auth.onAuthStateChanged(user => {
+  if (user) {
+    const redirectTo = sessionStorage.getItem('fb_redirect_after_login') || 'dashboard.html';
+    sessionStorage.removeItem('fb_redirect_after_login');
+    window.location.href = redirectTo;
+  }
+});
+
+function showToast(msg, isError = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isError ? ' red' : '');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+function setLoading(loading) {
+  const btn = document.getElementById('signUpBtn');
+  btn.disabled = loading;
+  btn.innerHTML = loading
+    ? '<span class="spinner"></span>Creating account…'
+    : 'Create Account';
+}
+
+function checkStrength() {
+  const val = document.getElementById('password').value;
+  const fill = document.getElementById('strengthFill');
+  const label = document.getElementById('strengthLabel');
+  let score = 0;
+  if (val.length >= 8) score++;
+  if (/[A-Z]/.test(val)) score++;
+  if (/[0-9]/.test(val)) score++;
+  if (/[^A-Za-z0-9]/.test(val)) score++;
+  const levels = [
+    { pct:'0%',   color:'', text:'' },
+    { pct:'25%',  color:'var(--red)',   text:'Weak' },
+    { pct:'50%',  color:'#f59e0b',      text:'Fair' },
+    { pct:'75%',  color:'#f59e0b',      text:'Good' },
+    { pct:'100%', color:'var(--green)', text:'Strong' },
+  ];
+  const l = levels[score] || levels[0];
+  fill.style.width = l.pct;
+  fill.style.background = l.color;
+  label.textContent = l.text;
+  label.style.color = l.color;
+}
+
+function validate() {
+  let ok = true;
+  const fields = [
+    { id:'name',    errId:'nameErr',    check: v => v.trim().length > 1 },
+    { id:'email',   errId:'emailErr',   check: v => /\S+@\S+\.\S+/.test(v.trim()) },
+    { id:'password',errId:'passErr',    check: v => v.length >= 8 },
+    { id:'confirm', errId:'confirmErr', check: v => v === document.getElementById('password').value },
+  ];
+  fields.forEach(f => {
+    const el  = document.getElementById(f.id);
+    const err = document.getElementById(f.errId);
+    el.classList.remove('error'); err.classList.remove('show');
+    if (!f.check(el.value)) { el.classList.add('error'); err.classList.add('show'); ok = false; }
+  });
+  return ok;
+}
+
+async function createUserDoc(user, displayName) {
+  await db.collection('users').doc(user.uid).set({
+    name:      displayName || user.displayName || '',
+    email:     user.email,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    photoURL:  user.photoURL || ''
+  }, { merge: true });
+}
+
+async function signUp() {
+  if (!validate()) return;
+  setLoading(true);
+  try {
+    const name = document.getElementById('name').value.trim();
+    const password = document.getElementById('password').value;
+    const cred = await auth.createUserWithEmailAndPassword(
+      document.getElementById('email').value.trim(),
+      password
+    );
+    await cred.user.updateProfile({ displayName: name });
+    await createUserDoc(cred.user, name);
+    // onAuthStateChanged will redirect
+  } catch (err) {
+    setLoading(false);
+    const msgs = {
+      'auth/email-already-in-use': 'That email is already registered. Try signing in.',
+      'auth/weak-password':        'Password is too weak.',
+      'auth/invalid-email':        'Invalid email address.',
+    };
+    showToast(msgs[err.code] || err.message, true);
+  }
+}
+
+async function signUpGoogle() {
+  try {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    const cred = await auth.signInWithPopup(provider);
+    await createUserDoc(cred.user, cred.user.displayName);
+  } catch (err) {
+    showToast(err.message, true);
+  }
+}
+</script>
+</body>
+</html>

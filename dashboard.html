@@ -1,0 +1,2596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dashboard — The Funded Best</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#378ADD;--blue-dark:#185FA5;--blue-glow:rgba(55,138,221,.18);
+  --green:#1D9E75;--green-glow:rgba(29,158,117,.18);
+  --red:#e05252;--red-glow:rgba(224,82,82,.15);
+  --amber:#f59e0b;
+  --bg:#07090f;--bg2:#0d1220;--bg3:#111827;
+  --border:rgba(255,255,255,.08);--border-blue:rgba(55,138,221,.35);
+  --text:#f0f4ff;--muted:rgba(240,244,255,.5);
+  --font-display:'Space Grotesk',sans-serif;--font-body:'Inter',sans-serif;
+  --radius:14px;--radius-sm:8px;--sidebar-w:236px;
+}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;line-height:1.6;min-height:100vh;display:flex}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sidebar-w);min-height:100vh;
+  background:rgba(13,18,32,.97);
+  border-right:.5px solid var(--border);
+  display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;z-index:200;
+  transition:transform .25s cubic-bezier(.4,0,.2,1);
+}
+.sidebar-logo{
+  padding:18px 18px 0;display:flex;align-items:center;gap:8px;
+  font-family:var(--font-display);font-size:1rem;font-weight:700;
+  text-decoration:none;color:var(--text);height:60px;
+}
+.sidebar-logo .logo-mark{
+  width:28px;height:28px;background:var(--blue);border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:#fff;flex-shrink:0;
+  box-shadow:0 0 16px rgba(55,138,221,.4);
+}
+.sidebar-nav{flex:1;padding:20px 10px;display:flex;flex-direction:column;gap:2px}
+.nav-section-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);padding:14px 10px 6px;margin-top:4px}
+.nav-item{
+  display:flex;align-items:center;gap:10px;padding:9px 12px;
+  border-radius:var(--radius-sm);font-size:13.5px;color:var(--muted);
+  text-decoration:none;transition:background .15s,color .15s;
+  cursor:pointer;border:none;background:none;width:100%;text-align:left;
+}
+.nav-item i{font-size:17px;flex-shrink:0}
+.nav-item:hover{background:rgba(255,255,255,.05);color:var(--text)}
+.nav-item.active{background:var(--blue-glow);color:var(--blue)}
+.nav-item .badge{margin-left:auto;background:var(--blue);color:#fff;font-size:10px;font-weight:600;padding:1px 6px;border-radius:20px}
+
+/* sidebar user — clickable profile */
+.sidebar-user{
+  padding:14px;border-top:.5px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+  cursor:pointer;transition:background .15s;border-radius:0 0 0 0;
+  position:relative;
+}
+.sidebar-user:hover{background:rgba(255,255,255,.04)}
+.sidebar-user .arrow{margin-left:auto;color:var(--muted);font-size:14px;transition:transform .2s}
+.user-avatar{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--blue-glow);border:2px solid var(--border-blue);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:var(--blue);flex-shrink:0;overflow:hidden;
+}
+.user-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.user-name{font-size:13px;font-weight:600;line-height:1.3}
+.user-role{font-size:11px;color:var(--muted)}
+.logout-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:17px;transition:color .15s;padding:4px}
+.logout-btn:hover{color:var(--red)}
+
+/* ── PROFILE DRAWER ── */
+.profile-drawer{
+  position:fixed;bottom:0;left:0;right:0;
+  max-height:min(600px,calc(100vh - 60px));
+  background:var(--bg2);border:1px solid var(--border-blue);border-bottom:none;
+  border-radius:18px 18px 0 0;z-index:210;
+  transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 -24px 70px rgba(0,0,0,.55);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.profile-drawer.open{transform:translateY(0)}
+.profile-overlay.open{display:block;background:rgba(0,0,0,.45);backdrop-filter:blur(2px)}
+.profile-drawer-header{
+  padding:18px 18px 14px;border-bottom:.5px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  background:linear-gradient(135deg,rgba(55,138,221,.10),rgba(29,158,117,.05));
+  flex-shrink:0;
+}
+.profile-drawer-header h4{font-family:var(--font-display);font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px}
+.profile-drawer-header h4 i{color:var(--blue);font-size:16px}
+.drawer-close{background:rgba(255,255,255,.05);border:.5px solid var(--border);border-radius:8px;color:var(--muted);cursor:pointer;font-size:15px;padding:5px 7px;line-height:1;transition:all .15s}
+.drawer-close:hover{color:var(--text);border-color:var(--border-blue)}
+.profile-body{padding:16px 18px 20px;display:flex;flex-direction:column;gap:10px;overflow-y:auto;max-width:520px;width:100%;margin:0 auto}
+.profile-avatar-row{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+.profile-big-avatar{
+  width:56px;height:56px;border-radius:50%;
+  background:linear-gradient(135deg,var(--blue-glow),var(--green-glow));
+  border:2px solid var(--border-blue);
+  display:flex;align-items:center;justify-content:center;
+  font-size:21px;font-weight:700;color:var(--blue);overflow:hidden;flex-shrink:0;
+  box-shadow:0 0 24px rgba(55,138,221,.25);
+}
+.profile-big-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.profile-name-block .pname{font-size:16px;font-weight:700;font-family:var(--font-display);line-height:1.3}
+.profile-name-block .prole{
+  font-size:11px;color:var(--blue);font-weight:600;margin-top:3px;
+  display:inline-flex;align-items:center;gap:5px;
+  background:var(--blue-glow);border:.5px solid var(--border-blue);
+  padding:2px 9px;border-radius:99px;
+}
+.profile-field{
+  background:var(--bg3);border:.5px solid var(--border);border-radius:var(--radius-sm);
+  padding:10px 14px;transition:border-color .15s;
+}
+.profile-field:hover{border-color:rgba(255,255,255,.14)}
+.profile-field label{display:flex;align-items:center;gap:6px;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px}
+.profile-field label i{font-size:12px}
+.profile-field .val{font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px}
+.profile-field .val .lock-icon{color:var(--muted);font-size:13px}
+.profile-field .masked{color:var(--muted);letter-spacing:.2em;font-family:monospace}
+.profile-field .field-btn{
+  margin-left:auto;background:rgba(255,255,255,.04);border:.5px solid var(--border);
+  border-radius:6px;color:var(--muted);cursor:pointer;font-size:12px;
+  padding:4px 7px;transition:all .15s;line-height:1;
+}
+.profile-field .field-btn:hover{color:var(--text);border-color:var(--border-blue)}
+.profile-field .val.editing{gap:8px}
+.profile-field .val input{
+  flex:1;padding:7px 10px;border-radius:6px;background:rgba(255,255,255,.05);
+  border:1px solid var(--border-blue);color:var(--text);font-size:13px;
+  font-family:var(--font-body);outline:none;
+}
+.profile-since{font-size:11px;color:var(--muted);text-align:center;padding-top:6px;border-top:.5px solid var(--border);margin-top:2px}
+.profile-since strong{color:var(--text);font-weight:600}
+
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh}
+/* ── DASHBOARD LOADING OVERLAY ── */
+.dashboard-loading{
+  position:fixed;top:0;right:0;bottom:0;left:var(--sidebar-w);
+  z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:var(--bg);
+  transition:opacity .4s ease,visibility .4s ease;
+}
+.dashboard-loading.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.loading-inner{display:flex;flex-direction:column;align-items:center}
+.loading-logo{
+  width:72px;height:72px;border-radius:22px;
+  background:linear-gradient(135deg,rgba(55,138,221,.12),rgba(55,138,221,.04));
+  border:1px solid var(--border-blue);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-display);font-size:26px;font-weight:700;color:var(--blue);
+  position:relative;margin-bottom:32px;
+  box-shadow:0 0 50px rgba(55,138,221,.18);
+}
+.loading-logo::before{
+  content:'';position:absolute;inset:-8px;border-radius:30px;
+  border:2px solid transparent;
+  border-top-color:var(--blue);border-right-color:rgba(29,158,117,.5);
+  animation:ldSpin 1.1s linear infinite;
+}
+.loading-logo::after{
+  content:'';position:absolute;inset:-16px;border-radius:38px;
+  border:1.5px solid transparent;
+  border-bottom-color:rgba(55,138,221,.25);border-left-color:rgba(29,158,117,.15);
+  animation:ldSpin 2s linear infinite reverse;
+}
+.loading-step{
+  font-family:var(--font-display);font-size:17px;font-weight:600;
+  color:var(--text);margin-bottom:8px;text-align:center;
+  animation:ldFade .35s ease;min-height:26px;
+}
+.loading-substep{
+  font-size:13px;color:var(--muted);margin-bottom:32px;
+  text-align:center;animation:ldFade .35s ease;min-height:20px;
+}
+.loading-track{
+  width:260px;height:3px;border-radius:99px;
+  background:rgba(255,255,255,.07);overflow:hidden;margin-bottom:40px;
+}
+.loading-fill{
+  height:100%;border-radius:99px;width:0%;
+  background:linear-gradient(90deg,var(--blue),rgba(29,158,117,.9));
+  transition:width .5s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 0 8px rgba(55,138,221,.5);
+}
+.loading-skels{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
+  width:min(560px,80vw);
+}
+.loading-skel{
+  height:80px;border-radius:12px;
+  background:linear-gradient(90deg,rgba(255,255,255,.03) 0%,rgba(55,138,221,.09) 50%,rgba(255,255,255,.03) 100%);
+  background-size:300% 100%;
+  animation:ldShimmer 1.7s ease-in-out infinite;
+  border:1px solid rgba(255,255,255,.05);
+}
+.loading-skel:nth-child(2){animation-delay:.15s}
+.loading-skel:nth-child(3){animation-delay:.3s}
+.loading-skel:nth-child(4){animation-delay:.45s}
+@keyframes ldSpin{to{transform:rotate(360deg)}}
+@keyframes ldShimmer{0%{background-position:100% 0}100%{background-position:-200% 0}}
+@keyframes ldFade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:768px){.dashboard-loading{left:0}.loading-skels{grid-template-columns:1fr 1fr}}
+
+/* ── TOP BAR ── */
+.topbar{
+  height:60px;border-bottom:.5px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;
+  background:rgba(7,9,15,.9);backdrop-filter:blur(20px);
+  position:sticky;top:0;z-index:100;
+}
+.topbar-left{display:flex;align-items:center;gap:14px}
+.topbar-greeting{font-size:14px;font-weight:500}
+.topbar-greeting span{color:var(--muted);font-weight:400}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.topbar-btn{
+  width:34px;height:34px;border-radius:var(--radius-sm);
+  background:var(--bg2);border:.5px solid var(--border);
+  color:var(--muted);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:17px;transition:border-color .15s,color .15s;position:relative;
+}
+.topbar-btn:hover{border-color:var(--border-blue);color:var(--text)}
+.notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;background:var(--blue);border-radius:50%;border:1.5px solid var(--bg)}
+.hamburger{display:none}
+
+/* ── ACCOUNT SWITCHER ── */
+.acc-switcher{position:relative}
+.acc-switcher-btn{
+  display:flex;align-items:center;gap:8px;padding:7px 12px;
+  border-radius:var(--radius-sm);background:var(--bg2);
+  border:.5px solid var(--border);color:var(--text);font-size:13px;
+  font-family:var(--font-body);cursor:pointer;transition:border-color .15s;max-width:220px;
+}
+.acc-switcher-btn:hover{border-color:var(--border-blue)}
+.acc-switcher-btn .acc-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.acc-switcher-btn i.ti-chevron-down{font-size:14px;color:var(--muted);transition:transform .15s}
+.acc-switcher.open .acc-switcher-btn i.ti-chevron-down{transform:rotate(180deg)}
+.acc-dropdown{
+  position:absolute;top:calc(100% + 8px);left:0;
+  min-width:240px;max-width:320px;
+  background:var(--bg2);border:.5px solid var(--border-blue);
+  border-radius:var(--radius);box-shadow:0 20px 50px rgba(0,0,0,.5);
+  padding:6px;display:none;z-index:300;max-height:320px;overflow-y:auto;
+}
+.acc-switcher.open .acc-dropdown{display:block;animation:fadeInDown .15s ease}
+@keyframes fadeInDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.acc-dropdown-item{
+  display:flex;flex-direction:column;gap:2px;padding:10px 12px;
+  border-radius:var(--radius-sm);cursor:pointer;transition:background .15s;
+}
+.acc-dropdown-item:hover{background:rgba(255,255,255,.05)}
+.acc-dropdown-item.active{background:var(--blue-glow)}
+.acc-dropdown-item .acc-item-top{display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:500}
+.acc-dropdown-item .acc-item-sub{font-size:11px;color:var(--muted)}
+.acc-item-status{font-size:10px;padding:1px 7px;border-radius:99px;font-weight:600}
+.acc-item-status.active{background:var(--green-glow);color:var(--green)}
+.acc-item-status.pending{background:var(--blue-glow);color:var(--blue)}
+.acc-item-status.rejected{background:var(--red-glow);color:var(--red)}
+
+/* ── CREDENTIALS CARD ── */
+.creds-card{
+  background:linear-gradient(135deg,rgba(29,158,117,.1) 0%,rgba(55,138,221,.08) 100%);
+  border:1px solid rgba(29,158,117,.25);border-radius:var(--radius);
+  padding:22px;margin-bottom:24px;
+  animation:fadeInUp .3s ease;
+}
+.creds-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.creds-card-title{font-family:var(--font-display);font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px}
+.creds-card-title i{color:var(--green);font-size:17px}
+.creds-badge{display:inline-flex;align-items:center;gap:5px;background:var(--green-glow);color:var(--green);font-size:11px;font-weight:600;padding:3px 10px;border-radius:99px;border:.5px solid rgba(29,158,117,.3)}
+.creds-badge .dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse-green 2s infinite}
+@keyframes pulse-green{0%,100%{opacity:1}50%{opacity:.4}}
+.creds-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.cred-field{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;position:relative}
+.cred-field label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);display:block;margin-bottom:6px}
+.cred-value{font-size:14px;font-weight:600;font-family:monospace;display:flex;align-items:center;gap:8px;min-height:22px}
+.cred-value.masked{color:var(--muted);letter-spacing:.15em;font-size:16px}
+.cred-copy{
+  position:absolute;top:10px;right:10px;background:none;border:none;
+  color:var(--muted);cursor:pointer;font-size:14px;transition:color .15s;padding:2px;
+}
+.cred-copy:hover{color:var(--blue)}
+.cred-reveal{
+  background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;
+  transition:color .15s;padding:2px;
+}
+.cred-reveal:hover{color:var(--text)}
+.creds-note{font-size:11px;color:var(--muted);margin-top:10px;display:flex;align-items:center;gap:6px}
+.creds-note i{color:var(--amber);font-size:13px}
+
+/* ── PAGES ── */
+.page{display:none;padding:26px;animation:fadeInUp .22s ease}
+.page.active{display:block}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── STAT CARDS ── */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.stat-card{
+  background:var(--bg2);border:.5px solid var(--border);border-radius:var(--radius);
+  padding:20px;transition:border-color .2s,transform .2s,box-shadow .2s;cursor:default;
+}
+.stat-card:hover{border-color:var(--border-blue);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.stat-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
+.stat-icon{width:36px;height:36px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:18px}
+.stat-icon.blue{background:var(--blue-glow);color:var(--blue)}
+.stat-icon.green{background:var(--green-glow);color:var(--green)}
+.stat-icon.red{background:var(--red-glow);color:var(--red)}
+.stat-icon.amber{background:rgba(245,158,11,.15);color:var(--amber)}
+.stat-change{font-size:11px;font-weight:600;padding:2px 7px;border-radius:20px}
+.stat-change.up{background:rgba(29,158,117,.15);color:var(--green)}
+.stat-change.down{background:rgba(224,82,82,.12);color:var(--red)}
+.stat-change.neutral{background:rgba(255,255,255,.07);color:var(--muted)}
+.stat-num{font-family:var(--font-display);font-size:1.65rem;font-weight:700;line-height:1.1;margin-bottom:4px}
+.stat-label{font-size:12px;color:var(--muted)}
+
+/* ── LAYOUT ── */
+.dashboard-grid{display:grid;grid-template-columns:1fr 310px;gap:18px;margin-bottom:22px}
+.dashboard-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:22px}
+
+/* ── CARD ── */
+.card{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--radius);padding:22px;transition:border-color .2s}
+.card:hover{border-color:rgba(255,255,255,.12)}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.card-title{font-family:var(--font-display);font-size:15px;font-weight:600}
+.card-action{font-size:12px;color:var(--blue);text-decoration:none;display:flex;align-items:center;gap:4px;transition:opacity .15s}
+.card-action:hover{opacity:.75}
+
+/* ── PROGRESS ── */
+.progress-item{margin-bottom:16px}
+.progress-item:last-child{margin-bottom:0}
+.progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.progress-label{font-size:13px;color:var(--muted)}
+.progress-values{display:flex;align-items:center;gap:8px;font-size:13px}
+.progress-current{font-weight:600}
+.progress-target{color:var(--muted)}
+.progress-bar{height:6px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;border-radius:99px;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+.progress-fill.green{background:var(--green)}
+.progress-fill.blue{background:var(--blue)}
+.progress-fill.red{background:var(--red)}
+.progress-fill.amber{background:var(--amber)}
+
+/* ── CHART ── */
+.chart-wrap{position:relative;height:200px}
+canvas{width:100%!important}
+
+/* ── PHASE BADGE ── */
+.account-phase{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px}
+.account-phase.evaluation{background:rgba(245,158,11,.15);color:var(--amber);border:.5px solid rgba(245,158,11,.3)}
+.account-phase.funded{background:var(--green-glow);color:var(--green);border:.5px solid rgba(29,158,117,.3)}
+.account-phase.pending{background:var(--blue-glow);color:var(--blue);border:.5px solid var(--border-blue)}
+.account-phase.rejected{background:var(--red-glow);color:var(--red);border:.5px solid rgba(224,82,82,.3)}
+.phase-dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+
+/* ── RULES ── */
+.rules-list{display:flex;flex-direction:column;gap:10px}
+.rule-row{display:flex;align-items:center;gap:12px;padding:11px 13px;background:var(--bg);border-radius:var(--radius-sm);border:.5px solid var(--border);transition:border-color .15s}
+.rule-row:hover{border-color:rgba(255,255,255,.12)}
+.rule-icon{font-size:16px;flex-shrink:0}
+.rule-icon.pass{color:var(--green)}
+.rule-icon.fail{color:var(--red)}
+.rule-icon.warn{color:var(--amber)}
+.rule-body{flex:1}
+.rule-name{font-size:13px;font-weight:500;margin-bottom:1px}
+.rule-desc{font-size:12px;color:var(--muted)}
+.rule-status{font-size:12px;font-weight:600}
+.rule-status.pass{color:var(--green)}
+.rule-status.fail{color:var(--red)}
+.rule-status.warn{color:var(--amber)}
+
+/* ── TRADES TABLE ── */
+.trades-table{width:100%;border-collapse:collapse}
+.trades-table th{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:0 0 12px;text-align:left;border-bottom:.5px solid var(--border)}
+.trades-table td{padding:12px 0;font-size:13px;border-bottom:.5px solid var(--border);vertical-align:middle}
+.trades-table tr:last-child td{border-bottom:none}
+.trade-pair{font-weight:600;font-size:13px}
+.trade-type{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px}
+.trade-type.buy{background:rgba(29,158,117,.15);color:var(--green)}
+.trade-type.sell{background:rgba(224,82,82,.12);color:var(--red)}
+.trade-pnl{font-weight:700}
+.trade-pnl.pos{color:var(--green)}
+.trade-pnl.neg{color:var(--red)}
+
+/* ── PAYOUT ── */
+.payout-highlight{
+  background:linear-gradient(135deg,rgba(55,138,221,.12) 0%,rgba(29,158,117,.08) 100%);
+  border:.5px solid var(--border-blue);border-radius:var(--radius);
+  padding:22px;text-align:center;
+}
+.payout-highlight .big-num{font-family:var(--font-display);font-size:2.2rem;font-weight:700;color:var(--green);line-height:1;margin-bottom:6px}
+.payout-highlight p{font-size:13px;color:var(--muted);margin-bottom:16px}
+.kyc-card{border-color:var(--border-blue)}
+.kyc-status-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.kyc-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:700}
+.kyc-badge.unsubmitted{background:rgba(255,255,255,.07);color:var(--muted);border:.5px solid var(--border)}
+.kyc-badge.pending{background:rgba(245,158,11,.15);color:var(--amber);border:.5px solid rgba(245,158,11,.3)}
+.kyc-badge.approved{background:var(--green-glow);color:var(--green);border:.5px solid rgba(29,158,117,.3)}
+.kyc-badge.rejected{background:var(--red-glow);color:var(--red);border:.5px solid rgba(224,82,82,.3)}
+.kyc-form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.kyc-form label{display:block;font-size:11px;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
+.kyc-form input,.kyc-form select{
+  width:100%;padding:10px 12px;border-radius:var(--radius-sm);
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  color:var(--text);font-family:var(--font-body);font-size:13px;outline:none
+}
+.kyc-form input:focus,.kyc-form select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(55,138,221,.1)}
+.kyc-form select option{background:var(--bg2);color:var(--text)}
+.kyc-form .full{grid-column:1/-1}
+.kyc-note{font-size:12px;color:var(--muted);margin:12px 0 0}
+.btn-sm{
+  display:inline-block;padding:9px 20px;background:var(--blue);color:#fff;
+  border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:500;
+  cursor:pointer;text-decoration:none;font-family:var(--font-body);
+  transition:background .2s,transform .15s;
+}
+.btn-sm:hover{background:var(--blue-dark);transform:translateY(-1px)}
+.btn-sm.outline{background:transparent;color:var(--text);border:.5px solid var(--border)}
+.btn-sm.outline:hover{background:rgba(255,255,255,.05)}
+.btn-sm:disabled{opacity:.55;cursor:not-allowed;transform:none}
+
+/* ── ACTIVITY ── */
+.activity-list{display:flex;flex-direction:column}
+.activity-item{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:.5px solid var(--border)}
+.activity-item:last-child{border-bottom:none}
+.activity-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;margin-top:2px}
+.activity-icon.blue{background:var(--blue-glow);color:var(--blue)}
+.activity-icon.green{background:var(--green-glow);color:var(--green)}
+.activity-icon.red{background:var(--red-glow);color:var(--red)}
+.activity-icon.amber{background:rgba(245,158,11,.15);color:var(--amber)}
+.activity-text{font-size:13px}
+.activity-text strong{font-weight:500}
+.activity-time{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* ── NOTIF PANEL ── */
+.notif-panel{
+  display:none;position:fixed;top:64px;right:28px;
+  width:320px;background:var(--bg2);border:.5px solid var(--border-blue);
+  border-radius:var(--radius);box-shadow:0 20px 60px rgba(0,0,0,.5);
+  z-index:300;overflow:hidden;
+}
+.notif-panel.open{display:block;animation:fadeInDown .15s ease}
+.notif-header{padding:14px 16px;border-bottom:.5px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.notif-header h4{font-size:14px;font-weight:600}
+.notif-mark{font-size:11px;color:var(--blue);cursor:pointer;background:none;border:none}
+.notif-list{max-height:360px;overflow-y:auto}
+.notif-item{padding:13px 16px;border-bottom:.5px solid var(--border);display:flex;gap:10px;align-items:flex-start}
+.notif-item:last-child{border-bottom:none}
+.notif-item.unread{background:rgba(55,138,221,.05)}
+.notif-dot-indicator{width:7px;height:7px;background:var(--blue);border-radius:50%;margin-top:5px;flex-shrink:0}
+.notif-dot-read{width:7px;height:7px;flex-shrink:0}
+.notif-item p{font-size:12px;color:var(--muted);line-height:1.5}
+.notif-item p strong{color:var(--text)}
+.notif-item-time{font-size:10px;color:var(--muted);margin-top:3px}
+
+/* ── CHALLENGE BANNER ── */
+.challenge-banner{
+  background:linear-gradient(135deg,rgba(55,138,221,.1),rgba(24,95,165,.06));
+  border:.5px solid var(--border-blue);border-radius:var(--radius);
+  padding:18px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  margin-bottom:22px;
+}
+.challenge-banner h3{font-family:var(--font-display);font-size:15px;margin-bottom:4px}
+.challenge-banner p{font-size:13px;color:var(--muted)}
+
+/* ── EMPTY STATE ── */
+.empty-state{text-align:center;padding:50px 20px;color:var(--muted)}
+.empty-state i{font-size:42px;margin-bottom:12px;opacity:.4;display:block}
+.empty-state p{font-size:14px}
+
+/* ── SIDEBAR OVERLAY ── */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:150}
+
+/* ── PROFILE OVERLAY ── */
+.profile-overlay{display:none;position:fixed;inset:0;z-index:205;background:transparent}
+.profile-overlay.open{display:block}
+
+/* ── COPY TOAST ── */
+.copy-toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:#1a2235;border:1px solid var(--border-blue);border-radius:var(--radius-sm);
+  padding:10px 18px;font-size:13px;color:var(--text);
+  transition:transform .25s;z-index:999;white-space:nowrap;pointer-events:none;
+}
+.copy-toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ── PENDING PULSE ── */
+@keyframes pendingPulse{0%,100%{opacity:1}50%{opacity:.6}}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1100px){
+  .stat-row{grid-template-columns:repeat(2,1fr)}
+  .dashboard-grid{grid-template-columns:1fr}
+  .dashboard-grid-3{grid-template-columns:1fr 1fr}
+  .creds-grid{grid-template-columns:1fr 1fr}
+  .kyc-form{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-overlay.open{display:block}
+  .main{margin-left:0}
+  .hamburger{display:flex}
+  .stat-row{grid-template-columns:1fr 1fr}
+  .dashboard-grid-3{grid-template-columns:1fr}
+  .page{padding:14px}
+  .topbar{padding:0 14px}
+  .challenge-banner{flex-direction:column;align-items:flex-start}
+  .creds-grid{grid-template-columns:1fr}
+  .kyc-form{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  .stat-row{grid-template-columns:1fr}
+}
+
+/* scrollbar */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:99px}
+</style>
+</head>
+<body>
+
+<div class="sidebar-overlay" id="overlay" onclick="closeSidebar()"></div>
+<div class="profile-overlay" id="profileOverlay" onclick="closeProfile()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <a href="SETup.html" class="sidebar-logo">
+    <div class="logo-mark">FB</div>
+    The Funded Best
+  </a>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Overview</div>
+    <a class="nav-item active" onclick="showPage('overview',this)">
+      <i class="ti ti-layout-dashboard"></i> Dashboard
+    </a>
+    <a class="nav-item" onclick="showPage('trades',this)">
+      <i class="ti ti-chart-candle"></i> My Trades
+    </a>
+    <a class="nav-item" onclick="showPage('account',this)">
+      <i class="ti ti-briefcase"></i> Account Status
+    </a>
+
+    <div class="nav-section-label">Finance</div>
+    <a class="nav-item" onclick="showPage('payouts',this)">
+      <i class="ti ti-cash"></i> Payouts
+    </a>
+    <a class="nav-item" href="challenges.html">
+      <i class="ti ti-rocket"></i> Get Funded
+    </a>
+
+    <div class="nav-section-label">Help</div>
+    <a class="nav-item" href="rules.html">
+      <i class="ti ti-book"></i> Rules
+    </a>
+    <a class="nav-item" href="support.html">
+      <i class="ti ti-headset"></i> Support <span class="badge">24/7</span>
+    </a>
+    <a class="nav-item" href="faq.html">
+      <i class="ti ti-help-circle"></i> FAQ
+    </a>
+  </nav>
+
+  <div class="sidebar-user" onclick="toggleProfile()">
+    <div class="user-avatar" id="sidebarAvatar">?</div>
+    <div>
+      <div class="user-name" id="sidebarName">Trader</div>
+      <div class="user-role">View profile</div>
+    </div>
+    <i class="ti ti-chevron-up arrow" id="profileArrow"></i>
+    <button class="logout-btn" onclick="event.stopPropagation();logout()" title="Sign out"><i class="ti ti-logout"></i></button>
+  </div>
+</aside>
+
+<!-- PROFILE DRAWER -->
+<div class="profile-drawer" id="profileDrawer">
+  <div class="profile-drawer-header">
+    <h4><i class="ti ti-user-circle"></i> My Profile</h4>
+    <button class="drawer-close" onclick="closeProfile()"><i class="ti ti-x"></i></button>
+  </div>
+  <div class="profile-body">
+    <div class="profile-avatar-row">
+      <div class="profile-big-avatar" id="profileBigAvatar">?</div>
+      <div class="profile-name-block">
+        <div class="pname" id="profileName">Trader</div>
+        <div class="prole"><i class="ti ti-chart-candle"></i> Challenge Trader</div>
+      </div>
+    </div>
+
+    <div class="profile-field">
+      <label><i class="ti ti-user"></i> Full Name</label>
+      <div class="val" id="profileNameDisplay">
+        <span id="profileFieldName">—</span>
+        <button class="field-btn" onclick="editProfileName()" title="Edit name"><i class="ti ti-pencil"></i></button>
+      </div>
+      <div class="val editing" id="profileNameEdit" style="display:none">
+        <input type="text" id="profileNameInput" placeholder="Your full name"/>
+        <button class="field-btn" onclick="saveProfileName()" title="Save"><i class="ti ti-check" style="color:var(--green)"></i></button>
+        <button class="field-btn" onclick="cancelProfileName()" title="Cancel"><i class="ti ti-x" style="color:var(--red)"></i></button>
+      </div>
+    </div>
+
+    <div class="profile-field">
+      <label><i class="ti ti-mail"></i> Email Address</label>
+      <div class="val"><span id="profileFieldEmail">—</span></div>
+    </div>
+
+    <div class="profile-field" id="profilePasswordField">
+      <label><i class="ti ti-lock"></i> Password</label>
+      <div class="val">
+        <span class="masked" id="profileFieldPassword">••••••••••</span>
+        <button class="field-btn" onclick="togglePasswordReveal()" id="profilePassToggle" title="Show password"><i class="ti ti-eye"></i></button>
+      </div>
+    </div>
+
+    <div class="profile-field">
+      <label><i class="ti ti-calendar"></i> Member Since</label>
+      <div class="val"><span id="profileFieldSince">—</span></div>
+    </div>
+
+    <div class="profile-field">
+      <label><i class="ti ti-fingerprint"></i> Account ID</label>
+      <div class="val"><span id="profileFieldUid" style="font-family:monospace;font-size:12px;color:var(--blue)">—</span></div>
+    </div>
+
+    <div class="profile-since">The Funded Best · <strong id="profileFieldRole">Challenge Trader</strong></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- LOADING OVERLAY — shown until Firestore data arrives -->
+  <div class="dashboard-loading" id="dashboardLoading">
+    <div class="loading-inner">
+      <div class="loading-logo">FB</div>
+      <div class="loading-step" id="loadingStep">Signing you in…</div>
+      <div class="loading-substep" id="loadingSubstep">Verifying your session</div>
+      <div class="loading-track"><div class="loading-fill" id="loadingFill"></div></div>
+      <div class="loading-skels">
+        <div class="loading-skel"></div>
+        <div class="loading-skel"></div>
+        <div class="loading-skel"></div>
+        <div class="loading-skel"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="topbar-btn hamburger" onclick="openSidebar()"><i class="ti ti-menu-2"></i></button>
+      <span class="topbar-greeting">Good <span id="timeGreeting">morning</span>, <strong id="topbarName">Trader</strong> 👋</span>
+    </div>
+    <div class="topbar-right">
+      <div class="acc-switcher" id="accSwitcher" style="display:none">
+        <button class="acc-switcher-btn" onclick="toggleAccSwitcher()">
+          <i class="ti ti-briefcase"></i>
+          <span class="acc-label" id="accSwitcherLabel">Account</span>
+          <i class="ti ti-chevron-down"></i>
+        </button>
+        <div class="acc-dropdown" id="accDropdown"></div>
+      </div>
+      <div class="topbar-btn" onclick="toggleNotif()" title="Notifications">
+        <i class="ti ti-bell"></i>
+        <span class="notif-dot" id="notifDot"></span>
+      </div>
+      <button class="btn-sm outline" id="dashboardRefreshBtn" onclick="refreshDashboard()" title="Refresh dashboard">
+        <i class="ti ti-refresh"></i> Refresh
+      </button>
+      <a href="challenges.html" class="btn-sm">+ New Challenge</a>
+    </div>
+  </header>
+
+  <!-- NOTIF PANEL -->
+  <div class="notif-panel" id="notifPanel">
+    <div class="notif-header">
+      <h4>Notifications</h4>
+      <button class="notif-mark" onclick="markAllRead()">Mark all read</button>
+    </div>
+    <div class="notif-list">
+      <div class="notif-item unread" id="notifWelcome">
+        <span class="notif-dot-indicator"></span>
+        <div>
+          <p>Welcome to <strong>The Funded Best</strong>! Your journey to a funded account starts now.</p>
+          <div class="notif-item-time">Just now</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PAGE: OVERVIEW ═══ -->
+  <div class="page active" id="page-overview">
+
+    <div class="challenge-banner" id="challenge-banner">
+      <div>
+        <h3>🚀 <span id="bannerType">One-Step Evaluation</span> · <span id="bannerSize">$100,000</span></h3>
+        <p>Hit 10% profit target — you're <strong id="bannerPct">0%</strong> of the way there. Keep it up!</p>
+      </div>
+      <a href="challenges.html" class="btn-sm">Upgrade account</a>
+    </div>
+
+    <!-- MT5 CREDENTIALS (shown only when active) -->
+    <div class="creds-card" id="credsCard" style="display:none">
+      <div class="creds-card-header">
+        <div class="creds-card-title">
+          <i class="ti ti-key"></i> MT5 Trading Credentials
+        </div>
+        <span class="creds-badge"><span class="dot"></span>Account Active</span>
+      </div>
+      <div class="creds-grid">
+        <div class="cred-field">
+          <label>Server</label>
+          <div class="cred-value" id="credServer">—</div>
+          <button class="cred-copy" onclick="copyField('credServer','Server')" title="Copy server"><i class="ti ti-copy"></i></button>
+        </div>
+        <div class="cred-field">
+          <label>Login / Account ID</label>
+          <div class="cred-value" id="credLogin">—</div>
+          <button class="cred-copy" onclick="copyField('credLogin','Login')" title="Copy login"><i class="ti ti-copy"></i></button>
+        </div>
+        <div class="cred-field">
+          <label>Password</label>
+          <div class="cred-value masked" id="credPassword">••••••••</div>
+          <button class="cred-reveal" onclick="toggleCredPass()" title="Show/hide" style="position:absolute;top:10px;right:32px"><i class="ti ti-eye" id="credEyeIcon"></i></button>
+          <button class="cred-copy" onclick="copyField('credPassword','Password')" title="Copy password"><i class="ti ti-copy"></i></button>
+        </div>
+      </div>
+      <div class="creds-note">
+        <i class="ti ti-shield-lock"></i>
+        Keep these credentials private. Do not share them with anyone. Connect via MetaTrader 5.
+      </div>
+    </div>
+
+    <!-- STAT CARDS -->
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-icon blue"><i class="ti ti-wallet"></i></div>
+          <span class="stat-change neutral" id="statBalanceChange">—</span>
+        </div>
+        <div class="stat-num" id="statBalance">$0.00</div>
+        <div class="stat-label">Account Balance</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-icon green"><i class="ti ti-trending-up"></i></div>
+          <span class="stat-change neutral" id="statProfitChange">—</span>
+        </div>
+        <div class="stat-num" id="statProfit" style="color:var(--green)">$0.00</div>
+        <div class="stat-label">Total Profit</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-icon amber"><i class="ti ti-target"></i></div>
+          <span class="stat-change neutral" id="statTargetPct">0% done</span>
+        </div>
+        <div class="stat-num" id="statTarget">$0</div>
+        <div class="stat-label">Profit Target</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-icon red"><i class="ti ti-shield-exclamation"></i></div>
+          <span class="stat-change neutral" id="statDailyUsedPct">Used 0%</span>
+        </div>
+        <div class="stat-num" style="color:var(--amber)" id="statDailyUsed">$0</div>
+        <div class="stat-label">Daily Loss Used</div>
+      </div>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div class="dashboard-grid">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Equity Curve</span>
+          <div style="display:flex;gap:8px">
+            <button class="btn-sm outline" style="padding:5px 10px;font-size:11px" onclick="setChart('1W',this)">1W</button>
+            <button class="btn-sm outline" style="padding:5px 10px;font-size:11px;background:var(--blue-glow);color:var(--blue);border-color:var(--blue)" onclick="setChart('1M',this)">1M</button>
+            <button class="btn-sm outline" style="padding:5px 10px;font-size:11px" onclick="setChart('ALL',this)">All</button>
+          </div>
+        </div>
+        <div class="chart-wrap"><canvas id="equityChart"></canvas></div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div class="payout-highlight">
+          <div class="big-num" id="payoutEarned">$0.00</div>
+          <p id="payoutSummaryText">Your earned payout (80% split)<br>checking eligibility...</p>
+          <a href="#" id="overviewPayoutBtn" onclick="event.preventDefault(); showPage('payouts',null)" class="btn-sm">View payouts</a>
+        </div>
+        <div class="card" style="padding:16px">
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:13px;color:var(--muted)">Phase</span>
+              <span class="account-phase evaluation" id="mainPhaseBadge"><span class="phase-dot"></span>Phase 1</span>
+            </div>
+            <div style="display:flex;justify-content:space-between">
+              <span style="font-size:13px;color:var(--muted)">Account type</span>
+              <span style="font-size:13px;font-weight:500" id="infoType">One-Step</span>
+            </div>
+            <div style="display:flex;justify-content:space-between">
+              <span style="font-size:13px;color:var(--muted)">Account size</span>
+              <span style="font-size:13px;font-weight:500" id="infoSize">$100,000</span>
+            </div>
+            <div style="display:flex;justify-content:space-between">
+              <span style="font-size:13px;color:var(--muted)">Trading days</span>
+              <span style="font-size:13px;font-weight:500" id="infoTradingDays">0 days active</span>
+            </div>
+            <div style="display:flex;justify-content:space-between">
+              <span style="font-size:13px;color:var(--muted)">Platform</span>
+              <span style="font-size:13px;font-weight:500">MT5</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOWER GRID -->
+    <div class="dashboard-grid-3">
+      <!-- RULES -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Rules Compliance</span>
+          <span class="account-phase funded" style="font-size:10px" id="rulesPassingBadge"><span class="phase-dot"></span>5/5 Passing</span>
+        </div>
+        <div class="rules-list">
+          <div class="rule-row">
+            <i class="ti ti-circle-check rule-icon pass"></i>
+            <div class="rule-body">
+              <div class="rule-name">Max Daily Loss</div>
+              <div class="rule-desc" id="ruleDailyLimit">Limit: 3% / $3,000</div>
+            </div>
+            <span class="rule-status pass" id="ruleDailyUsed">$0 used</span>
+          </div>
+          <div class="rule-row">
+            <i class="ti ti-circle-check rule-icon pass"></i>
+            <div class="rule-body">
+              <div class="rule-name">Max Total Drawdown</div>
+              <div class="rule-desc" id="ruleDDLimit">Limit: 10% / $10,000</div>
+            </div>
+            <span class="rule-status pass" id="ruleDDUsed">$0 used</span>
+          </div>
+          <div class="rule-row">
+            <i class="ti ti-circle-check rule-icon pass"></i>
+            <div class="rule-body">
+              <div class="rule-name">Consistency Rule</div>
+              <div class="rule-desc">No trading day >15% of profit</div>
+            </div>
+            <span class="rule-status pass">No trades yet</span>
+          </div>
+          <div class="rule-row">
+            <i class="ti ti-circle-check rule-icon pass"></i>
+            <div class="rule-body">
+              <div class="rule-name">No Weekend Hold</div>
+              <div class="rule-desc">Close all by Friday</div>
+            </div>
+            <span class="rule-status pass">Compliant</span>
+          </div>
+          <div class="rule-row">
+            <i class="ti ti-circle-check rule-icon pass"></i>
+            <div class="rule-body">
+              <div class="rule-name">Lot Size Limit</div>
+              <div class="rule-desc">Max 10 lots/trade</div>
+            </div>
+            <span class="rule-status pass">No trades yet</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROGRESS -->
+      <div class="card">
+        <div class="card-header"><span class="card-title">Progress Targets</span></div>
+        <div class="progress-item">
+          <div class="progress-header">
+            <span class="progress-label">Profit Target</span>
+            <div class="progress-values"><span class="progress-current">$0</span><span class="progress-target">/ $10,000</span></div>
+          </div>
+          <div class="progress-bar"><div class="progress-fill green" style="width:0%"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-header">
+            <span class="progress-label">Daily Loss Used</span>
+            <div class="progress-values"><span class="progress-current">$0</span><span class="progress-target">/ $3,000</span></div>
+          </div>
+          <div class="progress-bar"><div class="progress-fill amber" style="width:0%"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-header">
+            <span class="progress-label">Total Drawdown</span>
+            <div class="progress-values"><span class="progress-current">$0</span><span class="progress-target">/ $10,000</span></div>
+          </div>
+          <div class="progress-bar"><div class="progress-fill blue" style="width:0%"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-header">
+            <span class="progress-label">Win Rate</span>
+            <div class="progress-values"><span class="progress-current">—</span><span class="progress-target">/ 0 trades</span></div>
+          </div>
+          <div class="progress-bar"><div class="progress-fill green" style="width:0%"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-header">
+            <span class="progress-label">Consistency Score</span>
+            <div class="progress-values"><span class="progress-current">—</span><span class="progress-target">max 15%</span></div>
+          </div>
+          <div class="progress-bar"><div class="progress-fill green" style="width:0%"></div></div>
+        </div>
+      </div>
+
+      <!-- ACTIVITY -->
+      <div class="card">
+        <div class="card-header"><span class="card-title">Recent Activity</span></div>
+        <div class="activity-list" id="activityList">
+          <div class="activity-item">
+            <div class="activity-icon blue"><i class="ti ti-shield-check"></i></div>
+            <div>
+              <div class="activity-text">Account <strong id="activityAccountStatus">created</strong></div>
+              <div class="activity-time" id="activityAccountTime">—</div>
+            </div>
+          </div>
+          <div class="activity-item" id="activityEmptyHint">
+            <div class="activity-icon amber"><i class="ti ti-info-circle"></i></div>
+            <div>
+              <div class="activity-text">No trades yet — start trading to see activity here.</div>
+              <div class="activity-time"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /page-overview -->
+
+  <!-- ═══ PAGE: TRADES ═══ -->
+  <div class="page" id="page-trades">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px">
+      <div>
+        <div style="font-family:var(--font-display);font-size:1.3rem;font-weight:700;margin-bottom:4px">My Trades</div>
+        <div style="font-size:13px;color:var(--muted)" id="tradesSummaryLine">No trades yet</div>
+      </div>
+      <button class="btn-sm outline">Export CSV</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px">
+      <div class="card" style="text-align:center;padding:16px">
+        <div class="stat-num" id="tradeNetPnl" style="font-family:var(--font-display);font-size:1.5rem;font-weight:700">$0</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px">Net P&amp;L</div>
+      </div>
+      <div class="card" style="text-align:center;padding:16px">
+        <div id="tradeWinRate" style="font-family:var(--font-display);font-size:1.5rem;font-weight:700">—</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px">Win Rate</div>
+      </div>
+      <div class="card" style="text-align:center;padding:16px">
+        <div id="tradeProfitFactor" style="font-family:var(--font-display);font-size:1.5rem;font-weight:700">—</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px">Profit Factor</div>
+      </div>
+      <div class="card" style="text-align:center;padding:16px">
+        <div id="tradeBest" style="font-family:var(--font-display);font-size:1.5rem;font-weight:700">$0</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px">Best Trade</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Trade History</span>
+        <span style="font-size:12px;color:var(--muted)" id="tradesShowingLine">Showing 0 of 0</span>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="trades-table">
+          <thead>
+            <tr><th>Pair</th><th>Type</th><th>Lots</th><th>Open</th><th>Close</th><th>Duration</th><th style="text-align:right">P&amp;L</th></tr>
+          </thead>
+          <tbody id="tradesBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PAGE: ACCOUNT ═══ -->
+  <div class="page" id="page-account">
+    <div style="font-family:var(--font-display);font-size:1.3rem;font-weight:700;margin-bottom:22px">Account Status</div>
+
+    <!-- Credentials section here too -->
+    <div class="creds-card" id="credsCardAccount" style="display:none">
+      <div class="creds-card-header">
+        <div class="creds-card-title"><i class="ti ti-key"></i> MT5 Trading Credentials</div>
+        <span class="creds-badge"><span class="dot"></span>Account Active</span>
+      </div>
+      <div class="creds-grid">
+        <div class="cred-field">
+          <label>Server</label>
+          <div class="cred-value" id="credServer2">—</div>
+          <button class="cred-copy" onclick="copyField('credServer2','Server')"><i class="ti ti-copy"></i></button>
+        </div>
+        <div class="cred-field">
+          <label>Login / Account ID</label>
+          <div class="cred-value" id="credLogin2">—</div>
+          <button class="cred-copy" onclick="copyField('credLogin2','Login')"><i class="ti ti-copy"></i></button>
+        </div>
+        <div class="cred-field">
+          <label>Password</label>
+          <div class="cred-value masked" id="credPassword2">••••••••</div>
+          <button class="cred-reveal" onclick="toggleCredPass2()" style="position:absolute;top:10px;right:32px"><i class="ti ti-eye" id="credEyeIcon2"></i></button>
+          <button class="cred-copy" onclick="copyField('credPassword2','Password')"><i class="ti ti-copy"></i></button>
+        </div>
+      </div>
+      <div class="creds-note"><i class="ti ti-shield-lock"></i> Keep these credentials private. Connect via MetaTrader 5.</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Account Details</span>
+          <span class="account-phase evaluation" id="accStatusBadge"><span class="phase-dot"></span>Phase 1</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;justify-content:space-between;padding-bottom:12px;border-bottom:.5px solid var(--border)">
+            <span style="font-size:13px;color:var(--muted)">Account ID</span>
+            <span style="font-size:13px;font-weight:600;font-family:monospace;color:var(--blue)" id="accAccountId">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding-bottom:12px;border-bottom:.5px solid var(--border)">
+            <span style="font-size:13px;color:var(--muted)">Challenge type</span>
+            <span style="font-size:13px;font-weight:500" id="accType">One-Step Evaluation</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding-bottom:12px;border-bottom:.5px solid var(--border)">
+            <span style="font-size:13px;color:var(--muted)">Account size</span>
+            <span style="font-size:13px;font-weight:500" id="accSize">$100,000</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding-bottom:12px;border-bottom:.5px solid var(--border)">
+            <span style="font-size:13px;color:var(--muted)">Trading platform</span>
+            <span style="font-size:13px;font-weight:500" id="accPlatform">MetaTrader 5</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding-bottom:12px;border-bottom:.5px solid var(--border)">
+            <span style="font-size:13px;color:var(--muted)">Leverage</span>
+            <span style="font-size:13px;font-weight:500" id="accLeverage">1:100</span>
+          </div>
+          <div style="display:flex;justify-content:space-between">
+            <span style="font-size:13px;color:var(--muted)">Profit split</span>
+            <span style="font-size:13px;font-weight:500;color:var(--green)" id="accProfitSplit">80%</span>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Performance Summary</span></div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;justify-content:space-between;padding-bottom:12px;border-bottom:.5px solid var(--border)">
+            <span style="font-size:13px;color:var(--muted)">Starting balance</span>
+            <span style="font-size:13px;font-weight:500" id="perfStartBalance">$100,000</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding-bottom:12px;border-bottom:.5px solid var(--border)">
+            <span style="font-size:13px;color:var(--muted)">Current balance</span>
+            <span style="font-size:13px;font-weight:600;color:var(--green)" id="perfCurrentBalance">$100,000.00</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding-bottom:12px;border-bottom:.5px solid var(--border)">
+            <span style="font-size:13px;color:var(--muted)">Best day</span>
+            <span style="font-size:13px;font-weight:500;color:var(--green)" id="perfBestDay">$0</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding-bottom:12px;border-bottom:.5px solid var(--border)">
+            <span style="font-size:13px;color:var(--muted)">Worst day</span>
+            <span style="font-size:13px;font-weight:500;color:var(--red)" id="perfWorstDay">$0</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding-bottom:12px;border-bottom:.5px solid var(--border)">
+            <span style="font-size:13px;color:var(--muted)">Total trades</span>
+            <span style="font-size:13px;font-weight:500" id="perfTotalTrades">0</span>
+          </div>
+          <div style="display:flex;justify-content:space-between">
+            <span style="font-size:13px;color:var(--muted)">Active since</span>
+            <span style="font-size:13px;font-weight:500" id="perfActiveSince">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><span class="card-title">Rules Breakdown</span><a href="rules.html" class="card-action">Full rules <i class="ti ti-arrow-right"></i></a></div>
+      <div class="rules-list">
+        <div class="rule-row"><i class="ti ti-circle-check rule-icon pass"></i><div class="rule-body"><div class="rule-name">Maximum Daily Loss</div><div class="rule-desc" id="breakdownDailyDesc">3% of initial balance — $3,000 max per day</div></div><span class="rule-status pass" id="breakdownDailyUsed">✓ $0 used today</span></div>
+        <div class="rule-row"><i class="ti ti-circle-check rule-icon pass"></i><div class="rule-body"><div class="rule-name">Maximum Total Drawdown</div><div class="rule-desc" id="breakdownDDDesc">10% from peak — $10,000 max total</div></div><span class="rule-status pass" id="breakdownDDUsed">✓ $0 used</span></div>
+        <div class="rule-row"><i class="ti ti-circle-check rule-icon pass"></i><div class="rule-body"><div class="rule-name">Consistency Rule</div><div class="rule-desc">No single trading day can be >15% of total profit</div></div><span class="rule-status pass">✓ No trades yet</span></div>
+        <div class="rule-row"><i class="ti ti-circle-check rule-icon pass"></i><div class="rule-body"><div class="rule-name">No Weekend Holding</div><div class="rule-desc">All trades must close before Friday 21:00 UTC</div></div><span class="rule-status pass">✓ Compliant</span></div>
+        <div class="rule-row"><i class="ti ti-circle-check rule-icon pass"></i><div class="rule-body"><div class="rule-name">No Copying / Bots</div><div class="rule-desc">Manual trading only — no signal services</div></div><span class="rule-status pass">✓ Manual trading detected</span></div>
+        <div class="rule-row" id="tradingDaysRuleRow" style="display:none"><i class="ti ti-circle-check rule-icon pass" id="tradingDaysRuleIcon"></i><div class="rule-body"><div class="rule-name">Minimum Trading Days</div><div class="rule-desc" id="tradingDaysRuleDesc">Equity must move ≥0.5% per day to qualify</div></div><span class="rule-status pass" id="tradingDaysRuleStatus">✓ 0/0 days</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PAGE: PAYOUTS ═══ -->
+  <div class="page" id="page-payouts">
+    <div style="font-family:var(--font-display);font-size:1.3rem;font-weight:700;margin-bottom:22px">Payouts</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px">
+      <div class="payout-highlight" style="padding:20px">
+        <div class="big-num" id="payoutsPagePayoutEarned" style="font-size:1.8rem">$0.00</div>
+        <p style="margin-bottom:12px">Earned (80% split)</p>
+        <button class="btn-sm" id="payoutRequestBtn" disabled style="opacity:.5;cursor:not-allowed">Checking eligibility</button>
+      </div>
+      <div class="card" style="text-align:center;padding:20px">
+        <div id="payoutTotalWithdrawn" style="font-family:var(--font-display);font-size:1.8rem;font-weight:700;color:var(--green)">$0</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:6px">Total withdrawn</div>
+      </div>
+      <div class="card" style="text-align:center;padding:20px">
+        <div style="font-family:var(--font-display);font-size:1.8rem;font-weight:700">80%</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:6px">Your profit split</div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:22px" id="payoutWalletCard">
+      <div class="card-header"><span class="card-title">Payout Wallet</span></div>
+      <div class="kyc-form">
+        <div class="full">
+          <label>USDT TRC20 address</label>
+          <input type="text" id="payoutTrc20Address" autocomplete="off" placeholder="T..." maxlength="34"/>
+          <div class="kyc-note">Enter your USDT TRC20 wallet address. Admin will use this address when reviewing your payout request.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Payout History</span></div>
+      <div class="empty-state" id="payoutHistoryEmpty">
+        <i class="ti ti-cash-off"></i>
+        <p>No payouts yet.</p>
+      </div>
+    </div>
+    <div class="card kyc-card" style="margin-top:18px" id="kycCard">
+      <div class="card-header">
+        <span class="card-title">KYC Verification</span>
+        <span class="kyc-badge unsubmitted" id="kycStatusBadge"><span class="phase-dot"></span>Not submitted</span>
+      </div>
+      <div class="kyc-status-row">
+        <div style="font-size:13px;color:var(--muted)" id="kycStatusText">Submit your identity details before requesting a payout.</div>
+        <button class="btn-sm outline" id="kycEditBtn" onclick="enableKycForm()" style="display:none">Update KYC</button>
+      </div>
+      <div class="kyc-form" id="kycForm">
+        <div>
+          <label>Legal full name</label>
+          <input type="text" id="kycFullName" autocomplete="name" placeholder="Name as on ID"/>
+        </div>
+        <div>
+          <label>Date of birth</label>
+          <input type="date" id="kycDob"/>
+        </div>
+        <div>
+          <label>Country</label>
+          <input type="text" id="kycCountry" autocomplete="country-name" placeholder="Country"/>
+        </div>
+        <div>
+          <label>ID type</label>
+          <select id="kycIdType">
+            <option value="Passport">Passport</option>
+            <option value="National ID">National ID</option>
+            <option value="Driver License">Driver License</option>
+          </select>
+        </div>
+        <div class="full">
+          <label>ID number</label>
+          <input type="text" id="kycIdNumber" autocomplete="off" placeholder="Government ID number"/>
+        </div>
+        <div class="full">
+          <label>Upload ID proof</label>
+          <input type="file" id="kycDocument" accept="image/*,.pdf"/>
+          <div class="kyc-note" id="kycDocHint">Use a clear image or PDF under 700 KB.</div>
+        </div>
+        <div class="full" style="display:flex;justify-content:flex-end">
+          <button class="btn-sm" id="kycSubmitBtn" onclick="submitKyc()">Submit KYC</button>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:18px">
+      <div class="card-header"><span class="card-title">How payouts work</span></div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:4px">
+        <div style="padding:16px;background:var(--bg);border-radius:var(--radius-sm);border:.5px solid var(--border)">
+          <div style="font-size:22px;margin-bottom:8px">🏆</div>
+          <div style="font-size:13px;font-weight:500;margin-bottom:4px" id="payoutStepTitle">Meet account requirements</div>
+          <div style="font-size:12px;color:var(--muted)" id="payoutStepDesc">Stay within your account rules to become eligible.</div>
+        </div>
+        <div style="padding:16px;background:var(--bg);border-radius:var(--radius-sm);border:.5px solid var(--border)">
+          <div style="font-size:22px;margin-bottom:8px">💸</div>
+          <div style="font-size:13px;font-weight:500;margin-bottom:4px">Request payout</div>
+          <div style="font-size:12px;color:var(--muted)">Submit a withdrawal after your funded account is active.</div>
+        </div>
+        <div style="padding:16px;background:var(--bg);border-radius:var(--radius-sm);border:.5px solid var(--border)">
+          <div style="font-size:22px;margin-bottom:8px">⛓️</div>
+          <div style="font-size:13px;font-weight:500;margin-bottom:4px">On-chain proof</div>
+          <div style="font-size:12px;color:var(--muted)">Every payout is logged on-chain with a transaction hash.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- COPY TOAST -->
+<div class="copy-toast" id="copyToast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+firebase.initializeApp(FIREBASE_CONFIG);
+const auth = firebase.auth();
+const db   = firebase.firestore();
+
+const h = new Date().getHours();
+document.getElementById('timeGreeting').textContent = h < 12 ? 'morning' : h < 17 ? 'afternoon' : 'evening';
+
+// ── CREDENTIALS state ───────────────────────────────────────
+let credData = { server:'', login:'', password:'' };
+let credPassVisible = false;
+let currentUserId = null;
+let currentDashboardAccount = null;
+let currentUserKyc = { status:'unsubmitted' };
+
+function showCredentials(cred) {
+  if (!cred || !cred.mt5Login) return;
+  credData = {
+    server:   cred.mt5Server   || '—',
+    login:    cred.mt5Login    || '—',
+    password: cred.mt5Password || '—'
+  };
+  ['credServer','credServer2'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = credData.server;
+  });
+  ['credLogin','credLogin2'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = credData.login;
+  });
+  // Show cards
+  ['credsCard','credsCardAccount'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = '';
+  });
+}
+
+function toggleCredPass() {
+  credPassVisible = !credPassVisible;
+  const el  = document.getElementById('credPassword');
+  const ico = document.getElementById('credEyeIcon');
+  if (credPassVisible) {
+    el.textContent = credData.password;
+    el.classList.remove('masked');
+    ico.className = 'ti ti-eye-off';
+  } else {
+    el.textContent = '••••••••';
+    el.classList.add('masked');
+    ico.className = 'ti ti-eye';
+  }
+}
+function toggleCredPass2() {
+  const el  = document.getElementById('credPassword2');
+  const ico = document.getElementById('credEyeIcon2');
+  if (el.classList.contains('masked')) {
+    el.textContent = credData.password;
+    el.classList.remove('masked');
+    ico.className = 'ti ti-eye-off';
+  } else {
+    el.textContent = '••••••••';
+    el.classList.add('masked');
+    ico.className = 'ti ti-eye';
+  }
+}
+
+function copyField(elId, label) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  const text = el.classList.contains('masked') ? credData.password : el.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const t = document.getElementById('copyToast');
+    t.textContent = '✓ ' + label + ' copied to clipboard';
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+  });
+}
+
+// ── PROFILE DRAWER ───────────────────────────────────────────
+let profileOpen = false;
+function toggleProfile() {
+  profileOpen = !profileOpen;
+  document.getElementById('profileDrawer').classList.toggle('open', profileOpen);
+  document.getElementById('profileOverlay').classList.toggle('open', profileOpen);
+  document.getElementById('profileArrow').style.transform = profileOpen ? 'rotate(0deg)' : '';
+}
+function closeProfile() {
+  profileOpen = false;
+  document.getElementById('profileDrawer').classList.remove('open');
+  document.getElementById('profileOverlay').classList.remove('open');
+}
+
+let storedPassword = null;
+let passwordVisible = false;
+
+function populateProfile(user, createdAt, storedPass) {
+  const name = user.displayName || 'Trader';
+  const email = user.email || '—';
+  const uid = user.uid || '—';
+
+  document.getElementById('profileName').textContent = name;
+  document.getElementById('profileFieldName').textContent = name;
+  document.getElementById('profileFieldEmail').textContent = email;
+  document.getElementById('profileFieldUid').textContent = uid.slice(0,16) + '…';
+  document.getElementById('profileFieldSince').textContent = createdAt
+    ? new Date(createdAt).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})
+    : '—';
+
+  const bigAv = document.getElementById('profileBigAvatar');
+  if (user.photoURL) bigAv.innerHTML = `<img src="${user.photoURL}" alt="avatar">`;
+  else bigAv.textContent = name.slice(0,2).toUpperCase();
+
+  // Password field — only meaningful for email/password accounts
+  const isPasswordAccount = user.providerData.some(p => p.providerId === 'password');
+  storedPassword = storedPass || null;
+  passwordVisible = false;
+  const passField   = document.getElementById('profilePasswordField');
+  const passSpan    = document.getElementById('profileFieldPassword');
+  const passToggle  = document.getElementById('profilePassToggle');
+  if (isPasswordAccount && storedPassword) {
+    passField.style.display = '';
+    passSpan.textContent = '••••••••••';
+    passSpan.classList.add('masked');
+    passToggle.style.display = '';
+    passToggle.innerHTML = '<i class="ti ti-eye"></i>';
+    passToggle.title = 'Show password';
+  } else {
+    // No stored password (Google sign-in, or signed up before this feature)
+    passField.style.display = '';
+    passSpan.textContent = isPasswordAccount ? 'Not available' : 'Signed in with Google';
+    passSpan.classList.remove('masked');
+    passToggle.style.display = 'none';
+  }
+}
+
+function togglePasswordReveal() {
+  if (!storedPassword) return;
+  passwordVisible = !passwordVisible;
+  const passSpan   = document.getElementById('profileFieldPassword');
+  const passToggle = document.getElementById('profilePassToggle');
+  if (passwordVisible) {
+    passSpan.textContent = storedPassword;
+    passSpan.classList.remove('masked');
+    passToggle.innerHTML = '<i class="ti ti-eye-off"></i>';
+    passToggle.title = 'Hide password';
+  } else {
+    passSpan.textContent = '••••••••••';
+    passSpan.classList.add('masked');
+    passToggle.innerHTML = '<i class="ti ti-eye"></i>';
+    passToggle.title = 'Show password';
+  }
+}
+
+// ── EDITABLE PROFILE NAME ─────────────────────────────────────
+function editProfileName() {
+  const current = document.getElementById('profileFieldName').textContent;
+  document.getElementById('profileNameInput').value = current === '—' ? '' : current;
+  document.getElementById('profileNameDisplay').style.display = 'none';
+  document.getElementById('profileNameEdit').style.display = 'flex';
+  document.getElementById('profileNameInput').focus();
+}
+function cancelProfileName() {
+  document.getElementById('profileNameDisplay').style.display = 'flex';
+  document.getElementById('profileNameEdit').style.display = 'none';
+}
+async function saveProfileName() {
+  const newName = document.getElementById('profileNameInput').value.trim();
+  if (!newName) { showCopyToast('Name cannot be empty'); return; }
+  const user = auth.currentUser;
+  if (!user) return;
+  try {
+    await user.updateProfile({ displayName: newName });
+    await db.collection('users').doc(user.uid).set({ name: newName }, { merge: true });
+    document.getElementById('profileName').textContent = newName;
+    document.getElementById('profileFieldName').textContent = newName;
+    document.getElementById('sidebarName').textContent = newName;
+    document.getElementById('topbarName').textContent = newName.split(' ')[0];
+    const av = document.getElementById('sidebarAvatar');
+    if (!user.photoURL) av.textContent = newName.slice(0,2).toUpperCase();
+    const bigAv = document.getElementById('profileBigAvatar');
+    if (!user.photoURL) bigAv.textContent = newName.slice(0,2).toUpperCase();
+    cancelProfileName();
+    showCopyToast('✓ Name updated');
+  } catch(err) {
+    showCopyToast('Error: ' + err.message);
+  }
+}
+function showCopyToast(msg) {
+  const t = document.getElementById('copyToast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function normalizeKyc(data) {
+  const kyc = data?.kyc || {};
+  return {
+    status: data?.kycStatus || kyc.status || 'unsubmitted',
+    fullName: kyc.fullName || '',
+    dob: kyc.dob || '',
+    country: kyc.country || '',
+    idType: kyc.idType || 'Passport',
+    idNumber: kyc.idNumber || '',
+    documentName: kyc.documentName || '',
+    documentData: kyc.documentData || '',
+    reviewedNote: kyc.reviewedNote || ''
+  };
+}
+
+function renderKycStatus() {
+  const badge = document.getElementById('kycStatusBadge');
+  const text = document.getElementById('kycStatusText');
+  const form = document.getElementById('kycForm');
+  const editBtn = document.getElementById('kycEditBtn');
+  if (!badge || !text || !form) return;
+  const status = currentUserKyc.status || 'unsubmitted';
+  const labels = {
+    unsubmitted: 'Not submitted',
+    pending: 'Pending review',
+    approved: 'Approved',
+    rejected: 'Rejected'
+  };
+  badge.className = 'kyc-badge ' + status;
+  badge.innerHTML = `<span class="phase-dot"></span>${labels[status] || labels.unsubmitted}`;
+  document.getElementById('kycFullName').value = currentUserKyc.fullName || '';
+  document.getElementById('kycDob').value = currentUserKyc.dob || '';
+  document.getElementById('kycCountry').value = currentUserKyc.country || '';
+  document.getElementById('kycIdType').value = currentUserKyc.idType || 'Passport';
+  document.getElementById('kycIdNumber').value = currentUserKyc.idNumber || '';
+  document.getElementById('kycDocHint').textContent = currentUserKyc.documentName
+    ? `Current file: ${currentUserKyc.documentName}`
+    : 'Use a clear image or PDF under 700 KB.';
+  if (status === 'approved') {
+    text.textContent = 'Your identity is verified. You can request payouts when your account is eligible.';
+    form.style.display = 'none';
+    editBtn.style.display = '';
+  } else if (status === 'pending') {
+    text.textContent = 'Your KYC is with admin for review. Payout requests unlock after approval.';
+    form.style.display = 'none';
+    editBtn.style.display = '';
+  } else if (status === 'rejected') {
+    text.textContent = currentUserKyc.reviewedNote || 'Your KYC was rejected. Please update and submit again.';
+    form.style.display = 'grid';
+    editBtn.style.display = 'none';
+  } else {
+    text.textContent = 'Submit your identity details before requesting a payout.';
+    form.style.display = 'grid';
+    editBtn.style.display = 'none';
+  }
+}
+
+function enableKycForm() {
+  const form = document.getElementById('kycForm');
+  const editBtn = document.getElementById('kycEditBtn');
+  if (form) form.style.display = 'grid';
+  if (editBtn) editBtn.style.display = 'none';
+}
+
+function readKycFile(file) {
+  return new Promise((resolve, reject) => {
+    if (!file) { resolve({ name: currentUserKyc.documentName || '', data: currentUserKyc.documentData || '' }); return; }
+    if (file.size > 700 * 1024) { reject(new Error('KYC document must be under 700 KB.')); return; }
+    const reader = new FileReader();
+    reader.onload = () => resolve({ name: file.name, data: reader.result });
+    reader.onerror = () => reject(new Error('Could not read KYC document.'));
+    reader.readAsDataURL(file);
+  });
+}
+
+async function submitKyc() {
+  if (!currentUserId) return;
+  const fullName = document.getElementById('kycFullName').value.trim();
+  const dob = document.getElementById('kycDob').value;
+  const country = document.getElementById('kycCountry').value.trim();
+  const idType = document.getElementById('kycIdType').value;
+  const idNumber = document.getElementById('kycIdNumber').value.trim();
+  const file = document.getElementById('kycDocument').files[0];
+  if (!fullName || !dob || !country || !idNumber) {
+    showCopyToast('Please complete all KYC fields.');
+    return;
+  }
+  const btn = document.getElementById('kycSubmitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+  try {
+    const docFile = await readKycFile(file);
+    if (!docFile.data) throw new Error('Please upload your ID proof.');
+    const kyc = {
+      status: 'pending',
+      fullName, dob, country, idType, idNumber,
+      documentName: docFile.name,
+      documentData: docFile.data,
+      submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      reviewedAt: null,
+      reviewedNote: ''
+    };
+    await db.collection('users').doc(currentUserId).set({ kycStatus: 'pending', kyc }, { merge: true });
+    currentUserKyc = { ...kyc, status:'pending', documentName: docFile.name, documentData: docFile.data, reviewedNote:'' };
+    document.getElementById('kycDocument').value = '';
+    renderKycStatus();
+    if (currentDashboardAccount) populateDashboard(currentDashboardAccount);
+    showCopyToast('KYC submitted for admin review.');
+  } catch(err) {
+    showCopyToast(err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Submit KYC';
+  }
+}
+
+// ── LOADING OVERLAY HELPERS ──────────────────────────────────
+function setLoadingStep(step, sub, pct) {
+  const s = document.getElementById('loadingStep');
+  const b = document.getElementById('loadingSubstep');
+  const f = document.getElementById('loadingFill');
+  if (s) { s.style.animation='none'; void s.offsetWidth; s.style.animation='ldFade .35s ease'; s.textContent = step; }
+  if (b) { b.style.animation='none'; void b.offsetWidth; b.style.animation='ldFade .35s ease'; b.textContent = sub; }
+  if (f) f.style.width = pct + '%';
+}
+function hideLoadingOverlay() {
+  const el = document.getElementById('dashboardLoading');
+  if (el) {
+    el.classList.add('hidden');
+    setTimeout(() => { el.style.display = 'none'; }, 450);
+  }
+}
+
+// ── AUTH GUARD ───────────────────────────────────────────────
+auth.onAuthStateChanged(async user => {
+  if (!user) { window.location.href = 'signin.html'; return; }
+  currentUserId = user.uid;
+
+  setLoadingStep('Loading your profile…', 'Fetching account details', 30);
+
+  const displayName = user.displayName || 'Trader';
+  const photoURL    = user.photoURL || '';
+
+  document.getElementById('sidebarName').textContent = displayName;
+  document.getElementById('topbarName').textContent  = displayName.split(' ')[0];
+
+  const av = document.getElementById('sidebarAvatar');
+  if (photoURL) av.innerHTML = `<img src="${photoURL}" alt="avatar">`;
+  else av.textContent = displayName.slice(0,2).toUpperCase();
+
+  // Get user doc for member since + stored password
+  let memberSince = null;
+  let storedPass  = null;
+  try {
+    const userDoc = await db.collection('users').doc(user.uid).get();
+    if (userDoc.exists) {
+      const d = userDoc.data();
+      const ts = d.createdAt?.toDate?.() || null;
+      if (ts) memberSince = ts.toISOString();
+      storedPass = d.password || null;
+      currentUserKyc = normalizeKyc(d);
+    }
+  } catch(e) {}
+
+  populateProfile(user, memberSince || user.metadata?.creationTime, storedPass);
+  renderKycStatus();
+
+  // ─ write/merge user doc
+  await db.collection('users').doc(user.uid).set({
+    name: displayName, email: user.email || '', photoURL
+  }, { merge: true }).catch(()=>{});
+
+  setLoadingStep('Loading your accounts…', 'Syncing challenge data', 65);
+
+  try {
+    const snap = await db.collection('users').doc(user.uid)
+                         .collection('accounts').orderBy('createdAt','desc').get();
+    setLoadingStep('Almost there…', 'Building your dashboard', 90);
+    // Small delay so the progress animation is visible
+    await new Promise(r => setTimeout(r, 320));
+    if (snap.empty) {
+      hideLoadingOverlay();
+      showEmptyState();
+    } else {
+      window.fbAccounts = [];
+      snap.forEach(doc => window.fbAccounts.push({ id: doc.id, ...doc.data() }));
+
+      const savedId = localStorage.getItem('fb_selected_account');
+      let account = window.fbAccounts.find(a => a.id === savedId);
+      if (!account) account = window.fbAccounts.find(a => a.status === 'active') || window.fbAccounts[0];
+
+      buildAccountSwitcher(window.fbAccounts, account.id);
+      populateDashboard(account);
+      hideLoadingOverlay();
+    }
+  } catch(err) {
+    console.error(err);
+    hideLoadingOverlay();
+    showEmptyState();
+  }
+});
+
+// ── ACCOUNT SWITCHER ─────────────────────────────────────────
+function buildAccountSwitcher(accounts, activeId) {
+  const switcher = document.getElementById('accSwitcher');
+  if (!accounts || accounts.length < 2) { switcher.style.display = 'none'; return; }
+  switcher.style.display = '';
+  const dropdown = document.getElementById('accDropdown');
+  dropdown.innerHTML = accounts.map(acc => {
+    const sizeStr = acc.accountSize || ('$' + (acc.startBalance||0).toLocaleString());
+    const status  = acc.status || 'pending';
+    const statusLabel = status === 'active' ? 'Active' : status === 'rejected' ? 'Rejected' : 'Pending';
+    return `<div class="acc-dropdown-item ${acc.id===activeId?'active':''}" onclick="selectAccount('${acc.id}')">
+      <div class="acc-item-top"><span>${acc.challengeType||'Challenge'} · ${sizeStr}</span><span class="acc-item-status ${status}">${statusLabel}</span></div>
+      <div class="acc-item-sub">${acc.orderId||acc.id}</div>
+    </div>`;
+  }).join('');
+  const active = accounts.find(a => a.id === activeId);
+  if (active) {
+    const s = active.accountSize || ('$' + (active.startBalance||0).toLocaleString());
+    document.getElementById('accSwitcherLabel').textContent = `${active.challengeType||'Challenge'} · ${s}`;
+  }
+}
+function selectAccount(id) {
+  const acc = (window.fbAccounts||[]).find(a => a.id === id);
+  if (!acc) return;
+  localStorage.setItem('fb_selected_account', id);
+  buildAccountSwitcher(window.fbAccounts, id);
+  populateDashboard(acc);
+  toggleAccSwitcher(false);
+}
+
+async function refreshDashboard() {
+  if (!currentUserId) { showCopyToast('Please sign in again to refresh.'); return; }
+  const btn = document.getElementById('dashboardRefreshBtn');
+  if (btn?.disabled) return;
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="ti ti-refresh"></i> Refreshing...';
+  }
+  try {
+    const selectedId = currentDashboardAccount?.id || localStorage.getItem('fb_selected_account');
+    const snap = await db.collection('users').doc(currentUserId)
+                         .collection('accounts').orderBy('createdAt','desc').get();
+    if (snap.empty) {
+      showEmptyState();
+      showCopyToast('No account found.');
+      return;
+    }
+    window.fbAccounts = [];
+    snap.forEach(doc => window.fbAccounts.push({ id: doc.id, ...doc.data() }));
+    let account = window.fbAccounts.find(a => a.id === selectedId);
+    if (!account) account = window.fbAccounts.find(a => a.status === 'active') || window.fbAccounts[0];
+    localStorage.setItem('fb_selected_account', account.id);
+    buildAccountSwitcher(window.fbAccounts, account.id);
+    populateDashboard(account);
+    showCopyToast('Dashboard refreshed.');
+  } catch (err) {
+    console.error(err);
+    showCopyToast('Could not refresh dashboard: '+err.message);
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="ti ti-refresh"></i> Refresh';
+    }
+  }
+}
+
+function toggleAccSwitcher(force) {
+  const el = document.getElementById('accSwitcher');
+  el.classList.toggle('open', typeof force === 'boolean' ? force : !el.classList.contains('open'));
+}
+document.addEventListener('click', e => {
+  if (!document.getElementById('accSwitcher').contains(e.target)) document.getElementById('accSwitcher').classList.remove('open');
+  if (!e.target.closest('.notif-panel') && !e.target.closest('.topbar-btn')) document.getElementById('notifPanel').classList.remove('open');
+});
+
+// ── EMPTY STATE ───────────────────────────────────────────────
+function showEmptyState() {
+  document.getElementById('challenge-banner').style.display = 'none';
+  document.getElementById('accSwitcher').style.display = 'none';
+  document.getElementById('page-overview').innerHTML = `
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;padding:40px 20px">
+      <div style="font-size:64px;margin-bottom:20px;animation:fadeInUp .4s ease">🚀</div>
+      <div style="font-family:var(--font-display);font-size:1.8rem;font-weight:700;margin-bottom:12px">No active challenge yet</div>
+      <div style="font-size:15px;color:var(--muted);max-width:420px;line-height:1.7;margin-bottom:32px">
+        You haven't purchased a challenge yet. Get funded in as little as one step — pick your account size and start trading.
+      </div>
+      <a href="challenges.html" style="display:inline-flex;align-items:center;gap:10px;background:var(--blue);color:#fff;padding:15px 36px;border-radius:var(--radius-sm);font-weight:600;font-size:16px;text-decoration:none;box-shadow:0 0 40px rgba(55,138,221,.3);transition:background .2s,transform .2s">
+        <i class="ti ti-rocket"></i> Browse Challenges
+      </a>
+      <div style="margin-top:20px;font-size:13px;color:var(--muted)">Already purchased? Your account appears here once admin approves your payment.</div>
+    </div>`;
+  document.getElementById('page-account').innerHTML = `
+    <div style="text-align:center;padding:60px 20px;color:var(--muted)">
+      <i class="ti ti-briefcase-off" style="font-size:48px;opacity:.4;margin-bottom:12px;display:block"></i>
+      <p>No account yet. <a href="challenges.html" style="color:var(--blue)">Purchase a challenge</a> to get started.</p>
+    </div>`;
+}
+
+// ── RULE SETS PER CHALLENGE TYPE (kept in sync with rules.html) ─
+const RULE_SETS = {
+  'Instant':  { profitTargetPct: 0,  dailyLossPct: 3, maxDDPct: 5,  leverage: '1:50'  },
+  'One-Step': { profitTargetPct: 10, dailyLossPct: 4, maxDDPct: 6,  leverage: '1:50'  },
+  'Two-Step': { profitTargetPct: 8,  dailyLossPct: 5, maxDDPct: 10, leverage: '1:100' },
+  '3-Step':   { profitTargetPct: 6,  dailyLossPct: 3, maxDDPct: 7,  leverage: '1:100', minTradingDays: 3 },
+};
+function getRuleSet(challengeType) {
+  if (!challengeType) return RULE_SETS['One-Step'];
+  const t = challengeType.toLowerCase();
+  if (t.includes('instant')) return RULE_SETS['Instant'];
+  if (t.includes('3-step') || t.includes('3 step') || t.includes('three')) return RULE_SETS['3-Step'];
+  if (t.includes('two'))     return RULE_SETS['Two-Step'];
+  return RULE_SETS['One-Step'];
+}
+
+// ── ACCOUNT METRICS — derives balance, drawdown, daily loss, consistency, etc.
+// from startBalance + trades[]. Mirrors the logic in admin.html so both
+// admin and trader views always agree.
+function computeAccountMetrics(acc) {
+  const startBal = parseFloat(acc.startBalance) || 100000;
+  const trades = Array.isArray(acc.trades) ? acc.trades.slice() : [];
+  trades.sort((a,b) => new Date(a.closedAt) - new Date(b.closedAt));
+
+  const today = new Date(); today.setHours(0,0,0,0);
+  const todayTime = today.getTime();
+
+  // ── Step 1: balance at END of yesterday (used as daily-loss baseline) ──
+  // Daily loss rule = drop from yesterday's closing balance, NOT from intraday peak.
+  let balanceBeforeToday = startBal;
+  trades.forEach(t => {
+    const d = new Date(t.closedAt); d.setHours(0,0,0,0);
+    if (d.getTime() < todayTime) balanceBeforeToday += (parseFloat(t.pnl) || 0);
+  });
+
+  // ── Step 2: total drawdown — trailing peak from END-OF-DAY balances only.
+  // Peak is advanced only at day boundaries (not intraday), so intraday wins
+  // cannot inflate the peak and make a small net loss look like a huge drawdown.
+  // Within each day we still measure the lowest point reached vs that day's open.
+  //
+  // Algorithm: group trades by day → compute each day's net PnL →
+  // walk day-by-day updating EOD balance and peak → DD = peak - lowestEOD.
+  const dailyNetMap = {}; // dayKey → net PnL for that day
+  trades.forEach(t => {
+    const d = new Date(t.closedAt); d.setHours(0,0,0,0);
+    const k = d.getTime();
+    dailyNetMap[k] = (dailyNetMap[k] || 0) + (parseFloat(t.pnl) || 0);
+  });
+  const sortedDays = Object.keys(dailyNetMap).map(Number).sort((a,b)=>a-b);
+
+  let balance   = startBal;
+  let peak      = startBal;
+  let maxDDUsed = 0;
+  sortedDays.forEach(dayTs => {
+    if (dayTs === todayTime) return; // today handled separately below
+    balance += dailyNetMap[dayTs];
+    if (balance > peak) peak = balance; // peak advances only at EOD
+    const dd = peak - balance;
+    if (dd > maxDDUsed) maxDDUsed = dd;
+  });
+
+  // ── Step 3: daily loss = drop from today's opening balance to the lowest
+  // running balance reached during today's trades.
+  // balanceBeforeToday is already correct from Step 1.
+  let runningToday = balanceBeforeToday;
+  let minToday     = balanceBeforeToday;
+  trades.forEach(t => {
+    const d = new Date(t.closedAt); d.setHours(0,0,0,0);
+    if (d.getTime() === todayTime) {
+      runningToday += (parseFloat(t.pnl) || 0);
+      if (runningToday < minToday) minToday = runningToday;
+    }
+  });
+  const dailyLossUsed = Math.max(0, balanceBeforeToday - minToday);
+
+  // Include today's net in the final balance (needed for profit calc below)
+  balance = runningToday;
+  // Check if today's EOD would set a new DD (after today's trades are fully counted)
+  if (balance > peak) peak = balance;
+  const todayDD = peak - balance;
+  if (todayDD > maxDDUsed) maxDDUsed = todayDD;
+
+  const splitRate = Math.max(0, (Number(acc.profitSplit != null ? acc.profitSplit : 80) || 80) / 100);
+  const storedPayoutDebited = Number(acc.totalPayoutDebited);
+  const legacyPayoutDebited = splitRate > 0 ? Number(acc.totalWithdrawn || 0) / splitRate : 0;
+  const payoutDebited = Math.max(0, Number.isFinite(storedPayoutDebited) && storedPayoutDebited > 0 ? storedPayoutDebited : legacyPayoutDebited);
+  const payoutDebitApplied = Math.min(payoutDebited, Math.max(0, balance - startBal));
+  balance -= payoutDebitApplied;
+
+  const profit = balance - startBal;
+
+  const wins   = trades.filter(t => (parseFloat(t.pnl)||0) > 0);
+  const losses = trades.filter(t => (parseFloat(t.pnl)||0) < 0);
+  const winRate = trades.length ? (wins.length / trades.length * 100) : 0;
+  const grossWin  = wins.reduce((s,t)=>s+parseFloat(t.pnl||0),0);
+  const grossLoss = Math.abs(losses.reduce((s,t)=>s+parseFloat(t.pnl||0),0));
+  const profitFactor = grossLoss > 0 ? (grossWin/grossLoss) : (grossWin > 0 ? Infinity : 0);
+  const best  = trades.reduce((m,t)=>Math.max(m, parseFloat(t.pnl)||0), 0);
+  const worst = trades.reduce((m,t)=>Math.min(m, parseFloat(t.pnl)||0), 0);
+
+  // Instant consistency = largest profitable trading day / total profit.
+  const dailyPnL = {};
+  trades.forEach(t => {
+    const d = new Date(t.closedAt);
+    if (Number.isNaN(d.getTime())) return;
+    const dayKey = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    dailyPnL[dayKey] = (dailyPnL[dayKey] || 0) + (parseFloat(t.pnl) || 0);
+  });
+  const bestDayProfit = Math.max(0, ...Object.values(dailyPnL));
+  const consistencyPct = profit > 0 ? (bestDayProfit / profit * 100) : 0;
+  const consistencyPass = profit <= 0 || consistencyPct <= 15;
+
+  return {
+    startBal, balance, profit, maxDDUsed, dailyLossUsed,
+    winRate, profitFactor, best, worst, grossWin, grossLoss,
+    consistencyPct, consistencyPass, tradeCount: trades.length,
+    trades: trades.slice().sort((a,b)=> new Date(b.closedAt) - new Date(a.closedAt))
+  };
+}
+
+// ── RESET STATE BEFORE SWITCHING ACCOUNTS ───────────────────────
+// Prevents stale MT5 credentials / styling from a previously selected
+// account from carrying over when switching to an account that has
+// no credentials or a different status.
+function resetDashboardState() {
+  credData = { server:'', login:'', password:'' };
+  credPassVisible = false;
+  ['credsCard','credsCardAccount'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  ['credServer','credServer2','credLogin','credLogin2'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = '—';
+  });
+  ['credPassword','credPassword2'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.textContent = '••••••••'; el.classList.add('masked'); }
+  });
+  ['credEyeIcon','credEyeIcon2'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.className = 'ti ti-eye';
+  });
+}
+
+// ── POPULATE DASHBOARD ────────────────────────────────────────
+function populateDashboard(acc) {
+  currentDashboardAccount = acc;
+  // ── Reset state from any previously selected account ──
+  resetDashboardState();
+
+  const startBal  = parseFloat(acc.startBalance) || 100000;
+  const challengeType = acc.challengeType || 'One-Step';
+  const ruleSet   = getRuleSet(challengeType);
+  const ctLower = challengeType.toLowerCase();
+  const isThreeStep = ctLower.includes('3-step') || ctLower.includes('3 step') || ctLower.includes('three');
+  const accPhaseLower = (acc.phase || 'Phase 1').toLowerCase();
+  const hasConsistencyRule = ctLower.includes('instant') || (isThreeStep && accPhaseLower.includes('funded'));
+
+  // ── Compute live metrics from trade history ──
+  const m       = computeAccountMetrics(acc);
+  const balance = m.balance;
+  const profit  = m.profit;
+
+  // Use admin-set values if present, otherwise defaults from the rule set for this challenge type
+  const target    = parseFloat(acc.profitTarget) || (startBal * ruleSet.profitTargetPct/100);
+  const targetPct = Math.min(100,Math.max(0,(profit/target*100))).toFixed(1);
+  const maxDaily  = parseFloat(acc.maxDailyLoss) || (startBal * ruleSet.dailyLossPct/100);
+  const maxDD     = parseFloat(acc.maxDrawdown)  || (startBal * ruleSet.maxDDPct/100);
+  const dailyUsed = m.dailyLossUsed;
+  const totalDD   = m.maxDDUsed;
+  const profitSplit = acc.profitSplit != null ? acc.profitSplit : 80;
+  const earned    = Math.max(0,profit*(profitSplit/100));
+  const accSizeStr    = acc.accountSize || ('$'+startBal.toLocaleString());
+
+  // Show credentials only if THIS account is active and has creds
+  if (acc.status === 'active' && acc.mt5Login) {
+    showCredentials(acc);
+  }
+
+  // Banner
+  document.getElementById('bannerType').textContent = challengeType;
+  document.getElementById('bannerSize').textContent = accSizeStr;
+  document.getElementById('bannerPct').textContent  = targetPct + '%';
+
+  // Stats
+  document.getElementById('statBalance').textContent = '$'+balance.toLocaleString('en-US',{minimumFractionDigits:2});
+  document.getElementById('statProfit').textContent  = (profit>=0?'+':'−')+'$'+Math.abs(profit).toLocaleString('en-US',{minimumFractionDigits:2});
+  document.getElementById('statProfit').style.color  = profit>=0?'var(--green)':'var(--red)';
+  document.getElementById('statProfitChange').textContent = (profit>=0?'▲ ':'▼ ')+'$'+Math.abs(profit).toLocaleString();
+  document.getElementById('statProfitChange').className   = 'stat-change '+(profit>=0?'up':'down');
+  document.getElementById('statTarget').textContent  = '$'+target.toLocaleString('en-US',{maximumFractionDigits:0});
+  document.getElementById('statTargetPct').textContent = targetPct+'% done';
+  document.getElementById('statDailyUsed').textContent = '$'+dailyUsed.toLocaleString();
+  document.getElementById('statDailyUsedPct').textContent = 'Used '+Math.min(100,Math.round(dailyUsed/maxDaily*100))+'%';
+  document.getElementById('statBalanceChange').textContent = (profit>=0?'▲':'▼')+' '+Math.abs((profit/startBal)*100).toFixed(1)+'%';
+  document.getElementById('statBalanceChange').className = 'stat-change '+(profit>=0?'up':'down');
+
+  // Info
+  document.getElementById('infoType').textContent = challengeType;
+  document.getElementById('infoSize').textContent = accSizeStr;
+  document.getElementById('accType').textContent  = challengeType;
+  document.getElementById('accSize').textContent  = accSizeStr;
+  document.getElementById('accAccountId').textContent = acc.orderId||acc.id||'—';
+
+  // Trading days — a day qualifies only when equity moved by ≥0.5% of startBalance that day.
+  // This threshold applies to every challenge type that has a minTradingDays requirement.
+  const allTrades = Array.isArray(acc.trades) ? acc.trades : [];
+  const minEquityMove = startBal * 0.005; // 0.5% of starting balance
+  // Group PnL by calendar day
+  const dailyPnLMapTD = {};
+  allTrades.forEach(t => {
+    const d = new Date(t.closedAt);
+    if (Number.isNaN(d.getTime())) return;
+    const key = d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+    dailyPnLMapTD[key] = (dailyPnLMapTD[key] || 0) + (parseFloat(t.pnl) || 0);
+  });
+  // Count only days where |total PnL| >= 0.5% of startBalance
+  const tradingDaysCount = Object.values(dailyPnLMapTD).filter(pnl => Math.abs(pnl) >= minEquityMove).length;
+  if (acc.createdAt) {
+    const created = acc.createdAt.toDate?acc.createdAt.toDate():new Date(acc.createdAt);
+    document.getElementById('perfActiveSince').textContent = created.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+    document.getElementById('activityAccountTime').textContent = created.toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'});
+  }
+  const minTradingDays = ruleSet.minTradingDays || 0;
+  const daysLabel = tradingDaysCount+(tradingDaysCount===1?' trading day':' trading days')+(minTradingDays > 0 ? ' / '+minTradingDays+' required' : ' active');
+  document.getElementById('infoTradingDays').textContent = daysLabel;
+
+  // Chart — build equity curve from trades
+  const sortedTrades = allTrades.slice().sort((a,b)=>new Date(a.closedAt)-new Date(b.closedAt));
+  const chartLabels = ['Start'];
+  const chartData   = [startBal];
+  let runBal = startBal;
+  sortedTrades.forEach(t => {
+    runBal += parseFloat(t.pnl)||0;
+    const d = new Date(t.closedAt);
+    chartLabels.push(d.toLocaleDateString('en-US',{month:'short',day:'numeric'}));
+    chartData.push(parseFloat(runBal.toFixed(2)));
+  });
+  if (chartLabels.length === 1) chartLabels.push('Now'), chartData.push(balance);
+  if (window.equityChart) {
+    window.equityChart.data.labels = chartLabels;
+    window.equityChart.data.datasets[0].data = chartData;
+    window.equityChart.data.datasets[0].borderColor = profit >= 0 ? '#378ADD' : '#e05252';
+    window.equityChart.update();
+  }
+
+  // Trades page
+  const tradeCount = m.tradeCount;
+  const netPnl = profit;
+  document.getElementById('tradesSummaryLine').textContent = tradeCount > 0
+    ? tradeCount+' trade'+(tradeCount!==1?'s':'')+' · Net P&L: '+(netPnl>=0?'+':'-')+'$'+Math.abs(netPnl).toLocaleString('en-US',{minimumFractionDigits:2})
+    : 'No trades yet';
+  document.getElementById('tradesShowingLine').textContent = 'Showing '+tradeCount+' of '+tradeCount;
+  document.getElementById('tradeNetPnl').textContent = (netPnl>=0?'+':'-')+'$'+Math.abs(netPnl).toLocaleString('en-US',{minimumFractionDigits:2});
+  document.getElementById('tradeNetPnl').style.color = netPnl>=0?'var(--green)':'var(--red)';
+  document.getElementById('tradeWinRate').textContent = tradeCount > 0 ? m.winRate.toFixed(1)+'%' : '—';
+  document.getElementById('tradeProfitFactor').textContent = tradeCount > 0 ? (isFinite(m.profitFactor)?m.profitFactor.toFixed(2):'∞') : '—';
+  document.getElementById('tradeBest').textContent = m.best > 0 ? '+$'+m.best.toLocaleString('en-US',{minimumFractionDigits:2}) : '$0';
+
+  const tbody = document.getElementById('tradesBody');
+  if (tradeCount === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:50px;color:var(--muted);font-size:14px">
+      <i class="ti ti-chart-candle" style="font-size:40px;display:block;margin-bottom:12px;opacity:.3"></i>
+      No trades yet. Trades appear here once added by admin.
+    </td></tr>`;
+  } else {
+    tbody.innerHTML = m.trades.map(t => {
+      const pnl = parseFloat(t.pnl)||0;
+      const opened = t.openedAt  ? new Date(t.openedAt).toLocaleDateString('en-US',{month:'short',day:'numeric'})  : '—';
+      const closed = t.closedAt  ? new Date(t.closedAt).toLocaleDateString('en-US',{month:'short',day:'numeric'})  : '—';
+      const dur    = (t.openedAt && t.closedAt) ? (() => {
+        const diff = Math.round((new Date(t.closedAt)-new Date(t.openedAt))/60000);
+        return diff < 60 ? diff+'m' : Math.round(diff/60)+'h';
+      })() : '—';
+      return `<tr>
+        <td><span class="trade-pair">${t.pair||'—'}</span></td>
+        <td><span class="trade-type ${(t.type||'buy').toLowerCase()}">${(t.type||'BUY').toUpperCase()}</span></td>
+        <td>${t.lots!=null?t.lots:'—'}</td>
+        <td>${t.openPrice!=null?t.openPrice:'—'}</td>
+        <td>${t.closePrice!=null?t.closePrice:'—'}</td>
+        <td>${dur}</td>
+        <td style="text-align:right"><span class="trade-pnl ${pnl>=0?'pos':'neg'}">${pnl>=0?'+':'-'}$${Math.abs(pnl).toLocaleString('en-US',{minimumFractionDigits:2})}</span></td>
+      </tr>`;
+    }).join('');
+  }
+
+  // Recent Activity
+  const activityList = document.getElementById('activityList');
+  const recentTrades = m.trades.slice(0,3);
+  let activityHTML = `<div class="activity-item">
+    <div class="activity-icon blue"><i class="ti ti-shield-check"></i></div>
+    <div>
+      <div class="activity-text">Account <strong id="activityAccountStatus">${
+        acc.status==='active'?'activated':acc.status==='rejected'?'rejected':acc.status==='failed'?'failed — challenge ended':'created — pending approval'
+      }</strong></div>
+      <div class="activity-time" id="activityAccountTime">${acc.createdAt ? (acc.createdAt.toDate?acc.createdAt.toDate():new Date(acc.createdAt)).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'}) : '—'}</div>
+    </div>
+  </div>`;
+  if (recentTrades.length > 0) {
+    recentTrades.forEach(t => {
+      const pnl = parseFloat(t.pnl)||0;
+      const color = pnl >= 0 ? 'green' : 'red';
+      const icon  = pnl >= 0 ? 'trending-up' : 'trending-down';
+      const d = t.closedAt ? new Date(t.closedAt).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '';
+      activityHTML += `<div class="activity-item">
+        <div class="activity-icon ${color}"><i class="ti ti-${icon}"></i></div>
+        <div>
+          <div class="activity-text"><strong>${t.pair||'Trade'}</strong> ${(t.type||'').toUpperCase()} closed — <span style="color:var(--${color})">${pnl>=0?'+':'-'}$${Math.abs(pnl).toLocaleString('en-US',{minimumFractionDigits:2})}</span></div>
+          <div class="activity-time">${d}</div>
+        </div>
+      </div>`;
+    });
+  } else {
+    activityHTML += `<div class="activity-item" id="activityEmptyHint">
+      <div class="activity-icon amber"><i class="ti ti-info-circle"></i></div>
+      <div>
+        <div class="activity-text">No trades yet — start trading to see activity here.</div>
+        <div class="activity-time"></div>
+      </div>
+    </div>`;
+  }
+  activityList.innerHTML = activityHTML;
+
+  // Platform / leverage / profit split (admin-editable)
+  document.getElementById('accPlatform').textContent    = acc.platform || 'MetaTrader 5';
+  document.getElementById('accLeverage').textContent    = acc.leverage || ruleSet.leverage;
+  document.getElementById('accProfitSplit').textContent = profitSplit + '%';
+
+  document.getElementById('activityAccountStatus').textContent =
+    acc.status==='active' ? 'activated' :
+    acc.status==='rejected' ? 'rejected' :
+    acc.status==='failed' ? 'failed — challenge ended' :
+    'created — pending approval';
+
+  // Phase badge
+  const phBadge = document.getElementById('mainPhaseBadge');
+  const accBadge = document.getElementById('accStatusBadge');
+  [phBadge, accBadge].forEach(badge => {
+    if (!badge) return;
+    badge.className = 'account-phase';
+    if (acc.status==='active') { badge.classList.add('funded'); badge.innerHTML = '<span class="phase-dot"></span>'+(acc.phase||'Phase 1')+' Active'; }
+    else if (acc.status==='pending') { badge.classList.add('pending'); badge.innerHTML = '<span class="phase-dot"></span>Pending Approval'; }
+    else if (acc.status==='rejected') { badge.classList.add('rejected'); badge.innerHTML = '<span class="phase-dot"></span>Rejected'; }
+    else if (acc.status==='failed') { badge.classList.add('rejected'); badge.innerHTML = '<span class="phase-dot"></span>'+(acc.phase||'Phase 1')+' Failed'; }
+    else { badge.classList.add('evaluation'); badge.innerHTML = '<span class="phase-dot"></span>'+(acc.phase||'Phase 1')+' Evaluation'; }
+  });
+
+  // Payouts
+  const earnedStr = '$'+earned.toLocaleString('en-US',{minimumFractionDigits:2});
+  const totalWithdrawn = Math.max(0, Number(acc.totalWithdrawn || 0));
+  const availablePayout = earned;
+  document.getElementById('payoutEarned').textContent = earnedStr;
+  document.getElementById('payoutsPagePayoutEarned').textContent = earnedStr;
+  document.getElementById('payoutTotalWithdrawn').textContent = '$'+totalWithdrawn.toLocaleString('en-US',{minimumFractionDigits:2});
+  const payoutWalletInput = document.getElementById('payoutTrc20Address');
+  if (payoutWalletInput && acc.payoutWalletAddress && payoutWalletInput.value.trim() !== acc.payoutWalletAddress) {
+    payoutWalletInput.value = acc.payoutWalletAddress;
+  }
+
+  const phase = (acc.phase || 'Phase 1').toLowerCase();
+  const isInstant = challengeType.toLowerCase().includes('instant');
+  const isFundedPhase = phase.includes('funded');
+  const isTwoStep = challengeType.toLowerCase().includes('two');
+  const accountActive = acc.status === 'active';
+  const targetMet = target <= 0 || profit >= target;
+  const tradingDaysMet = minTradingDays === 0 || tradingDaysCount >= minTradingDays;
+  const rulesPassing = dailyUsed <= maxDaily && totalDD <= maxDD && (!hasConsistencyRule || m.consistencyPass) && tradingDaysMet;
+  let requestedPhase;
+  if (isThreeStep) {
+    if (phase.includes('phase 1')) requestedPhase = 'Phase 2';
+    else if (phase.includes('phase 2')) requestedPhase = 'Phase 3';
+    else requestedPhase = 'Funded';
+  } else {
+    requestedPhase = isTwoStep && !phase.includes('phase 2') ? 'Phase 2' : 'Funded';
+  }
+  const phaseAdvanceEligible = accountActive && !isInstant && !isFundedPhase && targetMet && rulesPassing;
+  const fundingPending = acc.fundingStatus === 'pending';
+  const payoutEligible = accountActive && (isInstant || isFundedPhase);
+  const payoutBtn = document.getElementById('payoutRequestBtn');
+  const overviewPayoutBtn = document.getElementById('overviewPayoutBtn');
+  const payoutSummary = document.getElementById('payoutSummaryText');
+  const payoutEmpty = document.querySelector('#payoutHistoryEmpty p');
+  const payoutStepTitle = document.getElementById('payoutStepTitle');
+  const payoutStepDesc = document.getElementById('payoutStepDesc');
+
+  const payoutStatus = acc.payoutStatus || '';
+  const requestPending = payoutStatus === 'pending';
+  const kycStatus = currentUserKyc.status || 'unsubmitted';
+  const kycApproved = kycStatus === 'approved';
+  const kycPending = kycStatus === 'pending';
+  const kycNeedsAction = payoutEligible && !requestPending && availablePayout > 0 && !kycApproved && !kycPending;
+  payoutBtn.disabled = phaseAdvanceEligible ? fundingPending : (!payoutEligible || requestPending || availablePayout <= 0 || kycPending);
+  payoutBtn.style.opacity = payoutBtn.disabled ? '.5' : '1';
+  payoutBtn.style.cursor = payoutBtn.disabled ? 'not-allowed' : 'pointer';
+  payoutBtn.onclick = payoutBtn.disabled ? null : (phaseAdvanceEligible ? requestFundingAccount : (kycNeedsAction ? () => {
+    showPage('payouts', null);
+    enableKycForm();
+    document.getElementById('kycCard')?.scrollIntoView({ behavior:'smooth', block:'start' });
+  } : requestPayout));
+
+  if (phaseAdvanceEligible && fundingPending) {
+    payoutBtn.textContent = `Awaiting ${requestedPhase} approval`;
+    overviewPayoutBtn.textContent = `${requestedPhase} request pending`;
+    payoutSummary.innerHTML = `${requestedPhase} request submitted<br>awaiting admin approval`;
+    payoutEmpty.textContent = `Your ${requestedPhase} request is awaiting an admin decision.`;
+    payoutStepTitle.textContent = 'Admin review pending';
+    payoutStepDesc.textContent = `You cannot submit another ${requestedPhase} request until admin decides.`;
+  } else if (phaseAdvanceEligible) {
+    payoutBtn.textContent = `Request ${requestedPhase === 'Funded' ? 'Funded Account' : requestedPhase}`;
+    overviewPayoutBtn.textContent = `Request ${requestedPhase}`;
+    payoutSummary.innerHTML = `Target completed<br>request ${requestedPhase === 'Funded' ? 'funded account' : requestedPhase}`;
+    payoutEmpty.innerHTML = `Profit target completed.<br>Request admin approval to move to ${requestedPhase}.`;
+    payoutStepTitle.textContent = `Request ${requestedPhase}`;
+    payoutStepDesc.textContent = requestedPhase === 'Funded'
+      ? 'Admin approval will reset the account and move it to Funded.'
+      : `Admin approval will reset the account and move it to ${requestedPhase}.`;
+  } else if (payoutEligible && availablePayout > 0 && kycPending) {
+    payoutBtn.textContent = 'KYC review pending';
+    overviewPayoutBtn.textContent = 'KYC pending';
+    payoutSummary.innerHTML = 'KYC verification submitted<br>awaiting admin approval';
+    payoutEmpty.textContent = 'Your KYC is awaiting admin approval before payout can be requested.';
+    payoutStepTitle.textContent = 'KYC review pending';
+    payoutStepDesc.textContent = 'Admin must approve your KYC before your payout request can be submitted.';
+  } else if (payoutEligible && availablePayout > 0 && !kycApproved) {
+    payoutBtn.textContent = kycStatus === 'rejected' ? 'Update KYC' : 'Complete KYC';
+    overviewPayoutBtn.textContent = 'Complete KYC';
+    payoutSummary.innerHTML = 'KYC verification required<br>before requesting payout';
+    payoutEmpty.textContent = 'Complete KYC verification first. After admin approval, your payout request will unlock.';
+    payoutStepTitle.textContent = 'Complete KYC';
+    payoutStepDesc.textContent = 'Submit your identity details for admin approval before requesting a payout.';
+  } else if (payoutEligible && requestPending) {
+    payoutBtn.textContent = 'Awaiting admin review';
+    overviewPayoutBtn.textContent = 'Payout pending';
+    payoutSummary.innerHTML = `Payout request: $${Number(acc.payoutAmount||0).toLocaleString('en-US',{minimumFractionDigits:2})}<br>awaiting admin review`;
+    payoutEmpty.textContent = acc.payoutWalletAddress
+      ? `Your payout request has been submitted for ${acc.payoutWalletAddress}.`
+      : 'Your payout request has been submitted and is awaiting an admin decision.';
+    payoutStepTitle.textContent = 'Admin review pending';
+    payoutStepDesc.textContent = 'You cannot submit another request until this payout is approved or rejected.';
+  } else if (payoutEligible && payoutStatus === 'approved') {
+    payoutBtn.textContent = availablePayout > 0 ? 'Request payout' : 'No profit available';
+    overviewPayoutBtn.textContent = 'Payout approved';
+    payoutSummary.innerHTML = 'Your previous payout request<br>was approved by admin';
+    payoutEmpty.textContent = 'Your payout request was approved. Payment processing can now be completed.';
+    payoutStepTitle.textContent = 'Payout approved';
+    payoutStepDesc.textContent = 'Your request has been accepted by the administrator.';
+  } else if (payoutEligible && payoutStatus === 'rejected') {
+    payoutBtn.textContent = availablePayout > 0 ? 'Request payout again' : 'No profit available';
+    overviewPayoutBtn.textContent = 'Payout rejected';
+    payoutSummary.innerHTML = 'Your previous payout request<br>was rejected by admin';
+    payoutEmpty.textContent = 'Your payout request was rejected. You may submit a new request when eligible.';
+    payoutStepTitle.textContent = 'Payout rejected';
+    payoutStepDesc.textContent = acc.payoutDecisionNote || 'Contact support if you need more information.';
+  } else if (payoutEligible) {
+    payoutBtn.textContent = availablePayout > 0 ? 'Request payout' : 'No profit available';
+    overviewPayoutBtn.textContent = 'Request payout';
+    payoutSummary.innerHTML = isInstant
+      ? 'Your earned payout (80% split)<br>Instant account eligible'
+      : 'Your earned payout (80% split)<br>Funded account eligible';
+    payoutEmpty.innerHTML = 'No payouts yet — your account is eligible.<br>Request your first withdrawal when ready.';
+    payoutStepTitle.textContent = isInstant ? 'Instant eligibility' : 'Funded account active';
+    payoutStepDesc.textContent = isInstant
+      ? 'No evaluation is required. Maintain all Instant account rules for payout approval.'
+      : 'Your evaluation is complete and the funded account can request payouts.';
+  } else if (accountActive && !isInstant && !isFundedPhase && targetMet && !tradingDaysMet) {
+    // Profit target done but minimum trading days not yet met
+    const daysLeft = minTradingDays - tradingDaysCount;
+    payoutBtn.textContent = `Request ${requestedPhase === 'Funded' ? 'Funded Account' : requestedPhase}`;
+    payoutBtn.disabled = true;
+    payoutBtn.style.opacity = '.5';
+    payoutBtn.style.cursor = 'not-allowed';
+    payoutBtn.onclick = null;
+    overviewPayoutBtn.textContent = 'Trading days pending';
+    payoutSummary.innerHTML = `Target hit — ${tradingDaysCount}/${minTradingDays} trading days<br>complete ${daysLeft} more day${daysLeft!==1?'s':''} to request ${requestedPhase}`;
+    payoutEmpty.innerHTML = `Profit target complete! You need ${daysLeft} more qualifying trading day${daysLeft!==1?'s':''} (equity must move ≥0.5%) before requesting ${requestedPhase}.`;
+    payoutStepTitle.textContent = 'Min. trading days not met';
+    payoutStepDesc.textContent = tradingDaysCount + '/' + minTradingDays + ' qualifying days completed — ' + daysLeft + ' more day' + (daysLeft!==1?'s':'') + ' needed (equity must move ≥0.5% to count).';
+  } else if (!accountActive) {
+    const statusLabel = acc.status === 'pending' ? 'Pending activation' :
+                        acc.status === 'rejected' ? 'Account rejected' :
+                        acc.status === 'failed' ? 'Account failed' : 'Account inactive';
+    payoutBtn.textContent = statusLabel;
+    overviewPayoutBtn.textContent = 'View payout status';
+    payoutSummary.innerHTML = `Your earned payout (80% split)<br>${statusLabel.toLowerCase()}`;
+    payoutEmpty.textContent = `Payouts are unavailable while this account is ${statusLabel.toLowerCase()}.`;
+    payoutStepTitle.textContent = statusLabel;
+    payoutStepDesc.textContent = 'The account must be active before payout eligibility can be checked.';
+  } else {
+    const currentPhase = phase.includes('phase 3') ? 'Phase 3' : phase.includes('phase 2') ? 'Phase 2' : 'Phase 1';
+    payoutBtn.textContent = `Complete ${currentPhase}`;
+    overviewPayoutBtn.textContent = 'View payout status';
+    payoutSummary.innerHTML = `Your earned payout (80% split)<br>complete ${currentPhase} evaluation`;
+    payoutEmpty.innerHTML = `No payouts yet — complete ${currentPhase}<br>to unlock withdrawals on the funded account.`;
+    payoutStepTitle.textContent = `Complete ${currentPhase}`;
+    payoutStepDesc.textContent = `Meet the ${currentPhase} target while staying within all drawdown rules.`;
+  }
+
+  // Progress
+  const bars = document.querySelectorAll('.progress-item');
+  bars.forEach(item => {
+    const label = item.querySelector('.progress-label');
+    if (!label) return;
+    if (label.textContent.includes('Profit Target')) {
+      item.querySelector('.progress-current').textContent = '$'+Math.max(0,profit).toLocaleString('en-US',{maximumFractionDigits:0});
+      item.querySelector('.progress-target').textContent  = '/ $'+target.toLocaleString('en-US',{maximumFractionDigits:0});
+      item.querySelector('.progress-fill').style.width    = Math.min(100,Math.max(0,parseFloat(targetPct)))+'%';
+    }
+    if (label.textContent.includes('Daily Loss')) {
+      const pct = Math.min(100,Math.max(0,(dailyUsed/maxDaily)*100));
+      item.querySelector('.progress-current').textContent = '$'+dailyUsed.toLocaleString();
+      item.querySelector('.progress-target').textContent  = '/ $'+maxDaily.toLocaleString();
+      item.querySelector('.progress-fill').style.width    = pct+'%';
+    }
+    if (label.textContent.includes('Total Drawdown')) {
+      const pct = Math.min(100,Math.max(0,(totalDD/maxDD)*100));
+      item.querySelector('.progress-current').textContent = '$'+totalDD.toLocaleString();
+      item.querySelector('.progress-target').textContent  = '/ $'+maxDD.toLocaleString();
+      item.querySelector('.progress-fill').style.width    = pct+'%';
+    }
+    if (label.textContent.includes('Win Rate')) {
+      const tradeCount = m.tradeCount;
+      const winPct = tradeCount > 0 ? m.winRate.toFixed(1)+'%' : '—';
+      item.querySelector('.progress-current').textContent = winPct;
+      item.querySelector('.progress-target').textContent  = '/ '+tradeCount+' trade'+(tradeCount!==1?'s':'');
+      item.querySelector('.progress-fill').style.width    = (tradeCount > 0 ? Math.min(100,m.winRate) : 0)+'%';
+    }
+    if (label.textContent.includes('Consistency')) {
+      const currentEl = item.querySelector('.progress-current');
+      const targetEl  = item.querySelector('.progress-target');
+      const fillEl    = item.querySelector('.progress-fill');
+      if (!hasConsistencyRule) {
+        currentEl.textContent = 'N/A';
+        targetEl.textContent = 'not required';
+        fillEl.style.width = '0%';
+        fillEl.className = 'progress-fill blue';
+      } else {
+        currentEl.textContent = m.tradeCount > 0 && profit > 0 ? m.consistencyPct.toFixed(1)+'%' : '—';
+        targetEl.textContent = 'max 15%';
+        fillEl.style.width = (profit > 0 ? Math.min(100, m.consistencyPct / 15 * 100) : 0)+'%';
+        fillEl.className = 'progress-fill '+(m.consistencyPass ? 'green' : 'red');
+      }
+    }
+  });
+
+  // Performance summary
+  document.getElementById('perfStartBalance').textContent   = '$'+startBal.toLocaleString();
+  document.getElementById('perfCurrentBalance').textContent = '$'+balance.toLocaleString('en-US',{minimumFractionDigits:2});
+  document.getElementById('perfCurrentBalance').style.color = profit>=0?'var(--green)':'var(--red)';
+  document.getElementById('perfBestDay').textContent  = m.best  > 0 ? '+$'+m.best.toLocaleString('en-US',{minimumFractionDigits:2})  : '$0';
+  document.getElementById('perfWorstDay').textContent = m.worst < 0 ? '-$'+Math.abs(m.worst).toLocaleString('en-US',{minimumFractionDigits:2}) : '$0';
+  document.getElementById('perfTotalTrades').textContent = m.tradeCount;
+
+  // Rules compliance — Consistency and Lot Size
+  const consistencyRuleRows = document.querySelectorAll('.rule-row');
+  consistencyRuleRows.forEach(row => {
+    const name = row.querySelector('.rule-name')?.textContent || '';
+    const statusEl = row.querySelector('.rule-status');
+    const iconEl   = row.querySelector('.rule-icon');
+    if (!statusEl) return;
+    if (name.includes('Consistency')) {
+      if (!hasConsistencyRule) {
+        statusEl.textContent = 'Not required';
+        statusEl.className = 'rule-status pass';
+        if (iconEl) { iconEl.className = 'ti ti-circle-check rule-icon pass'; }
+      } else if (m.tradeCount === 0 || profit <= 0) {
+        statusEl.textContent = 'No trades yet';
+        statusEl.className = 'rule-status pass';
+        if (iconEl) { iconEl.className = 'ti ti-circle-check rule-icon pass'; }
+      } else if (m.consistencyPass) {
+        statusEl.textContent = m.consistencyPct.toFixed(1)+'% / max 15%';
+        statusEl.className = 'rule-status pass';
+        if (iconEl) { iconEl.className = 'ti ti-circle-check rule-icon pass'; }
+      } else {
+        statusEl.textContent = m.consistencyPct.toFixed(1)+'% / max 15% ⚠';
+        statusEl.className = 'rule-status fail';
+        if (iconEl) { iconEl.className = 'ti ti-circle-x rule-icon fail'; }
+      }
+    }
+    if (name.includes('Lot Size')) {
+      if (m.tradeCount === 0) {
+        statusEl.textContent = 'No trades yet';
+        statusEl.className = 'rule-status pass';
+        if (iconEl) { iconEl.className = 'ti ti-circle-check rule-icon pass'; }
+      } else {
+        const trades = Array.isArray(acc.trades) ? acc.trades : [];
+        const maxLots = trades.reduce((mx,t) => Math.max(mx, parseFloat(t.lots)||0), 0);
+        const over = maxLots > 10;
+        statusEl.textContent = 'Max: '+maxLots.toFixed(2)+' lots';
+        statusEl.className = 'rule-status '+(over?'fail':'pass');
+        if (iconEl) { iconEl.className = 'ti ti-circle-'+(over?'x rule-icon fail':'check rule-icon pass'); }
+      }
+    }
+  });
+
+  // Keep the summary badge in sync with the five rules shown in this card.
+  const rulesBadge = document.getElementById('rulesPassingBadge');
+  const rulesCard = rulesBadge?.closest('.card');
+  if (rulesBadge && rulesCard) {
+    const ruleStatuses = [...rulesCard.querySelectorAll('.rule-status')];
+    const passingCount = ruleStatuses.filter(status => !status.classList.contains('fail')).length;
+    const totalRules = ruleStatuses.length;
+    rulesBadge.innerHTML = `<span class="phase-dot"></span>${passingCount}/${totalRules} Passing`;
+    rulesBadge.className = 'account-phase '+(passingCount === totalRules ? 'funded' : 'evaluation');
+    rulesBadge.style.fontSize = '10px';
+  }
+
+  // Rules
+  document.getElementById('ruleDailyLimit').textContent = `Limit: ${ruleSet.dailyLossPct}% / $`+maxDaily.toLocaleString();
+  document.getElementById('ruleDailyUsed').textContent   = '$'+dailyUsed.toLocaleString()+' used';
+  document.getElementById('ruleDDLimit').textContent     = `Limit: ${ruleSet.maxDDPct}% / $`+maxDD.toLocaleString();
+  document.getElementById('ruleDDUsed').textContent      = '$'+totalDD.toLocaleString()+' used';
+  // Trading days rule row — show only for challenge types with minTradingDays
+  const tdRuleRow = document.getElementById('tradingDaysRuleRow');
+  if (tdRuleRow) {
+    if (minTradingDays > 0) {
+      tdRuleRow.style.display = '';
+      const tdMet = tradingDaysCount >= minTradingDays;
+      document.getElementById('tradingDaysRuleIcon').className = 'ti ti-circle-'+(tdMet?'check rule-icon pass':'x rule-icon fail');
+      document.getElementById('tradingDaysRuleDesc').textContent = 'Equity must move ≥0.5% per day to qualify — '+minTradingDays+' days required';
+      document.getElementById('tradingDaysRuleStatus').textContent = (tdMet?'✓ ':'⚠ ')+tradingDaysCount+'/'+minTradingDays+' days';
+      document.getElementById('tradingDaysRuleStatus').className = 'rule-status '+(tdMet?'pass':'fail');
+    } else {
+      tdRuleRow.style.display = 'none';
+    }
+  }
+
+  const dailyRemaining = Math.max(0, maxDaily - dailyUsed);
+  const ddRemaining    = Math.max(0, maxDD - totalDD);
+  document.getElementById('breakdownDailyUsed').textContent = (dailyUsed===0?'✓ ':'⚠ ')+'$'+dailyUsed.toLocaleString()+' used — $'+dailyRemaining.toLocaleString()+' remaining today';
+  document.getElementById('breakdownDDUsed').textContent    = (totalDD===0?'✓ ':'⚠ ')+'$'+totalDD.toLocaleString()+' used — $'+ddRemaining.toLocaleString()+' remaining';
+  document.getElementById('breakdownDailyDesc').textContent = ruleSet.dailyLossPct+'% of initial balance — $'+maxDaily.toLocaleString()+' max per day';
+  document.getElementById('breakdownDDDesc').textContent    = ruleSet.maxDDPct+'% trailing from peak — $'+maxDD.toLocaleString()+' limit (resets with peak)';
+
+  // Banner status
+  const banner = document.getElementById('challenge-banner');
+  if (banner) {
+    if (acc.status==='pending') {
+      banner.style.background = 'linear-gradient(135deg,rgba(245,158,11,.12),rgba(245,158,11,.04))';
+      banner.style.borderColor = 'rgba(245,158,11,.3)';
+      banner.querySelector('h3').innerHTML = `⏳ Payment Pending Approval · ${accSizeStr}`;
+      banner.querySelector('p').textContent = 'Our admin is reviewing your payment. Your account will be activated shortly.';
+    } else if (acc.status==='rejected') {
+      banner.style.background = 'linear-gradient(135deg,rgba(224,82,82,.12),rgba(224,82,82,.04))';
+      banner.style.borderColor = 'rgba(224,82,82,.3)';
+      banner.querySelector('h3').innerHTML = `❌ Payment Rejected · ${accSizeStr}`;
+      banner.querySelector('p').textContent = 'Your payment could not be verified. Please contact support.';
+    } else if (acc.status==='failed') {
+      banner.style.background = 'linear-gradient(135deg,rgba(224,82,82,.12),rgba(224,82,82,.04))';
+      banner.style.borderColor = 'rgba(224,82,82,.3)';
+      banner.querySelector('h3').innerHTML = `❌ Challenge Failed · ${accSizeStr}`;
+      banner.querySelector('p').textContent = (acc.phase||'Phase 1')+' rules were breached. Contact support for a reset or new challenge.';
+    } else {
+      banner.style.background = 'linear-gradient(135deg,rgba(55,138,221,.1),rgba(24,95,165,.06))';
+      banner.style.borderColor = 'var(--border-blue)';
+      banner.querySelector('h3').innerHTML = `🚀 <span id="bannerType">${challengeType}</span> · <span id="bannerSize">${accSizeStr}</span>`;
+      banner.querySelector('p').innerHTML = `Hit ${ruleSet.profitTargetPct}% profit target — you're <strong id="bannerPct">${targetPct}%</strong> of the way there. Keep it up!`;
+    }
+  }
+
+}
+
+async function requestPayout() {
+  const acc = currentDashboardAccount;
+  if (!currentUserId || !acc) return;
+
+  const metrics = computeAccountMetrics(acc);
+  const split = acc.profitSplit != null ? Number(acc.profitSplit) : 80;
+  const splitRate = Math.max(0, split / 100);
+  const grossAmount = Math.max(0, metrics.profit);
+  const amount = Math.max(0, grossAmount * splitRate);
+  if (amount <= 0) { showCopyToast('No payout amount is currently available.'); return; }
+  if (acc.payoutStatus === 'pending') { showCopyToast('A payout request is already pending.'); return; }
+  if ((currentUserKyc.status || 'unsubmitted') !== 'approved') {
+    showCopyToast('KYC approval is required before requesting payout.');
+    showPage('payouts', null);
+    enableKycForm();
+    document.getElementById('kycCard')?.scrollIntoView({ behavior:'smooth', block:'start' });
+    return;
+  }
+  const payoutWalletAddress = document.getElementById('payoutTrc20Address')?.value.trim();
+  const trc20Pattern = /^T[1-9A-HJ-NP-Za-km-z]{33}$/;
+  if (!trc20Pattern.test(payoutWalletAddress || '')) {
+    showCopyToast('Enter a valid USDT TRC20 address before requesting payout.');
+    showPage('payouts', null);
+    document.getElementById('payoutTrc20Address')?.focus();
+    return;
+  }
+
+  const btn = document.getElementById('payoutRequestBtn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+  try {
+    const accountId = acc.id || acc.orderId;
+    const userRef = db.collection('users').doc(currentUserId);
+    const accountRef = db.collection('users').doc(currentUserId)
+                         .collection('accounts').doc(accountId);
+    await db.runTransaction(async transaction => {
+      const userSnap = await transaction.get(userRef);
+      const accountSnap = await transaction.get(accountRef);
+      const serverKycStatus = userSnap.data()?.kycStatus || userSnap.data()?.kyc?.status || 'unsubmitted';
+      if (serverKycStatus !== 'approved') throw new Error('KYC approval is required before requesting payout.');
+      if (!accountSnap.exists) throw new Error('Account not found.');
+      if (accountSnap.data().payoutStatus === 'pending') {
+        throw new Error('A payout request is already pending.');
+      }
+      transaction.update(accountRef, {
+        payoutStatus: 'pending',
+        payoutAmount: amount,
+        payoutGrossAmount: grossAmount,
+        payoutSplit: split,
+        payoutNetwork: 'USDT TRC20',
+        payoutWalletAddress,
+        payoutRequestedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        payoutDecidedAt: firebase.firestore.FieldValue.delete(),
+        payoutDecisionNote: firebase.firestore.FieldValue.delete()
+      });
+    });
+    acc.payoutStatus = 'pending';
+    acc.payoutAmount = amount;
+    acc.payoutGrossAmount = grossAmount;
+    acc.payoutSplit = split;
+    acc.payoutNetwork = 'USDT TRC20';
+    acc.payoutWalletAddress = payoutWalletAddress;
+    populateDashboard(acc);
+    showCopyToast('Payout request submitted for admin review.');
+  } catch (err) {
+    btn.disabled = false;
+    btn.textContent = 'Request payout';
+    showCopyToast('Could not submit payout request: '+err.message);
+  }
+}
+
+// ── NAVIGATION ───────────────────────────────────────────────
+async function requestFundingAccount() {
+  const acc = currentDashboardAccount;
+  if (!currentUserId || !acc) return;
+
+  const metrics = computeAccountMetrics(acc);
+  const challengeType = acc.challengeType || 'One-Step';
+  const phase = (acc.phase || 'Phase 1').toLowerCase();
+  const ruleSet = getRuleSet(challengeType);
+  const startBal = parseFloat(acc.startBalance) || 100000;
+  const target = parseFloat(acc.profitTarget) || (startBal * ruleSet.profitTargetPct/100);
+  const maxDaily = parseFloat(acc.maxDailyLoss) || (startBal * ruleSet.dailyLossPct/100);
+  const maxDD = parseFloat(acc.maxDrawdown) || (startBal * ruleSet.maxDDPct/100);
+  const ctLower = challengeType.toLowerCase();
+  const isThreeStep = ctLower.includes('3-step') || ctLower.includes('3 step') || ctLower.includes('three');
+  let requestedPhase;
+  if (isThreeStep) {
+    if (phase.includes('phase 1')) requestedPhase = 'Phase 2';
+    else if (phase.includes('phase 2')) requestedPhase = 'Phase 3';
+    else requestedPhase = 'Funded';
+  } else {
+    requestedPhase = ctLower.includes('two') && !phase.includes('phase 2') ? 'Phase 2' : 'Funded';
+  }
+
+  if (acc.status !== 'active') { showCopyToast('Account must be active before requesting the next phase.'); return; }
+  if (phase.includes('funded')) { showCopyToast('This account is already funded.'); return; }
+  if (acc.fundingStatus === 'pending') { showCopyToast('A phase request is already pending.'); return; }
+  if (metrics.profit < target) { showCopyToast('Profit target is not complete yet.'); return; }
+  const hasConsistencyRule = ctLower.includes('instant') || (isThreeStep && requestedPhase === 'Funded');
+  // Check trading days requirement (0.5% equity move threshold)
+  const minTDays = ruleSet.minTradingDays || 0;
+  if (minTDays > 0) {
+    const minEqMove = startBal * 0.005;
+    const tdPnLMap = {};
+    (Array.isArray(acc.trades)?acc.trades:[]).forEach(t => {
+      const d = new Date(t.closedAt);
+      if (Number.isNaN(d.getTime())) return;
+      const k = d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+      tdPnLMap[k] = (tdPnLMap[k]||0)+(parseFloat(t.pnl)||0);
+    });
+    const qualifiedDays = Object.values(tdPnLMap).filter(p=>Math.abs(p)>=minEqMove).length;
+    if (qualifiedDays < minTDays) {
+      showCopyToast('Trading days not met: ' + qualifiedDays + '/' + minTDays + ' qualifying days (equity must move ≥0.5% per day).');
+      return;
+    }
+  }
+  if (metrics.dailyLossUsed > maxDaily || metrics.maxDDUsed > maxDD || (hasConsistencyRule && !metrics.consistencyPass)) {
+    showCopyToast('Account rules must be passing before requesting the next phase.');
+    return;
+  }
+
+  const btn = document.getElementById('payoutRequestBtn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+  try {
+    const accountId = acc.id || acc.orderId;
+    const accountRef = db.collection('users').doc(currentUserId)
+                         .collection('accounts').doc(accountId);
+    await db.runTransaction(async transaction => {
+      const accountSnap = await transaction.get(accountRef);
+      if (!accountSnap.exists) throw new Error('Account not found.');
+      const data = accountSnap.data();
+      if (data.fundingStatus === 'pending') {
+        throw new Error('A phase request is already pending.');
+      }
+      transaction.update(accountRef, {
+        fundingStatus: 'pending',
+        fundingRequestedPhase: requestedPhase,
+        fundingRequestedFromPhase: acc.phase || 'Phase 1',
+        fundingRequestedProfit: metrics.profit,
+        fundingRequestedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        fundingDecidedAt: firebase.firestore.FieldValue.delete()
+      });
+    });
+    acc.fundingStatus = 'pending';
+    acc.fundingRequestedPhase = requestedPhase;
+    acc.fundingRequestedFromPhase = acc.phase || 'Phase 1';
+    acc.fundingRequestedProfit = metrics.profit;
+    populateDashboard(acc);
+    showCopyToast(`${requestedPhase} request submitted for admin review.`);
+  } catch (err) {
+    btn.disabled = false;
+    btn.textContent = `Request ${requestedPhase === 'Funded' ? 'Funded Account' : requestedPhase}`;
+    showCopyToast('Could not submit request: '+err.message);
+  }
+}
+
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if (el) el.classList.add('active');
+  closeSidebar();
+}
+
+// ── SIDEBAR MOBILE ───────────────────────────────────────────
+function openSidebar()  { document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').classList.add('open'); }
+function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('open'); }
+
+// ── NOTIFICATIONS ────────────────────────────────────────────
+function toggleNotif() { document.getElementById('notifPanel').classList.toggle('open'); }
+function markAllRead() {
+  document.querySelectorAll('.notif-item').forEach(i => i.classList.remove('unread'));
+  document.querySelectorAll('.notif-dot-indicator').forEach(d => { d.className='notif-dot-read'; });
+  const dot = document.getElementById('notifDot');
+  if (dot) dot.style.display = 'none';
+}
+
+// ── LOGOUT ───────────────────────────────────────────────────
+async function logout() {
+  await firebase.auth().signOut().catch(()=>{});
+  localStorage.clear();
+  window.location.href = 'signin.html';
+}
+
+// ── EQUITY CHART ─────────────────────────────────────────────
+const ctx = document.getElementById('equityChart').getContext('2d');
+const gradient = ctx.createLinearGradient(0,0,0,200);
+gradient.addColorStop(0,'rgba(55,138,221,0.25)');
+gradient.addColorStop(1,'rgba(55,138,221,0)');
+window.equityChart = new Chart(ctx, {
+  type:'line',
+  data:{
+    labels:['Start','Now'],
+    datasets:[{
+      data:[100000,100000],
+      borderColor:'#378ADD',borderWidth:2,
+      backgroundColor:gradient,fill:true,tension:0.4,
+      pointRadius:3,pointBackgroundColor:'#378ADD',pointHoverRadius:5,
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{display:false},
+      tooltip:{
+        backgroundColor:'#0d1220',borderColor:'rgba(55,138,221,.35)',borderWidth:1,
+        titleColor:'#f0f4ff',bodyColor:'rgba(240,244,255,.6)',padding:10,
+        callbacks:{label:c=>' $'+c.parsed.y.toLocaleString()}
+      }
+    },
+    scales:{
+      x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'rgba(240,244,255,.4)',font:{size:11}}},
+      y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'rgba(240,244,255,.4)',font:{size:11},callback:v=>'$'+(v/1000).toFixed(0)+'K'}}
+    }
+  }
+});
+
+function setChart(range, btn) {
+  document.querySelectorAll('[onclick^="setChart"]').forEach(b => {
+    b.style.background='transparent';b.style.color='var(--text)';b.style.borderColor='var(--border)';
+  });
+  btn.style.background='var(--blue-glow)';btn.style.color='var(--blue)';btn.style.borderColor='var(--blue)';
+}
+
+// ── BFCACHE GUARD — prevent landing on dashboard from bfcache after payment ──
+window.addEventListener('pageshow', e => {
+  if (e.persisted) window.location.reload();
+});
+</script>
+</body>
+</html>

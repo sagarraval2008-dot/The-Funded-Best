@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Terms of Service — The Funded Best</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#378ADD;--blue-dark:#185FA5;
+  --blue-glow:rgba(55,138,221,.18);--blue-glow2:rgba(55,138,221,.08);
+  --green:#1D9E75;
+  --red:#e05252;
+  --bg:#07090f;--bg2:#0b0f1c;--bg3:#111827;
+  --border:rgba(255,255,255,.07);--border-blue:rgba(55,138,221,.3);
+  --text:#eef2ff;--muted:rgba(238,242,255,.48);--muted2:rgba(238,242,255,.28);
+  --font-display:'Space Grotesk',sans-serif;--font-body:'Inter',sans-serif;
+  --radius:16px;--radius-sm:10px;--radius-xs:6px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.7;min-height:100vh;overflow-x:hidden}
+
+/* NAV */
+nav{
+  position:sticky;top:0;z-index:200;
+  background:rgba(7,9,15,.85);backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,255,255,.05);
+  padding:0 2rem;height:64px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.nav-logo{font-family:var(--font-display);font-size:1.05rem;font-weight:700;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:10px}
+.nav-logo-mark{width:30px;height:30px;border-radius:8px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;box-shadow:0 0 18px rgba(55,138,221,.5)}
+.nav-links{display:flex;align-items:center;gap:1.75rem}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{background:var(--blue);color:#fff;text-decoration:none;padding:8px 20px;border-radius:var(--radius-xs);font-size:14px;font-weight:600;font-family:var(--font-body);transition:all .2s}
+.nav-cta:hover{background:var(--blue-dark)}
+@media(max-width:640px){.nav-links{display:none}}
+
+/* HERO */
+.page-hero{
+  padding:5rem 1.5rem 3rem;text-align:center;
+  background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(55,138,221,.12) 0%,transparent 70%);
+  border-bottom:1px solid var(--border);
+}
+.page-badge{
+  display:inline-flex;align-items:center;gap:7px;
+  background:rgba(55,138,221,.1);border:1px solid rgba(55,138,221,.25);
+  color:#7eb8f5;font-size:12px;font-weight:600;letter-spacing:.06em;
+  padding:5px 14px;border-radius:99px;margin-bottom:1.4rem;
+}
+.page-hero h1{font-family:var(--font-display);font-size:clamp(2rem,5vw,3rem);font-weight:700;letter-spacing:-.02em;margin-bottom:.8rem}
+.page-hero p{color:var(--muted);font-size:14px;max-width:480px;margin:0 auto}
+.page-hero .meta{display:flex;align-items:center;justify-content:center;gap:1.5rem;margin-top:1.2rem;font-size:13px;color:var(--muted2);flex-wrap:wrap}
+.page-hero .meta span{display:flex;align-items:center;gap:5px}
+
+/* LAYOUT */
+.doc-wrap{max-width:820px;margin:0 auto;padding:3.5rem 1.5rem 6rem;display:grid;grid-template-columns:220px 1fr;gap:3rem;align-items:start}
+@media(max-width:780px){.doc-wrap{grid-template-columns:1fr;gap:2rem}}
+
+/* SIDEBAR TOC */
+.toc{position:sticky;top:84px}
+.toc-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted2);margin-bottom:.9rem}
+.toc-list{list-style:none;display:flex;flex-direction:column;gap:2px}
+.toc-list a{
+  display:block;font-size:13px;color:var(--muted);text-decoration:none;
+  padding:6px 10px;border-radius:var(--radius-xs);
+  border-left:2px solid transparent;
+  transition:all .2s;
+}
+.toc-list a:hover{color:var(--text);background:rgba(255,255,255,.04);border-left-color:var(--border-blue)}
+.toc-list a.active{color:var(--blue);background:var(--blue-glow2);border-left-color:var(--blue)}
+@media(max-width:780px){.toc{display:none}}
+
+/* CONTENT */
+.doc-content{min-width:0}
+.doc-section{margin-bottom:3rem;scroll-margin-top:90px}
+.doc-section h2{
+  font-family:var(--font-display);font-size:1.2rem;font-weight:700;
+  margin-bottom:1rem;padding-bottom:.75rem;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+}
+.doc-section h2 i{color:var(--blue);font-size:18px;flex-shrink:0}
+.doc-section h3{font-size:15px;font-weight:600;margin:1.4rem 0 .5rem;color:var(--text)}
+.doc-section p{font-size:14.5px;color:var(--muted);margin-bottom:.9rem;line-height:1.8}
+.doc-section ul,.doc-section ol{padding-left:1.3rem;display:flex;flex-direction:column;gap:.5rem;margin-bottom:.9rem}
+.doc-section li{font-size:14.5px;color:var(--muted);line-height:1.75}
+.doc-section li strong{color:var(--text)}
+.doc-section a{color:var(--blue);text-decoration:none}
+.doc-section a:hover{text-decoration:underline}
+
+/* CALLOUT BOXES */
+.callout{
+  border-radius:var(--radius-sm);padding:1rem 1.1rem;margin:1.2rem 0;
+  display:flex;gap:12px;align-items:flex-start;
+  font-size:14px;line-height:1.7;
+}
+.callout i{font-size:18px;flex-shrink:0;margin-top:1px}
+.callout-warn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);color:rgba(238,242,255,.7)}
+.callout-warn i{color:#f59e0b}
+.callout-red{background:rgba(224,82,82,.08);border:1px solid rgba(224,82,82,.22);color:rgba(238,242,255,.7)}
+.callout-red i{color:var(--red)}
+.callout-blue{background:var(--blue-glow2);border:1px solid var(--border-blue);color:rgba(238,242,255,.7)}
+.callout-blue i{color:var(--blue)}
+
+/* TABLE */
+.doc-table{width:100%;border-collapse:collapse;margin:1rem 0 1.2rem;font-size:13.5px}
+.doc-table th{text-align:left;font-weight:600;color:var(--muted2);font-size:11px;text-transform:uppercase;letter-spacing:.06em;padding:8px 10px;border-bottom:1px solid var(--border)}
+.doc-table td{padding:10px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--muted);vertical-align:top}
+.doc-table tr:last-child td{border-bottom:none}
+.doc-table td:first-child{color:var(--text);font-weight:500}
+
+/* FOOTER */
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.5rem 1.5rem}
+.footer-inner{max-width:1040px;margin:0 auto;display:flex;flex-wrap:wrap;gap:1.5rem;justify-content:space-between;align-items:center}
+.footer-logo{font-family:var(--font-display);font-size:.95rem;font-weight:700;display:flex;align-items:center;gap:8px}
+.footer-logo-mark{width:24px;height:24px;border-radius:6px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
+.footer-links{display:flex;gap:1.25rem;flex-wrap:wrap}
+.footer-links a{font-size:13px;color:var(--muted);text-decoration:none;transition:color .2s}
+.footer-links a:hover{color:var(--text)}
+.footer-copy{max-width:1040px;margin:.75rem auto 0;font-size:12px;color:var(--muted2);text-align:center;padding-top:1.2rem;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="SETup.html" class="nav-logo">
+    <div class="nav-logo-mark">FB</div>
+    The Funded Best
+  </a>
+  <div class="nav-links">
+    <a href="challenges.html">Challenges</a>
+    <a href="rules.html">Rules</a>
+    <a href="faq.html">FAQ</a>
+    <a href="support.html">Support</a>
+  </div>
+  <a href="challenges.html" class="nav-cta">Get Funded →</a>
+</nav>
+
+<div class="page-hero">
+  <div class="page-badge"><i class="ti ti-file-text"></i> Legal</div>
+  <h1>Terms of Service</h1>
+  <p>Please read these terms carefully before purchasing a challenge or using any part of The Funded Best platform.</p>
+  <div class="meta">
+    <span><i class="ti ti-calendar"></i> Effective: 1 June 2026</span>
+    <span><i class="ti ti-refresh"></i> Last updated: 1 June 2026</span>
+    <span><i class="ti ti-map-pin"></i> Governing law: India</span>
+  </div>
+</div>
+
+<div class="doc-wrap">
+
+  <!-- SIDEBAR TOC -->
+  <aside class="toc">
+    <div class="toc-label">On this page</div>
+    <ul class="toc-list" id="tocList">
+      <li><a href="#acceptance">1. Acceptance</a></li>
+      <li><a href="#eligibility">2. Eligibility</a></li>
+      <li><a href="#nature">3. Nature of the Service</a></li>
+      <li><a href="#challenges">4. Challenges & Accounts</a></li>
+      <li><a href="#fees">5. Fees & Payments</a></li>
+      <li><a href="#payouts">6. Payouts & Profit Split</a></li>
+      <li><a href="#prohibited">7. Prohibited Conduct</a></li>
+      <li><a href="#termination">8. Termination</a></li>
+      <li><a href="#liability">9. Limitation of Liability</a></li>
+      <li><a href="#disclaimers">10. Disclaimers</a></li>
+      <li><a href="#ip">11. Intellectual Property</a></li>
+      <li><a href="#changes">12. Changes to Terms</a></li>
+      <li><a href="#governing">13. Governing Law</a></li>
+      <li><a href="#contact">14. Contact Us</a></li>
+    </ul>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="doc-content">
+
+    <div class="callout callout-warn">
+      <i class="ti ti-alert-triangle"></i>
+      <div><strong>Risk warning:</strong> Trading financial instruments involves a substantial risk of loss. Challenge accounts are simulated evaluation environments, not live brokerage accounts. You may lose the entire fee paid for a challenge.</div>
+    </div>
+
+    <div class="doc-section" id="acceptance">
+      <h2><i class="ti ti-check-circle"></i> 1. Acceptance of Terms</h2>
+      <p>By registering an account, purchasing a challenge, or using any service offered by <strong>The Funded Best</strong> ("Company", "we", "us", "our"), you ("User", "Trader", "you") agree to be bound by these Terms of Service ("Terms") and our <a href="privacy.html">Privacy Policy</a>.</p>
+      <p>If you do not agree to these Terms in their entirety, you must not access or use our platform. Continued use of the platform after any modification to these Terms constitutes your acceptance of the updated Terms.</p>
+    </div>
+
+    <div class="doc-section" id="eligibility">
+      <h2><i class="ti ti-user-check"></i> 2. Eligibility</h2>
+      <p>To use The Funded Best platform you must:</p>
+      <ul>
+        <li>Be at least <strong>18 years of age</strong></li>
+        <li>Have the legal capacity to enter into a binding contract under the laws of your jurisdiction</li>
+        <li>Not be a resident of a country where participation in such services is prohibited by applicable law</li>
+        <li>Provide accurate, current, and complete registration information</li>
+      </ul>
+      <p>We reserve the right to refuse service, terminate accounts, or cancel challenges at our discretion if we determine that eligibility requirements are not met.</p>
+    </div>
+
+    <div class="doc-section" id="nature">
+      <h2><i class="ti ti-info-circle"></i> 3. Nature of the Service</h2>
+      <div class="callout callout-blue">
+        <i class="ti ti-alert-circle"></i>
+        <div>The Funded Best provides <strong>simulated trading evaluation accounts</strong>. These are not real brokerage accounts. No real capital is traded during evaluation phases. Funded accounts operate on capital allocated by the Company under specific conditions described herein.</div>
+      </div>
+      <p>The Company is not a licensed broker, investment advisor, or financial institution. We do not provide investment advice. All trading decisions are made solely by the Trader.</p>
+      <p>Past performance of any trader on our platform does not guarantee future results. The Company makes no representations or warranties regarding the profitability of any trading strategy.</p>
+    </div>
+
+    <div class="doc-section" id="challenges">
+      <h2><i class="ti ti-target"></i> 4. Challenges & Funded Accounts</h2>
+      <h3>4.1 Challenge Types</h3>
+      <p>We offer the following challenge types, each with specific rules published on the <a href="rules.html">Rules page</a>:</p>
+      <table class="doc-table">
+        <thead><tr><th>Type</th><th>Phases</th><th>Profit Split</th></tr></thead>
+        <tbody>
+          <tr><td>Instant Funding</td><td>No evaluation — funded immediately</td><td>80%</td></tr>
+          <tr><td>One-Step</td><td>1 evaluation phase</td><td>80%</td></tr>
+          <tr><td>Two-Step</td><td>2 evaluation phases</td><td>80%</td></tr>
+          <tr><td>3-Step</td><td>3 evaluation phases</td><td>50%</td></tr>
+        </tbody>
+      </table>
+      <h3>4.2 Challenge Rules</h3>
+      <p>Each challenge has specific rules including profit targets, daily loss limits, maximum drawdown limits, minimum trading days, and consistency requirements. These rules are published on our Rules page and form part of these Terms. Violation of any rule will result in immediate termination of the challenge account without refund.</p>
+      <h3>4.3 Account Activation</h3>
+      <p>Challenge accounts are activated within 5–30 minutes of payment verification. MT5 login credentials are sent to the email address registered on your account. The Company is not liable for delays caused by payment verification issues or incorrect email addresses provided by the User.</p>
+      <h3>4.4 Account Resets</h3>
+      <p>Reset discounts may be offered at our discretion. A reset does not carry over any trading history, profit, or status from the previous account. Each reset is treated as a new challenge purchase.</p>
+    </div>
+
+    <div class="doc-section" id="fees">
+      <h2><i class="ti ti-credit-card"></i> 5. Fees & Payments</h2>
+      <h3>5.1 Challenge Fees</h3>
+      <p>All challenge fees are displayed in USD and collected in INR at the prevailing exchange rate. Fees are non-refundable except as stated below or as required by applicable Indian consumer protection law.</p>
+      <h3>5.2 Fee Refund Policy</h3>
+      <ul>
+        <li><strong>Evaluation challenges (One-Step, Two-Step, 3-Step):</strong> The challenge fee is refunded with your first successful payout once you reach the funded stage and complete your first withdrawal.</li>
+        <li><strong>Instant Funding:</strong> Fees are non-refundable under any circumstances.</li>
+        <li><strong>Failed challenges:</strong> Fees are not refunded if you violate a rule or fail to meet the profit target.</li>
+        <li><strong>Technical issues:</strong> If a verifiable platform error caused your account to be wrongly terminated, you may contact support for a review within 7 days.</li>
+      </ul>
+      <h3>5.3 Payment Methods</h3>
+      <p>We currently accept UPI and cryptocurrency payments. All payments must be made by the registered account holder. Payments made from third-party accounts may be rejected. The Company reserves the right to request proof of payment identity.</p>
+      <h3>5.4 Chargebacks</h3>
+      <div class="callout callout-red">
+        <i class="ti ti-ban"></i>
+        <div>Initiating a chargeback or payment dispute without first contacting our support team constitutes a material breach of these Terms. We reserve the right to permanently ban accounts involved in fraudulent chargebacks and to pursue recovery through legal means.</div>
+      </div>
+    </div>
+
+    <div class="doc-section" id="payouts">
+      <h2><i class="ti ti-cash"></i> 6. Payouts & Profit Split</h2>
+      <h3>6.1 Profit Split</h3>
+      <p>Upon reaching the funded stage, Traders receive the profit split percentage applicable to their account type (80% for most accounts, 50% for 3-Step accounts). The Company retains the remaining percentage.</p>
+      <h3>6.2 Payout Requests</h3>
+      <p>Payout requests are submitted through the dashboard and reviewed by our admin team. We aim to process verified payout requests within 24–48 hours on business days. The Company reserves the right to delay payouts pending verification of trading activity for compliance purposes.</p>
+      <h3>6.3 Payout Methods</h3>
+      <p>Payouts are processed via UPI or cryptocurrency to the wallet/account details provided by the Trader. The Company is not responsible for errors caused by incorrect payment details submitted by the Trader.</p>
+      <h3>6.4 Payout Denial</h3>
+      <p>We reserve the right to deny or reverse a payout if we determine that the trading activity involved rule violations, prohibited strategies, or any form of fraud or manipulation.</p>
+    </div>
+
+    <div class="doc-section" id="prohibited">
+      <h2><i class="ti ti-ban"></i> 7. Prohibited Conduct</h2>
+      <p>The following are strictly prohibited and will result in immediate account termination without refund:</p>
+      <ul>
+        <li><strong>Copy trading / signal services:</strong> Using third-party signal services, copy trading platforms, or automated bots that replicate trades from another account</li>
+        <li><strong>Tick scalping / latency arbitrage:</strong> Exploiting platform latency or data feed delays to gain an unfair advantage</li>
+        <li><strong>Account sharing:</strong> Allowing any third party to trade on your account</li>
+        <li><strong>Hedging across accounts:</strong> Placing opposing positions across multiple Company accounts to guarantee profit or eliminate risk</li>
+        <li><strong>Weekend / news holding:</strong> Where explicitly prohibited by your account type rules</li>
+        <li><strong>Wash trading:</strong> Executing trades with no genuine market intent to manipulate metrics</li>
+        <li><strong>Identity fraud:</strong> Registering with false identity information or using another person's identity</li>
+        <li><strong>Reverse engineering:</strong> Attempting to reverse engineer, scrape, or interfere with the platform's systems</li>
+      </ul>
+    </div>
+
+    <div class="doc-section" id="termination">
+      <h2><i class="ti ti-x-circle"></i> 8. Termination</h2>
+      <p>The Company may suspend or permanently terminate your account and access to the platform at any time, with or without notice, for:</p>
+      <ul>
+        <li>Violation of these Terms or the Rules applicable to your challenge</li>
+        <li>Fraudulent, abusive, or deceptive conduct</li>
+        <li>Chargebacks or payment disputes</li>
+        <li>Any activity that the Company determines, in its sole discretion, to be harmful to the platform or other users</li>
+      </ul>
+      <p>Upon termination, all pending payout requests may be cancelled and any funded account access will be revoked. The Company is not obligated to provide detailed reasons for termination decisions.</p>
+    </div>
+
+    <div class="doc-section" id="liability">
+      <h2><i class="ti ti-shield-off"></i> 9. Limitation of Liability</h2>
+      <p>To the maximum extent permitted by applicable law:</p>
+      <ul>
+        <li>The Company's total liability to you for any claim arising from use of the platform shall not exceed the challenge fee you paid in the three months preceding the claim</li>
+        <li>The Company is not liable for any indirect, incidental, consequential, or punitive damages, including loss of profits, data, or business opportunity</li>
+        <li>The Company is not liable for losses resulting from platform downtime, internet connectivity issues, or force majeure events</li>
+      </ul>
+      <p>Nothing in these Terms excludes liability for fraud, death, or personal injury caused by our negligence, to the extent such exclusions are prohibited by Indian law.</p>
+    </div>
+
+    <div class="doc-section" id="disclaimers">
+      <h2><i class="ti ti-alert-circle"></i> 10. Disclaimers</h2>
+      <p>The platform is provided on an <strong>"as is" and "as available"</strong> basis without warranties of any kind, express or implied. We do not warrant that:</p>
+      <ul>
+        <li>The platform will be uninterrupted, error-free, or secure at all times</li>
+        <li>Any specific trading result will be achieved</li>
+        <li>The simulated trading environment will exactly replicate live market conditions</li>
+      </ul>
+      <div class="callout callout-warn">
+        <i class="ti ti-chart-line"></i>
+        <div>Trading financial instruments, even in a simulated environment, requires significant skill and risk management. The Company does not guarantee that passing an evaluation will result in profitability on a funded account.</div>
+      </div>
+    </div>
+
+    <div class="doc-section" id="ip">
+      <h2><i class="ti ti-lock"></i> 11. Intellectual Property</h2>
+      <p>All content on the platform, including but not limited to the website design, logos, text, graphics, challenge structures, and software, is the exclusive property of The Funded Best and is protected by applicable Indian and international intellectual property laws.</p>
+      <p>You may not reproduce, distribute, modify, or create derivative works from any platform content without prior written consent from the Company.</p>
+    </div>
+
+    <div class="doc-section" id="changes">
+      <h2><i class="ti ti-edit"></i> 12. Changes to These Terms</h2>
+      <p>We may update these Terms at any time. When we do, we will update the "Last updated" date at the top of this page. For material changes, we will notify registered users via email or a platform notification.</p>
+      <p>Your continued use of the platform after changes are posted constitutes your acceptance of the revised Terms. If you disagree with the changes, you must stop using the platform.</p>
+    </div>
+
+    <div class="doc-section" id="governing">
+      <h2><i class="ti ti-gavel"></i> 13. Governing Law & Disputes</h2>
+      <p>These Terms shall be governed by and construed in accordance with the laws of India. Any dispute arising out of or in connection with these Terms shall first be attempted to be resolved through good-faith negotiation.</p>
+      <p>If negotiation fails, disputes shall be subject to the exclusive jurisdiction of the courts of <strong>Pune, Maharashtra, India</strong>. You agree to waive any objection to the jurisdiction or venue of such courts.</p>
+    </div>
+
+    <div class="doc-section" id="contact">
+      <h2><i class="ti ti-mail"></i> 14. Contact Us</h2>
+      <p>If you have any questions about these Terms, please contact us:</p>
+      <ul>
+        <li><strong>Email:</strong> <a href="mailto:support.thefundedbest@gmail.com">support.thefundedbest@gmail.com</a></li>
+        <li><strong>Support page:</strong> <a href="support.html">thefundedbest.com/support</a></li>
+        <li><strong>Telegram:</strong> <a href="https://t.me/+OhhSq6i38605ZDNl" target="_blank" rel="noopener">Join our Telegram</a></li>
+      </ul>
+      <p style="margin-top:1.5rem;font-size:13px;color:var(--muted2)">Also see our <a href="privacy.html">Privacy Policy</a> for information on how we collect and use your personal data.</p>
+    </div>
+
+  </main>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">
+      <div class="footer-logo-mark">FB</div>
+      The Funded Best
+    </div>
+    <div class="footer-links">
+      <a href="challenges.html">Challenges</a>
+      <a href="rules.html">Rules</a>
+      <a href="support.html">Support</a>
+      <a href="faq.html">FAQ</a>
+      <a href="terms.html">Terms</a>
+      <a href="privacy.html">Privacy</a>
+    </div>
+  </div>
+  <p class="footer-copy">© 2026 The Funded Best. All rights reserved. Trading involves substantial risk of loss — only trade capital you can afford to lose.</p>
+</footer>
+
+<script>
+// Active TOC highlight on scroll
+const sections = document.querySelectorAll('.doc-section');
+const tocLinks = document.querySelectorAll('.toc-list a');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      tocLinks.forEach(a => a.classList.remove('active'));
+      const active = document.querySelector(`.toc-list a[href="#${entry.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { rootMargin:'-20% 0px -70% 0px' });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

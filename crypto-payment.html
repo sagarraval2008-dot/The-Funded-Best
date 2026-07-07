@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Crypto Payment — The Funded Best</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --blue: #378ADD;
+  --blue-dark: #185FA5;
+  --blue-bright: #5ba3f5;
+  --blue-glow: rgba(55,138,221,0.15);
+  --green: #22c55e;
+  --green-glow: rgba(34,197,94,0.12);
+  --orange: #f59e0b;
+  --red: #ef4444;
+  --bg: #060810;
+  --bg2: #0b0f1c;
+  --bg3: #0f1526;
+  --border: rgba(255,255,255,0.07);
+  --border-blue: rgba(55,138,221,0.3);
+  --text: #eef2ff;
+  --muted: rgba(200,210,240,0.5);
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --radius: 18px;
+  --radius-sm: 10px;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --t: 0.3s;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: var(--font-body); font-size: 16px;
+  line-height: 1.6; min-height: 100vh; overflow-x: hidden;
+}
+
+/* ── ANIMATED BG ── */
+.bg-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.orb { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.28; animation: orbFloat 14s ease-in-out infinite; }
+.orb-1 { width: 500px; height: 500px; top: -140px; left: -80px;
+  background: radial-gradient(circle, rgba(55,138,221,0.45) 0%, transparent 70%); animation-delay:0s; }
+.orb-2 { width: 360px; height: 360px; top: 35%; right: -80px;
+  background: radial-gradient(circle, rgba(245,158,11,0.25) 0%, transparent 70%); animation-delay:-5s; }
+.orb-3 { width: 300px; height: 300px; bottom: 10%; left: 20%;
+  background: radial-gradient(circle, rgba(34,197,94,0.18) 0%, transparent 70%); animation-delay:-9s; }
+@keyframes orbFloat {
+  0%,100% { transform: translate(0,0) scale(1); }
+  33% { transform: translate(22px,-30px) scale(1.05); }
+  66% { transform: translate(-16px,24px) scale(0.95); }
+}
+.bg-grid {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image: linear-gradient(rgba(55,138,221,0.035) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(55,138,221,0.035) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 40%, black, transparent);
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top:0; left:0; right:0; z-index:1000;
+  background: rgba(6,8,16,0.72); backdrop-filter: blur(22px) saturate(180%);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem; display: flex; align-items: center; justify-content: space-between;
+  height: 64px; animation: navIn 0.6s var(--ease) both;
+}
+@keyframes navIn { from { transform: translateY(-100%); opacity:0; } to { transform: translateY(0); opacity:1; } }
+.nav-logo { font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 9px; letter-spacing:-0.01em; }
+.nav-logo .dot { width:8px; height:8px; background:var(--blue); border-radius:50%; animation: dotPulse 2s ease-in-out infinite; }
+@keyframes dotPulse { 0%,100% { box-shadow:0 0 6px var(--blue); transform:scale(1); } 50% { box-shadow:0 0 18px var(--blue),0 0 32px rgba(55,138,221,0.35); transform:scale(1.15); } }
+.nav-links { display:flex; align-items:center; gap:1.75rem; }
+.nav-links a { color:var(--muted); text-decoration:none; font-size:14px; transition:color var(--t); position:relative; }
+.nav-links a::after { content:''; position:absolute; bottom:-4px; left:0; right:0; height:1px; background:var(--blue); transform:scaleX(0); transition:transform var(--t); }
+.nav-links a:hover { color:var(--text); }
+.nav-links a:hover::after { transform:scaleX(1); }
+.nav-actions { display:flex; gap:10px; align-items:center; }
+.btn-ghost { background:transparent; color:var(--text); border:1px solid var(--border); padding:8px 20px; border-radius:var(--radius-sm); font-size:14px; font-family:var(--font-body); cursor:pointer; text-decoration:none; transition:all var(--t); display:inline-block; }
+.btn-ghost:hover { border-color:rgba(255,255,255,0.2); background:rgba(255,255,255,0.05); }
+.nav-cta { background:var(--blue); color:#fff; border:none; padding:8px 20px; border-radius:var(--radius-sm); font-size:14px; font-family:var(--font-body); font-weight:500; cursor:pointer; text-decoration:none; transition:all var(--t); box-shadow:0 0 20px rgba(55,138,221,0.3); display:inline-block; }
+.nav-cta:hover { background:var(--blue-dark); transform:translateY(-1px); }
+
+/* ── HERO ── */
+.page-hero {
+  position:relative; z-index:1; text-align:center;
+  padding: 120px 1.5rem 40px;
+}
+.hero-badge {
+  display:inline-flex; align-items:center; gap:8px;
+  background:rgba(245,158,11,0.1); color:var(--orange);
+  font-size:12px; padding:6px 16px; border-radius:20px;
+  border:1px solid rgba(245,158,11,0.25); margin-bottom:1.25rem;
+  letter-spacing:0.06em; text-transform:uppercase; font-weight:500;
+  animation: fadeUp 0.7s 0.1s var(--ease) both;
+}
+.page-hero h1 {
+  font-family:var(--font-display); font-size:clamp(2rem,5vw,3rem);
+  font-weight:700; line-height:1.1; letter-spacing:-0.03em; margin-bottom:0.6rem;
+  background:linear-gradient(130deg,#eef2ff 0%,#a8c5f0 55%,#378ADD 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  animation: fadeUp 0.7s 0.25s var(--ease) both;
+}
+.page-hero p { font-size:0.95rem; color:var(--muted); animation: fadeUp 0.7s 0.4s var(--ease) both; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(22px); } to { opacity:1; transform:translateY(0); } }
+
+/* ── PROGRESS ── */
+.progress-wrap {
+  position:relative; z-index:1;
+  max-width:480px; margin:0 auto 40px; padding:0 1.5rem;
+  animation: fadeUp 0.7s 0.5s var(--ease) both;
+}
+.progress-steps { display:flex; align-items:center; justify-content:center; }
+.p-step { display:flex; flex-direction:column; align-items:center; gap:6px; flex:1; }
+.p-step-circle { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; position:relative; z-index:1; transition:all var(--t); }
+.p-step.done .p-step-circle { background:var(--green); border:2px solid var(--green); color:white; box-shadow:0 0 16px rgba(34,197,94,0.4); }
+.p-step.active .p-step-circle { background:var(--orange); border:2px solid var(--orange); color:white; box-shadow:0 0 20px rgba(245,158,11,0.5); animation:stepPulse 2s ease-in-out infinite; }
+.p-step.pending .p-step-circle { background:transparent; border:2px solid var(--border); color:var(--muted); }
+@keyframes stepPulse { 0%,100%{box-shadow:0 0 12px rgba(245,158,11,0.4);}  50%{box-shadow:0 0 28px rgba(245,158,11,0.7);} }
+.p-step-label { font-size:11px; color:var(--muted); white-space:nowrap; }
+.p-step.active .p-step-label, .p-step.done .p-step-label { color:var(--text); }
+.p-line { flex:1; height:2px; background:var(--border); margin-bottom:20px; }
+.p-line.filled { background:var(--green); }
+.p-line.half { background:linear-gradient(90deg, var(--green), var(--border)); }
+
+/* ── LAYOUT ── */
+.page-layout {
+  position:relative; z-index:1;
+  max-width:960px; margin:0 auto;
+  padding:0 1.5rem 100px;
+  display:grid; grid-template-columns:1fr 360px;
+  gap:24px; align-items:start;
+}
+
+/* ── CARDS ── */
+.card {
+  background:linear-gradient(135deg,rgba(11,15,28,0.97) 0%,rgba(15,21,38,0.93) 100%);
+  border:1px solid var(--border); border-radius:var(--radius);
+  padding:2rem; position:relative; overflow:hidden;
+  transition:border-color var(--t), box-shadow var(--t);
+  animation: fadeUp 0.7s var(--ease) both;
+}
+.card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(55,138,221,0.4),transparent);
+}
+.card:hover { border-color:var(--border-blue); box-shadow:0 20px 60px rgba(55,138,221,0.07); }
+.card + .card { margin-top:20px; }
+.card-title {
+  font-family:var(--font-display); font-size:1rem; font-weight:600;
+  margin-bottom:1.5rem; display:flex; align-items:center; gap:10px;
+}
+.title-icon {
+  width:32px; height:32px; background:var(--blue-glow); border:1px solid var(--border-blue);
+  border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:15px;
+}
+
+/* ── SUMMARY ROWS ── */
+.s-row { display:flex; justify-content:space-between; align-items:center; padding:11px 0; border-bottom:1px solid var(--border); }
+.s-row:last-child { border-bottom:none; }
+.s-row .lbl { font-size:14px; color:var(--muted); }
+.s-row .val { font-size:14px; font-weight:600; }
+
+/* ── WALLET SECTION ── */
+.network-pill {
+  display:inline-flex; align-items:center; gap:7px;
+  background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.25);
+  color:var(--orange); font-size:12px; font-weight:600;
+  padding:5px 14px; border-radius:20px; margin-bottom:1.25rem;
+  letter-spacing:0.04em;
+}
+.network-pill .dot-anim { width:7px; height:7px; background:var(--orange); border-radius:50%; animation:dotPulse 1.5s infinite; }
+
+.wallet-box {
+  background:rgba(6,8,16,0.8); border:1px solid var(--border-blue);
+  border-radius:var(--radius-sm); padding:18px 20px; margin-bottom:14px;
+  position:relative; overflow:hidden;
+}
+.wallet-box::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(135deg,var(--blue-glow) 0%,transparent 60%);
+  pointer-events:none;
+}
+.wallet-label { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px; }
+.wallet-addr {
+  font-family: 'Space Grotesk', monospace; font-size:15px; font-weight:600;
+  word-break:break-all; color:var(--blue-bright); line-height:1.4;
+  position:relative; z-index:1;
+}
+.copy-btn {
+  display:inline-flex; align-items:center; gap:8px;
+  background:var(--blue); color:white; border:none;
+  padding:11px 22px; border-radius:var(--radius-sm);
+  font-size:14px; font-weight:600; font-family:var(--font-body);
+  cursor:pointer; transition:all var(--t);
+  box-shadow:0 4px 18px rgba(55,138,221,0.3);
+}
+.copy-btn:hover { background:var(--blue-dark); transform:translateY(-2px); box-shadow:0 8px 28px rgba(55,138,221,0.5); }
+.copy-btn svg { width:15px; height:15px; transition:transform var(--t); }
+.copy-btn:hover svg { transform:scale(1.15); }
+
+/* Warnings */
+.warnings { display:flex; flex-direction:column; gap:10px; margin-top:1.5rem; }
+.warn-item {
+  display:flex; align-items:flex-start; gap:10px;
+  padding:12px 14px; border-radius:var(--radius-sm);
+  font-size:13px; line-height:1.5;
+}
+.warn-item.orange { background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.2); color:#fbbf24; }
+.warn-item.red { background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2); color:#f87171; }
+.warn-item .wi { font-size:16px; flex-shrink:0; margin-top:1px; }
+
+/* ── UPLOAD ZONE ── */
+.upload-zone {
+  border:2px dashed rgba(55,138,221,0.3); border-radius:var(--radius-sm);
+  padding:32px 20px; text-align:center; cursor:pointer;
+  transition:all var(--t); margin-bottom:16px; position:relative;
+  background:rgba(6,8,16,0.5);
+}
+.upload-zone:hover, .upload-zone.dragover {
+  border-color:var(--blue); background:rgba(55,138,221,0.06);
+  box-shadow:0 0 0 4px rgba(55,138,221,0.08);
+}
+.upload-zone input[type="file"] { display:none; }
+.upload-icon { font-size:2.5rem; margin-bottom:10px; display:block; }
+.upload-zone h4 { font-size:15px; font-weight:600; margin-bottom:4px; }
+.upload-zone p { font-size:12px; color:var(--muted); }
+.upload-zone .browse { color:var(--blue-bright); text-decoration:underline; cursor:pointer; }
+
+.upload-preview { display:none; margin-top:14px; text-align:center; }
+.upload-preview.show { display:block; animation:fadeUp 0.4s var(--ease); }
+.upload-preview img { max-width:100%; max-height:220px; border-radius:10px; border:1px solid var(--border-blue); }
+.upload-filename { font-size:12px; color:var(--muted); margin-top:8px; word-break:break-all; }
+.upload-remove {
+  margin-top:10px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3);
+  color:#f87171; padding:6px 16px; border-radius:8px; font-size:12px; font-weight:500;
+  cursor:pointer; font-family:var(--font-body); transition:all var(--t);
+}
+.upload-remove:hover { background:rgba(239,68,68,0.2); }
+
+/* ── PAID BUTTON ── */
+#paidBtn {
+  width:100%; padding:16px; border-radius:var(--radius-sm); border:none;
+  background:linear-gradient(135deg,var(--green) 0%,#15803d 100%);
+  color:white; font-size:15px; font-weight:600; font-family:var(--font-body);
+  cursor:pointer; transition:all var(--t); margin-top:8px;
+  position:relative; overflow:hidden;
+  box-shadow:0 4px 24px rgba(34,197,94,0.3);
+}
+#paidBtn::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent);
+  transform:translateX(-100%); transition:transform 0.6s ease;
+}
+#paidBtn:hover::before { transform:translateX(100%); }
+#paidBtn:not(:disabled):hover { box-shadow:0 8px 36px rgba(34,197,94,0.5); transform:translateY(-2px); }
+#paidBtn:disabled { opacity:0.35; cursor:not-allowed; box-shadow:none; }
+#paidBtn .btn-spinner { display:none; width:18px; height:18px; border-radius:50%; border:2px solid rgba(255,255,255,0.3); border-top-color:white; animation:spin 0.7s linear infinite; margin:0 auto; }
+#paidBtn.loading .btn-text { display:none; }
+#paidBtn.loading .btn-spinner { display:block; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* ── ORDER SUMMARY (right) ── */
+.order-card { position:sticky; top:84px; animation-delay:0.2s; }
+.total-row { padding-top:16px; }
+.total-row .lbl { font-size:15px; font-weight:600; color:var(--text); }
+.total-row .val { font-size:1.5rem; font-family:var(--font-display); font-weight:700; color:var(--blue-bright); }
+.order-divider { border:none; border-top:1px solid var(--border); margin:1rem 0; }
+
+.trust-badges { display:flex; flex-direction:column; gap:8px; margin-top:1.25rem; }
+.trust-badge { display:flex; align-items:center; gap:10px; font-size:12px; color:var(--muted); padding:8px 12px; background:rgba(6,8,16,0.5); border:1px solid var(--border); border-radius:8px; }
+
+/* ── TIMER ── */
+.timer-wrap {
+  display:flex; align-items:center; gap:10px;
+  background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2);
+  border-radius:var(--radius-sm); padding:12px 16px; margin-bottom:1.25rem;
+}
+.timer-icon { font-size:18px; }
+.timer-text { font-size:13px; color:#f87171; }
+.timer-count { font-family:var(--font-display); font-weight:700; font-size:15px; color:#fca5a5; letter-spacing:0.04em; }
+
+/* ── TOAST ── */
+#toast {
+  position:fixed; bottom:32px; right:32px; z-index:9999;
+  padding:14px 22px; border-radius:12px; font-size:14px; font-weight:600;
+  display:flex; align-items:center; gap:10px; pointer-events:none;
+  transform:translateY(20px); opacity:0;
+  transition:all 0.35s cubic-bezier(0.34,1.56,0.64,1); backdrop-filter:blur(12px);
+}
+#toast.show { opacity:1; transform:translateY(0); }
+#toast.success { background:rgba(34,197,94,0.12); border:1px solid rgba(34,197,94,0.3); color:var(--green); }
+#toast.info { background:var(--blue-glow); border:1px solid var(--border-blue); color:var(--blue-bright); }
+
+/* ── FOOTER ── */
+footer { position:relative; z-index:1; background:var(--bg2); border-top:1px solid var(--border); padding:2.5rem 1.5rem; }
+.footer-inner { max-width:1000px; margin:0 auto; display:flex; flex-wrap:wrap; gap:2rem; justify-content:space-between; align-items:center; }
+.footer-logo { font-family:var(--font-display); font-size:1rem; font-weight:700; display:flex; align-items:center; gap:8px; }
+.footer-links { display:flex; gap:1.5rem; flex-wrap:wrap; }
+.footer-links a { font-size:13px; color:var(--muted); text-decoration:none; transition:color var(--t); }
+.footer-links a:hover { color:var(--text); }
+.footer-copy { font-size:12px; color:var(--muted); width:100%; text-align:center; margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid var(--border); }
+
+@media (max-width:740px) {
+  .page-layout { grid-template-columns:1fr; }
+  .order-card { position:static; }
+  .nav-links { display:none; }
+  .page-hero h1 { font-size:1.9rem; }
+  nav { padding:0 1rem; }
+}
+@media (prefers-reduced-motion:reduce) {
+  *,*::before,*::after { animation-duration:0.01ms !important; transition-duration:0.01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-canvas">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+<div class="bg-grid"></div>
+<div id="toast"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo"><span class="dot"></span> The Funded Best</a>
+  <div class="nav-links">
+    <a href="challenges.html">Challenges</a>
+    <a href="rules.html">Rules</a>
+    <a href="faq.html">FAQ</a>
+    <a href="support.html">Support</a>
+  </div>
+  <div class="nav-actions">
+    <a href="signin.html" class="btn-ghost" id="navSignIn">Sign In</a>
+    <a href="dashboard.html" class="btn-ghost" id="navProfile" style="display:none"><i class="ti ti-user"></i> Account</a>
+    <a href="challenges.html" class="nav-cta">Get Funded</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="page-hero">
+  <div class="hero-badge">₿ Cryptocurrency Payment</div>
+  <h1>Complete Your Payment</h1>
+  <p>Send the exact amount to the wallet address below, then upload your proof.</p>
+</section>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-steps">
+    <div class="p-step done">
+      <div class="p-step-circle">✓</div>
+      <div class="p-step-label">Select Plan</div>
+    </div>
+    <div class="p-line filled"></div>
+    <div class="p-step done">
+      <div class="p-step-circle">✓</div>
+      <div class="p-step-label">Checkout</div>
+    </div>
+    <div class="p-line half"></div>
+    <div class="p-step active">
+      <div class="p-step-circle">₿</div>
+      <div class="p-step-label">Payment</div>
+    </div>
+    <div class="p-line"></div>
+    <div class="p-step pending">
+      <div class="p-step-circle">4</div>
+      <div class="p-step-label">Funded 🎉</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="page-layout">
+
+  <!-- LEFT COLUMN -->
+  <div>
+
+    <!-- Wallet Details -->
+    <div class="card" style="animation-delay:0.1s">
+      <div class="card-title">
+        <div class="title-icon">₿</div>
+        Wallet Details
+      </div>
+
+      <div class="network-pill">
+        <span class="dot-anim"></span>
+        USDT · TRC20 Network
+      </div>
+
+      <div class="wallet-box">
+        <div class="wallet-label">Send to this wallet address</div>
+        <div class="wallet-addr" id="walletAddr">TKpLMnAPN5w6hutV9VvcvJ1rWQikE1uDAf</div>
+      </div>
+
+      <button class="copy-btn" onclick="copyWallet()">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M7 9a2 2 0 012-2h6a2 2 0 012 2v6a2 2 0 01-2 2H9a2 2 0 01-2-2V9z"/><path d="M5 3a2 2 0 00-2 2v6a2 2 0 002 2V5h8a2 2 0 00-2-2H5z"/></svg>
+        Copy Wallet Address
+      </button>
+
+      <div class="warnings">
+        <div class="warn-item orange">
+          <span class="wi">⚠️</span>
+          <span>Send <strong>only USDT via TRC20</strong> network. Sending any other coin or using another network will result in permanent loss of funds.</span>
+        </div>
+        <div class="warn-item orange">
+          <span class="wi">💰</span>
+          <span>Pay the <strong>exact amount</strong> shown in your order summary. Under or overpayment may delay activation.</span>
+        </div>
+        <div class="warn-item red">
+          <span class="wi">📸</span>
+          <span>Upload a clear screenshot of the successful transaction below. Without proof, your account cannot be activated.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upload Proof -->
+    <div class="card" style="animation-delay:0.2s; margin-top:20px;">
+      <div class="card-title">
+        <div class="title-icon">📤</div>
+        Upload Payment Proof
+      </div>
+
+      <label class="upload-zone" id="uploadZone" for="paymentProof">
+        <input type="file" id="paymentProof" accept="image/*" />
+        <span class="upload-icon">🖼️</span>
+        <h4>Drop your screenshot here</h4>
+        <p>or <span class="browse">browse files</span> — JPG, PNG, WEBP</p>
+      </label>
+
+      <div class="upload-preview" id="uploadPreview">
+        <img id="uploadPreviewImg" alt="Payment proof" />
+        <div class="upload-filename" id="uploadFilename"></div>
+        <button type="button" class="upload-remove" onclick="removeProof()">✕ Remove</button>
+      </div>
+
+      <button id="paidBtn" disabled>
+        <span class="btn-text">✓ I Have Paid — Submit</span>
+        <span class="btn-spinner"></span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div>
+    <div class="card order-card" style="animation-delay:0.3s">
+      <div class="card-title">
+        <div class="title-icon">🧾</div>
+        Order Summary
+      </div>
+
+      <!-- Countdown timer -->
+      <div class="timer-wrap">
+        <span class="timer-icon">⏳</span>
+        <div>
+          <div class="timer-text">Session expires in</div>
+          <div class="timer-count" id="countdown">29:59</div>
+        </div>
+      </div>
+
+      <div class="s-row">
+        <span class="lbl">Challenge</span>
+        <span class="val" id="challengeType">Instant Funding</span>
+      </div>
+      <div class="s-row">
+        <span class="lbl">Account Size</span>
+        <span class="val" id="accountSize">$100,000</span>
+      </div>
+      <div class="s-row">
+        <span class="lbl">Network</span>
+        <span class="val" style="color:var(--orange)">USDT TRC20</span>
+      </div>
+      <div class="s-row">
+        <span class="lbl">Processing Fee</span>
+        <span class="val" style="color:var(--green)">Free</span>
+      </div>
+
+      <hr class="order-divider" />
+
+      <div class="s-row total-row">
+        <span class="lbl">Amount to Send</span>
+        <span class="val" id="entryFee">$499</span>
+      </div>
+
+      <div class="trust-badges" style="margin-top:1.5rem">
+        <div class="trust-badge">🔒 256-bit SSL Encrypted</div>
+        <div class="trust-badge">⚡ Instant Activation on Verify</div>
+        <div class="trust-badge">🕐 Verification within 1 hour</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo"><span class="dot"></span> The Funded Best</div>
+    <div class="footer-links">
+      <a href="challenges.html">Challenges</a>
+      <a href="rules.html">Rules</a>
+      <a href="#">Payouts</a>
+      <a href="support.html">Support</a>
+      <a href="#">Terms</a>
+    </div>
+  </div>
+  <p class="footer-copy">© 2026 The Funded Best. All rights reserved. Trading involves risk — only trade what you can afford to lose.</p>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+// ── AUTH GUARD: redirect to sign-in if not logged in ──
+firebase.apps.length ? firebase.app() : firebase.initializeApp(FIREBASE_CONFIG);
+(function() {
+  const overlay = document.createElement('div');
+  overlay.id = 'authGuardOverlay';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:#07090f;display:flex;align-items:center;justify-content:center;';
+  overlay.innerHTML = '<div style="text-align:center"><div style="width:36px;height:36px;border:3px solid rgba(55,138,221,.2);border-top-color:#378ADD;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px"></div><div style="font-size:13px;color:rgba(238,242,255,.5)">Checking session…</div></div>';
+  document.body.prepend(overlay);
+  firebase.auth().onAuthStateChanged(user => {
+    if (!user) {
+      sessionStorage.setItem('fb_redirect_after_login', 'crypto-payment.html');
+      window.location.replace('signin.html');
+      return;
+    }
+    document.getElementById('navSignIn').style.display  = 'none';
+    document.getElementById('navProfile').style.display = '';
+    overlay.remove();
+  });
+})();
+
+// ── ORDER DATA GUARD: if no challenge in localStorage, send back to challenges ──
+(function() {
+  if (!localStorage.getItem('challengeType') || !localStorage.getItem('entryFee')) {
+    window.location.replace('challenges.html');
+  }
+})();
+
+// ── Load from localStorage ──
+document.getElementById('challengeType').textContent = localStorage.getItem('challengeType') || 'Instant Funding';
+document.getElementById('accountSize').textContent   = localStorage.getItem('accountSize')   || '$100,000';
+document.getElementById('entryFee').textContent      = localStorage.getItem('entryFee')      || '$499';
+
+// ── Countdown timer (30 min) ──
+let secs = 30 * 60 - 1;
+const countEl = document.getElementById('countdown');
+const timerInterval = setInterval(() => {
+  if (secs <= 0) { clearInterval(timerInterval); countEl.textContent = '00:00'; return; }
+  const m = Math.floor(secs / 60).toString().padStart(2,'0');
+  const s = (secs % 60).toString().padStart(2,'0');
+  countEl.textContent = `${m}:${s}`;
+  secs--;
+}, 1000);
+
+// ── Toast ──
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = `show ${type}`;
+  setTimeout(() => { t.className = ''; }, 3000);
+}
+
+// ── Copy wallet ──
+function copyWallet() {
+  const addr = document.getElementById('walletAddr').textContent.trim();
+  navigator.clipboard.writeText(addr);
+  showToast('✓ Wallet address copied!', 'success');
+}
+
+// ── Drag & drop upload zone ──
+const zone = document.getElementById('uploadZone');
+zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+zone.addEventListener('drop', e => {
+  e.preventDefault(); zone.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file) handleFile(file);
+});
+
+// ── File input ──
+document.getElementById('paymentProof').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (file) handleFile(file);
+});
+
+function handleFile(file) {
+  if (!file.type.startsWith('image/')) {
+    showToast('⚠ Please upload an image file', 'info'); return;
+  }
+  if (file.size > 10 * 1024 * 1024) {
+    showToast('⚠ File too large — max 10 MB', 'info'); return;
+  }
+  document.getElementById('uploadFilename').textContent = 'Processing ' + file.name + '…';
+  document.getElementById('uploadPreview').classList.add('show');
+  document.getElementById('paidBtn').disabled = true;
+
+  compressImage(file, 1000, 0.75).then(dataUrl => {
+    document.getElementById('uploadPreviewImg').src = dataUrl;
+    document.getElementById('uploadFilename').textContent = '✓ ' + file.name;
+    localStorage.setItem('paymentProofImage', dataUrl);
+    localStorage.setItem('paymentProofName', file.name);
+    document.getElementById('paidBtn').disabled = false;
+    showToast('✓ Screenshot uploaded!', 'success');
+  }).catch(() => {
+    document.getElementById('uploadFilename').textContent = 'Could not read file — try another image.';
+    document.getElementById('paidBtn').disabled = true;
+  });
+}
+
+function removeProof() {
+  document.getElementById('paymentProof').value = '';
+  document.getElementById('uploadPreview').classList.remove('show');
+  document.getElementById('uploadPreviewImg').src = '';
+  localStorage.removeItem('paymentProofImage');
+  localStorage.removeItem('paymentProofName');
+  document.getElementById('paidBtn').disabled = true;
+}
+
+// ── Image compression ──
+function compressImage(file, maxDim, quality) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('Read failed'));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error('Load failed'));
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > maxDim || height > maxDim) {
+          if (width > height) { height = Math.round(height * maxDim / width); width = maxDim; }
+          else { width = Math.round(width * maxDim / height); height = maxDim; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#fff'; ctx.fillRect(0,0,width,height);
+        ctx.drawImage(img,0,0,width,height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// ── Submit ──
+document.getElementById('paidBtn').addEventListener('click', () => {
+  const btn = document.getElementById('paidBtn');
+  btn.disabled = true; btn.classList.add('loading');
+  localStorage.setItem('paymentMethod','Crypto');
+  if (!sessionStorage.getItem('fb_payment_order_id')) {
+    sessionStorage.setItem('fb_payment_order_id','FB-' + Date.now().toString(36).toUpperCase().slice(-6));
+  }
+  sessionStorage.setItem('fb_payment_just_submitted','1');
+  setTimeout(() => window.location.replace('payment-submitted.html'), 1400);
+});
+</script>
+</body>
+</html>

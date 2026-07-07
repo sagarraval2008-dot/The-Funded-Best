@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Trading Rules — The Funded Best</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#378ADD;--blue-dark:#185FA5;--blue-glow:rgba(55,138,221,.18);
+  --green:#1D9E75;--green-glow:rgba(29,158,117,.15);
+  --red:#e05252;--amber:#f59e0b;
+  --purple:#a855f7;--purple-glow:rgba(168,85,247,.15);
+  --bg:#07090f;--bg2:#0d1220;--bg3:#111827;
+  --border:rgba(255,255,255,.08);--border-blue:rgba(55,138,221,.35);
+  --text:#f0f4ff;--muted:rgba(240,244,255,.5);
+  --font-display:'Space Grotesk',sans-serif;--font-body:'Inter',sans-serif;
+  --radius:16px;--radius-sm:10px;
+}
+
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font-body);min-height:100vh;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%,rgba(55,138,221,.12) 0%,transparent 70%),
+    radial-gradient(ellipse 40% 30% at 85% 30%,rgba(168,85,247,.06) 0%,transparent 60%)}
+
+/* ── NAV ── */
+nav{
+  position:sticky;top:0;z-index:200;
+  background:rgba(7,9,15,.85);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:64px;
+}
+.nav-logo{font-family:var(--font-display);font-size:1.1rem;font-weight:700;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:10px}
+.logo-mark{width:30px;height:30px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;box-shadow:0 0 20px rgba(55,138,221,.5)}
+.nav-links{display:flex;align-items:center;gap:1.5rem}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;transition:color .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--text)}
+.nav-right{display:flex;gap:10px;align-items:center}
+.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border);padding:8px 18px;border-radius:var(--radius-sm);font-size:14px;font-family:var(--font-body);cursor:pointer;text-decoration:none;transition:border-color .2s,background .2s}
+.btn-ghost:hover{border-color:var(--border-blue);background:rgba(55,138,221,.06)}
+.nav-cta{background:var(--blue);color:#fff;border:none;padding:9px 20px;border-radius:var(--radius-sm);font-size:14px;font-family:var(--font-body);font-weight:500;cursor:pointer;text-decoration:none;transition:background .2s,transform .15s,box-shadow .2s}
+.nav-cta:hover{background:var(--blue-dark);transform:translateY(-1px);box-shadow:0 6px 20px rgba(55,138,221,.35)}
+
+/* ── HERO ── */
+.hero{text-align:center;padding:5rem 1.5rem 3rem;position:relative}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:6px;background:var(--blue-glow);color:#85b7eb;font-size:12px;padding:5px 14px;border-radius:20px;border:1px solid var(--border-blue);margin-bottom:1.5rem;letter-spacing:.04em;animation:fadeDown .5s ease}
+.hero h1{font-family:var(--font-display);font-size:clamp(2.2rem,5vw,3.5rem);font-weight:700;line-height:1.1;margin-bottom:1rem;letter-spacing:-.02em;animation:fadeDown .5s .1s ease both}
+.hero h1 .accent{color:var(--blue)}
+.hero-sub{font-size:1rem;color:var(--muted);max-width:520px;margin:0 auto 2.5rem;line-height:1.7;animation:fadeDown .5s .2s ease both}
+
+/* ── TABS ── */
+.tabs-wrapper{display:flex;justify-content:center;margin-bottom:3rem;animation:fadeDown .5s .3s ease both}
+.tabs{display:inline-flex;background:var(--bg2);border:1px solid var(--border);border-radius:50px;padding:5px;gap:4px}
+.tab{padding:10px 28px;border-radius:50px;border:none;color:var(--muted);font-size:14px;font-weight:500;font-family:var(--font-body);cursor:pointer;transition:all .25s cubic-bezier(.4,0,.2,1);white-space:nowrap;background:none}
+.tab:hover{color:var(--text)}
+.tab.active{background:var(--blue);color:#fff;box-shadow:0 4px 20px rgba(55,138,221,.4)}
+.tab.active.green-tab{background:var(--green);box-shadow:0 4px 20px rgba(29,158,117,.4)}
+.tab.active.purple-tab{background:var(--purple);box-shadow:0 4px 20px rgba(168,85,247,.4)}
+
+/* ── PANEL ── */
+.panel{display:none;animation:fadeInUp .35s ease}
+.panel.active{display:block}
+
+/* ── INFO BANNER ── */
+.info-banner{
+  max-width:900px;margin:0 auto 3rem;
+  padding:30px 36px;border-radius:var(--radius);
+  display:flex;align-items:flex-start;gap:20px;
+}
+.info-banner.blue-banner{background:linear-gradient(135deg,rgba(55,138,221,.1),rgba(55,138,221,.04));border:1px solid rgba(55,138,221,.25)}
+.info-banner.green-banner{background:linear-gradient(135deg,rgba(29,158,117,.1),rgba(29,158,117,.04));border:1px solid rgba(29,158,117,.25)}
+.info-banner.purple-banner{background:linear-gradient(135deg,rgba(168,85,247,.1),rgba(168,85,247,.04));border:1px solid rgba(168,85,247,.25)}
+.banner-icon{font-size:36px;flex-shrink:0;line-height:1}
+.banner-text h2{font-family:var(--font-display);font-size:1.4rem;font-weight:700;margin-bottom:8px}
+.banner-text p{font-size:14px;color:var(--muted);line-height:1.7}
+.banner-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.tag{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;letter-spacing:.02em}
+.tag.green{background:var(--green-glow);color:var(--green);border:1px solid rgba(29,158,117,.25)}
+.tag.blue{background:var(--blue-glow);color:var(--blue);border:1px solid rgba(55,138,221,.25)}
+.tag.amber{background:rgba(245,158,11,.15);color:var(--amber);border:1px solid rgba(245,158,11,.25)}
+.tag.purple{background:var(--purple-glow);color:var(--purple);border:1px solid rgba(168,85,247,.25)}
+
+/* ── RULES GRID ── */
+.rules-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));
+  gap:16px;max-width:1100px;margin:0 auto 3rem;
+}
+.rule-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:28px;transition:all .25s cubic-bezier(.4,0,.2,1);
+  position:relative;overflow:hidden;
+}
+.rule-card::before{
+  content:'';position:absolute;inset:0;border-radius:var(--radius);
+  background:radial-gradient(circle at 80% 0%,rgba(55,138,221,.06) 0%,transparent 60%);
+  opacity:0;transition:opacity .3s;pointer-events:none;
+}
+.rule-card:hover{transform:translateY(-4px);border-color:var(--border-blue);box-shadow:0 12px 40px rgba(0,0,0,.3)}
+.rule-card:hover::before{opacity:1}
+.rule-card.green-card:hover{border-color:rgba(29,158,117,.4)}
+.rule-card.green-card::before{background:radial-gradient(circle at 80% 0%,rgba(29,158,117,.08) 0%,transparent 60%)}
+.rule-card.red-card:hover{border-color:rgba(224,82,82,.4)}
+.rule-card.purple-card:hover{border-color:rgba(168,85,247,.4)}
+
+.rule-icon-wrap{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+.rule-icon-wrap.blue{background:var(--blue-glow)}
+.rule-icon-wrap.green{background:var(--green-glow)}
+.rule-icon-wrap.red{background:rgba(224,82,82,.12)}
+.rule-icon-wrap.amber{background:rgba(245,158,11,.12)}
+.rule-icon-wrap.purple{background:var(--purple-glow)}
+.rule-icon-wrap i{font-size:22px}
+.rule-icon-wrap.blue i{color:var(--blue)}
+.rule-icon-wrap.green i{color:var(--green)}
+.rule-icon-wrap.red i{color:var(--red)}
+.rule-icon-wrap.amber i{color:var(--amber)}
+.rule-icon-wrap.purple i{color:var(--purple)}
+
+.rule-name{font-family:var(--font-display);font-size:1rem;font-weight:700;margin-bottom:8px}
+.rule-desc{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:18px}
+.rule-value{font-family:var(--font-display);font-size:2rem;font-weight:700;letter-spacing:-.02em}
+.rule-value.blue{color:var(--blue)}
+.rule-value.green{color:var(--green)}
+.rule-value.red{color:var(--red)}
+.rule-value.amber{color:var(--amber)}
+.rule-value.purple{color:var(--purple)}
+.rule-sub{font-size:11px;color:var(--muted);margin-top:4px}
+
+/* ── COMPARISON TABLE ── */
+.compare-wrap{max-width:1000px;margin:0 auto 4rem;overflow-x:auto}
+.compare-title{font-family:var(--font-display);font-size:1.2rem;font-weight:700;text-align:center;margin-bottom:1.5rem}
+.compare-table{width:100%;border-collapse:collapse;font-size:14px}
+.compare-table th{padding:14px 20px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:500;text-align:left;border-bottom:1px solid var(--border)}
+.compare-table th:first-child{width:220px}
+.compare-table td{padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.04)}
+.compare-table tr:last-child td{border-bottom:none}
+.compare-table tbody tr:hover td{background:rgba(255,255,255,.02)}
+.compare-table .metric{font-weight:500;color:var(--muted);font-size:13px}
+.compare-table .val{font-weight:600;font-size:14px}
+.compare-table .val.good{color:var(--green)}
+.compare-table .val.warn{color:var(--amber)}
+.compare-table .val.neutral{color:var(--text)}
+.col-instant{color:var(--purple)}
+.col-one{color:var(--blue)}
+.col-two{color:var(--green)}
+.col-header{font-family:var(--font-display);font-size:13px;font-weight:600}
+.check{color:var(--green);font-size:16px}
+.cross{color:var(--red);font-size:16px}
+
+/* ── GENERAL RULES ── */
+.general-section{max-width:900px;margin:0 auto 3rem;padding:0 1rem}
+.general-title{font-family:var(--font-display);font-size:1.2rem;font-weight:700;margin-bottom:1.2rem;display:flex;align-items:center;gap:10px}
+.general-title i{color:var(--blue);font-size:20px}
+.general-list{display:flex;flex-direction:column;gap:10px}
+.general-item{
+  display:flex;align-items:flex-start;gap:14px;padding:16px 20px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);
+  transition:border-color .2s;
+}
+.general-item:hover{border-color:var(--border-blue)}
+.general-item-icon{flex-shrink:0;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.general-item-text h4{font-size:13px;font-weight:600;margin-bottom:3px}
+.general-item-text p{font-size:13px;color:var(--muted);line-height:1.6}
+
+/* ── FOOTER ── */
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.5rem 1.5rem;margin-top:4rem}
+.footer-inner{max-width:1000px;margin:0 auto;display:flex;flex-wrap:wrap;gap:2rem;justify-content:space-between;align-items:center}
+.footer-logo{font-family:var(--font-display);font-size:1rem;font-weight:700;display:flex;align-items:center;gap:8px}
+.footer-links{display:flex;gap:1.5rem;flex-wrap:wrap}
+.footer-links a{font-size:13px;color:var(--muted);text-decoration:none;transition:color .2s}
+.footer-links a:hover{color:var(--text)}
+.footer-copy{font-size:12px;color:var(--muted);width:100%;text-align:center;margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--border)}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeDown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* stagger cards */
+.rules-grid .rule-card{animation:fadeInUp .4s ease both}
+.rules-grid .rule-card:nth-child(1){animation-delay:.05s}
+.rules-grid .rule-card:nth-child(2){animation-delay:.1s}
+.rules-grid .rule-card:nth-child(3){animation-delay:.15s}
+.rules-grid .rule-card:nth-child(4){animation-delay:.2s}
+.rules-grid .rule-card:nth-child(5){animation-delay:.25s}
+.rules-grid .rule-card:nth-child(6){animation-delay:.3s}
+
+@media(max-width:640px){
+  .tabs{flex-wrap:wrap;border-radius:16px;justify-content:center}
+  .tab{padding:10px 18px;font-size:13px}
+  .info-banner{flex-direction:column;gap:12px}
+  .nav-links{display:none}
+  .compare-wrap{padding:0 1rem}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="challenges.html" class="nav-logo">
+    <div class="logo-mark">FB</div>
+    The Funded Best
+  </a>
+  <div class="nav-links">
+    <a href="challenges.html">Challenges</a>
+    <a href="rules.html" class="active">Rules</a>
+    <a href="faq.html">FAQ</a>
+    <a href="support.html">Support</a>
+    <a href="terms.html">Terms</a>
+    <a href="privacy.html">Privacy</a>
+  </div>
+  <div class="nav-right">
+    <a href="signin.html" class="btn-ghost" id="navSignIn">Sign In</a>
+    <a href="dashboard.html" class="btn-ghost" id="navProfile" style="display:none"><i class="ti ti-user"></i> Account</a>
+    <a href="challenges.html" class="nav-cta">Get Funded</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow"><i class="ti ti-shield-check"></i> Transparent & Fair</div>
+  <h1>Clear <span class="accent">Trading Rules</span><br>Designed for Traders</h1>
+  <p class="hero-sub">All rules are transparent, consistent, and designed to reward disciplined traders. No hidden catches — what you see is what you trade.</p>
+</div>
+
+<!-- TABS -->
+<div class="tabs-wrapper">
+  <div class="tabs">
+    <button class="tab active purple-tab" onclick="showPanel('instant',this)">⚡ Instant Funding</button>
+    <button class="tab" onclick="showPanel('onestep',this)">📈 One-Step</button>
+    <button class="tab" onclick="showPanel('twostep',this)">🚀 Two-Step</button>
+  </div>
+</div>
+
+<!-- ── INSTANT FUNDING PANEL ── -->
+<div id="panel-instant" class="panel active">
+  <div class="info-banner purple-banner" style="max-width:900px;margin:0 auto 3rem">
+    <div class="banner-icon">⚡</div>
+    <div class="banner-text">
+      <h2>Instant Funding Account</h2>
+      <p>Skip the evaluation entirely. Get immediate access to a live funded account from day one. A small safety cushion applies — the first 3% of profit cannot be withdrawn. After that, keep up to 80% of all profits.</p>
+      <div class="banner-tags">
+        <span class="tag purple">No Evaluation</span>
+        <span class="tag green">80% Profit Split</span>
+        <span class="tag amber">7 Min Trading Days</span>
+        <span class="tag blue">Trailing Drawdown</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="rules-grid" style="max-width:1100px;margin:0 auto 3rem">
+    <div class="rule-card purple-card">
+      <div class="rule-icon-wrap purple"><i class="ti ti-bolt"></i></div>
+      <div class="rule-name">Instant Access</div>
+      <div class="rule-desc">No evaluation phase needed. Your funded account is ready immediately after purchase and payment verification.</div>
+      <div class="rule-value purple">Day 1</div>
+      <div class="rule-sub">Ready immediately</div>
+    </div>
+    <div class="rule-card red-card">
+      <div class="rule-icon-wrap red"><i class="ti ti-trending-down"></i></div>
+      <div class="rule-name">Daily Loss Limit</div>
+      <div class="rule-desc">Your equity cannot drop more than 3% in a single trading day. Calculated from the day's opening equity.</div>
+      <div class="rule-value red">3%</div>
+      <div class="rule-sub">Per trading day</div>
+    </div>
+    <div class="rule-card red-card">
+      <div class="rule-icon-wrap red"><i class="ti ti-chart-line-down"></i></div>
+      <div class="rule-name">Max Total Drawdown</div>
+      <div class="rule-desc">Trailing drawdown — tracks from your highest equity point. Never let your account drop more than 5% from peak.</div>
+      <div class="rule-value red">5%</div>
+      <div class="rule-sub">Trailing from peak</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-icon-wrap amber"><i class="ti ti-calendar"></i></div>
+      <div class="rule-name">Min Trading Days</div>
+      <div class="rule-desc">Trade for a minimum of 7 profitable days before requesting your first payout. Days without trades don't count.</div>
+      <div class="rule-value amber">7 Days</div>
+      <div class="rule-sub">Before first payout</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-icon-wrap purple"><i class="ti ti-lock"></i></div>
+      <div class="rule-name">Safety Cushion</div>
+      <div class="rule-desc">The first 3% of your total profits acts as a safety buffer and cannot be withdrawn. All profits beyond that are fully yours.</div>
+      <div class="rule-value purple">3%</div>
+      <div class="rule-sub">Non-withdrawable buffer</div>
+    </div>
+    <div class="rule-card green-card">
+      <div class="rule-icon-wrap green"><i class="ti ti-percentage"></i></div>
+      <div class="rule-name">Profit Split</div>
+      <div class="rule-desc">Keep 80% of all profits you generate beyond the safety cushion. Payouts processed within 24–48 hours.</div>
+      <div class="rule-value green">80%</div>
+      <div class="rule-sub">Yours to keep</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-icon-wrap amber"><i class="ti ti-chart-bar"></i></div>
+      <div class="rule-name">Consistency Rule</div>
+      <div class="rule-desc">No single trading day can exceed 15% of your total accumulated profits. This ensures consistent, disciplined trading.</div>
+      <div class="rule-value amber">15%</div>
+      <div class="rule-sub">Max per day of total profit</div>
+    </div>
+    <div class="rule-card green-card">
+      <div class="rule-icon-wrap green"><i class="ti ti-infinity"></i></div>
+      <div class="rule-name">Time Limit</div>
+      <div class="rule-desc">No time pressure. Trade at your own pace for as long as you need. There is no expiry on funded accounts.</div>
+      <div class="rule-value green">None</div>
+      <div class="rule-sub">No expiry date</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── ONE-STEP PANEL ── -->
+<div id="panel-onestep" class="panel">
+  <div class="info-banner blue-banner" style="max-width:900px;margin:0 auto 3rem">
+    <div class="banner-icon">📈</div>
+    <div class="banner-text">
+      <h2>One-Step Evaluation</h2>
+      <p>Pass a single evaluation phase by hitting a 10% profit target while respecting daily and total drawdown limits. Trade for at least 3 days and you're funded. Static drawdown — your limits never move.</p>
+      <div class="banner-tags">
+        <span class="tag blue">Single Phase</span>
+        <span class="tag green">80% Profit Split</span>
+        <span class="tag blue">Static Drawdown</span>
+        <span class="tag amber">3 Min Days</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="rules-grid">
+    <div class="rule-card green-card">
+      <div class="rule-icon-wrap green"><i class="ti ti-target"></i></div>
+      <div class="rule-name">Profit Target</div>
+      <div class="rule-desc">Reach a 10% profit target to pass the evaluation and receive your funded account. Calculated from your starting balance.</div>
+      <div class="rule-value green">10%</div>
+      <div class="rule-sub">Of starting balance</div>
+    </div>
+    <div class="rule-card red-card">
+      <div class="rule-icon-wrap red"><i class="ti ti-trending-down"></i></div>
+      <div class="rule-name">Daily Loss Limit</div>
+      <div class="rule-desc">Your equity cannot drop more than 4% on any single trading day. Calculated from the higher of opening balance or equity.</div>
+      <div class="rule-value red">4%</div>
+      <div class="rule-sub">Per trading day</div>
+    </div>
+    <div class="rule-card red-card">
+      <div class="rule-icon-wrap red"><i class="ti ti-chart-line-down"></i></div>
+      <div class="rule-name">Max Total Drawdown</div>
+      <div class="rule-desc">Static drawdown — remains fixed at 6% of your starting balance regardless of profits made. Never trails or moves.</div>
+      <div class="rule-value red">6%</div>
+      <div class="rule-sub">Static from start balance</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-icon-wrap amber"><i class="ti ti-calendar-check"></i></div>
+      <div class="rule-name">Min Trading Days</div>
+      <div class="rule-desc">You must actively trade on at least 3 different calendar days during the evaluation period before completing it.</div>
+      <div class="rule-value amber">3 Days</div>
+      <div class="rule-sub">Minimum required</div>
+    </div>
+    <div class="rule-card green-card">
+      <div class="rule-icon-wrap green"><i class="ti ti-infinity"></i></div>
+      <div class="rule-name">Time Limit</div>
+      <div class="rule-desc">No time pressure at all. Take as long as you need to hit the profit target — there's no expiry on the evaluation.</div>
+      <div class="rule-value green">None</div>
+      <div class="rule-sub">Unlimited time</div>
+    </div>
+    <div class="rule-card green-card">
+      <div class="rule-icon-wrap green"><i class="ti ti-percentage"></i></div>
+      <div class="rule-name">Profit Split</div>
+      <div class="rule-desc">Once funded, keep 80% of all profits generated. No consistency rule applies on the funded account.</div>
+      <div class="rule-value green">80%</div>
+      <div class="rule-sub">On funded account</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-icon-wrap blue"><i class="ti ti-robot"></i></div>
+      <div class="rule-name">Trading Tools</div>
+      <div class="rule-desc">Expert Advisors (EAs), bots, copy trading, and news trading are all permitted during the evaluation and on funded accounts.</div>
+      <div class="rule-value blue">✓ EAs</div>
+      <div class="rule-sub">All tools allowed</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-icon-wrap blue"><i class="ti ti-moon"></i></div>
+      <div class="rule-name">Overnight &amp; Weekend</div>
+      <div class="rule-desc">Holding positions overnight and over the weekend is permitted. Be mindful of swap fees and weekend gap risk.</div>
+      <div class="rule-value blue">✓ OK</div>
+      <div class="rule-sub">No holding restrictions</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TWO-STEP PANEL ── -->
+<div id="panel-twostep" class="panel">
+  <div class="info-banner green-banner" style="max-width:900px;margin:0 auto 3rem">
+    <div class="banner-icon">🚀</div>
+    <div class="banner-text">
+      <h2>Two-Step Evaluation</h2>
+      <p>Complete two phases — an 8% Phase 1 target and a 5% Phase 2 target — before receiving your funded account. Best overall value: 1:100 leverage, static 10% total drawdown, and no time pressure across both phases.</p>
+      <div class="banner-tags">
+        <span class="tag green">Best Value</span>
+        <span class="tag green">80% Profit Split</span>
+        <span class="tag blue">1:100 Leverage</span>
+        <span class="tag amber">Static Drawdown</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase pills -->
+  <div style="display:flex;gap:12px;justify-content:center;margin-bottom:2rem;flex-wrap:wrap">
+    <div style="display:inline-flex;align-items:center;gap:8px;padding:10px 24px;background:var(--blue-glow);border:1px solid var(--border-blue);border-radius:50px;font-size:13px;font-weight:600;color:var(--blue)">
+      <i class="ti ti-circle-number-1"></i> Phase 1 — Evaluation
+    </div>
+    <div style="display:inline-flex;align-items:center;gap:8px;padding:10px 24px;background:var(--green-glow);border:1px solid rgba(29,158,117,.3);border-radius:50px;font-size:13px;font-weight:600;color:var(--green)">
+      <i class="ti ti-circle-number-2"></i> Phase 2 — Verification
+    </div>
+    <div style="display:inline-flex;align-items:center;gap:8px;padding:10px 24px;background:rgba(168,85,247,.12);border:1px solid rgba(168,85,247,.3);border-radius:50px;font-size:13px;font-weight:600;color:var(--purple)">
+      <i class="ti ti-star"></i> Funded Account
+    </div>
+  </div>
+
+  <div class="rules-grid">
+    <div class="rule-card green-card">
+      <div class="rule-icon-wrap green"><i class="ti ti-target-arrow"></i></div>
+      <div class="rule-name">Phase 1 Target</div>
+      <div class="rule-desc">Achieve an 8% profit on your starting balance to pass the first phase. No time limit applies.</div>
+      <div class="rule-value green">8%</div>
+      <div class="rule-sub">Phase 1 profit target</div>
+    </div>
+    <div class="rule-card green-card">
+      <div class="rule-icon-wrap green"><i class="ti ti-target-arrow"></i></div>
+      <div class="rule-name">Phase 2 Target</div>
+      <div class="rule-desc">Once in Phase 2, hit a 5% profit on your starting balance. The most forgiving ratio in the industry: 5% target vs 10% drawdown.</div>
+      <div class="rule-value green">5%</div>
+      <div class="rule-sub">Phase 2 profit target</div>
+    </div>
+    <div class="rule-card red-card">
+      <div class="rule-icon-wrap red"><i class="ti ti-trending-down"></i></div>
+      <div class="rule-name">Daily Loss Limit</div>
+      <div class="rule-desc">Maximum 5% equity drop per day, both in Phase 1 and Phase 2. Calculated from the higher of balance or equity.</div>
+      <div class="rule-value red">5%</div>
+      <div class="rule-sub">Per trading day</div>
+    </div>
+    <div class="rule-card red-card">
+      <div class="rule-icon-wrap red"><i class="ti ti-chart-line-down"></i></div>
+      <div class="rule-name">Max Total Drawdown</div>
+      <div class="rule-desc">Static drawdown of 10% from your initial starting balance. Never trails, never moves — the most forgiving structure available.</div>
+      <div class="rule-value red">10%</div>
+      <div class="rule-sub">Static from start balance</div>
+    </div>
+    <div class="rule-card green-card">
+      <div class="rule-icon-wrap green"><i class="ti ti-infinity"></i></div>
+      <div class="rule-name">Time Limit</div>
+      <div class="rule-desc">No time pressure on either phase. Trade at your own pace without any countdown timer or expiry date.</div>
+      <div class="rule-value green">None</div>
+      <div class="rule-sub">Both phases unlimited</div>
+    </div>
+    <div class="rule-card green-card">
+      <div class="rule-icon-wrap green"><i class="ti ti-percentage"></i></div>
+      <div class="rule-name">Profit Split</div>
+      <div class="rule-desc">Keep 80% of all profits on the funded account. No consistency rule. Weekend holding allowed. Payouts in 24–48 hrs.</div>
+      <div class="rule-value green">80%</div>
+      <div class="rule-sub">Yours to keep</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-icon-wrap blue"><i class="ti ti-arrows-maximize"></i></div>
+      <div class="rule-name">Leverage</div>
+      <div class="rule-desc">Highest available leverage at 1:100 for forex on Two-Step accounts — giving your trades more room to breathe.</div>
+      <div class="rule-value blue">1:100</div>
+      <div class="rule-sub">Maximum leverage</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-icon-wrap amber"><i class="ti ti-calendar-check"></i></div>
+      <div class="rule-name">Min Trading Days</div>
+      <div class="rule-desc">Minimum of 3 trading days per phase. Ensures a baseline of trading activity in each evaluation phase.</div>
+      <div class="rule-value amber">3 Days</div>
+      <div class="rule-sub">Per phase minimum</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── COMPARISON TABLE ── -->
+<div class="compare-wrap">
+  <div class="compare-title">Side-by-Side Comparison</div>
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Rule</th>
+          <th><span class="col-header col-instant">⚡ Instant</span></th>
+          <th><span class="col-header col-one">📈 One-Step</span></th>
+          <th><span class="col-header col-two">🚀 Two-Step</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="metric">Phase 1 Target</td><td class="val neutral">None</td><td class="val good">10%</td><td class="val good">8%</td></tr>
+        <tr><td class="metric">Phase 2 Target</td><td class="val neutral">—</td><td class="val neutral">—</td><td class="val good">5%</td></tr>
+        <tr><td class="metric">Daily Loss Limit</td><td class="val warn">3%</td><td class="val warn">4%</td><td class="val warn">5%</td></tr>
+        <tr><td class="metric">Max Total Drawdown</td><td class="val warn">5% (trailing)</td><td class="val warn">6% (static)</td><td class="val good">10% (static)</td></tr>
+        <tr><td class="metric">Drawdown Type</td><td class="val warn">Trailing</td><td class="val good">Static</td><td class="val good">Static</td></tr>
+        <tr><td class="metric">Min Trading Days</td><td class="val neutral">7 days</td><td class="val good">3 days</td><td class="val good">3 days / phase</td></tr>
+        <tr><td class="metric">Time Limit</td><td class="val good">Unlimited</td><td class="val good">Unlimited</td><td class="val good">Unlimited</td></tr>
+        <tr><td class="metric">Profit Split</td><td class="val good">80%</td><td class="val good">80%</td><td class="val good">80%</td></tr>
+        <tr><td class="metric">Leverage</td><td class="val neutral">1:50</td><td class="val neutral">1:50</td><td class="val good">1:100</td></tr>
+        <tr><td class="metric">EAs / Bots</td><td><i class="ti ti-check check"></i></td><td><i class="ti ti-check check"></i></td><td><i class="ti ti-check check"></i></td></tr>
+        <tr><td class="metric">Weekend Holding</td><td><i class="ti ti-check check"></i></td><td><i class="ti ti-check check"></i></td><td><i class="ti ti-check check"></i></td></tr>
+        <tr><td class="metric">News Trading</td><td><i class="ti ti-check check"></i></td><td><i class="ti ti-check check"></i></td><td><i class="ti ti-check check"></i></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ── GENERAL RULES ── -->
+<div class="general-section">
+  <div class="general-title"><i class="ti ti-shield-check"></i> General Rules — All Account Types</div>
+  <div class="general-list">
+    <div class="general-item">
+      <div class="general-item-icon" style="background:var(--blue-glow)"><i class="ti ti-clock" style="color:var(--blue)"></i></div>
+      <div class="general-item-text">
+        <h4>No Martingale or Gambling</h4>
+        <p>Martingale strategies, grid trading with no stop loss, and all-or-nothing gambling behavior are strictly prohibited on all account types.</p>
+      </div>
+    </div>
+    <div class="general-item">
+      <div class="general-item-icon" style="background:var(--green-glow)"><i class="ti ti-refresh" style="color:var(--green)"></i></div>
+      <div class="general-item-text">
+        <h4>Payout Schedule</h4>
+        <p>First payout available after minimum trading days are met. Subsequent payouts available on a bi-weekly basis. Processed in 24–48 hours via UPI, crypto, or wire transfer.</p>
+      </div>
+    </div>
+    <div class="general-item">
+      <div class="general-item-icon" style="background:rgba(245,158,11,.12)"><i class="ti ti-news" style="color:var(--amber)"></i></div>
+      <div class="general-item-text">
+        <h4>News Trading Allowed</h4>
+        <p>High-impact news trading is permitted across all account types. However, holding positions into extreme news events (e.g. NFP) carries significant gap risk.</p>
+      </div>
+    </div>
+    <div class="general-item">
+      <div class="general-item-icon" style="background:rgba(224,82,82,.1)"><i class="ti ti-users" style="color:var(--red)"></i></div>
+      <div class="general-item-text">
+        <h4>Account Sharing Prohibited</h4>
+        <p>Each account must be traded by a single individual. Account sharing, group trading on one account, or having a third party manage your account is strictly prohibited.</p>
+      </div>
+    </div>
+    <div class="general-item">
+      <div class="general-item-icon" style="background:var(--blue-glow)"><i class="ti ti-device-desktop" style="color:var(--blue)"></i></div>
+      <div class="general-item-text">
+        <h4>Platform: MT5</h4>
+        <p>All accounts trade on MetaTrader 5 (MT5). Your login credentials, server address, and account ID will be sent to your email upon account activation.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo"><div class="logo-mark" style="width:24px;height:24px;font-size:11px">FB</div> The Funded Best</div>
+    <div class="footer-links">
+      <a href="challenges.html">Challenges</a>
+      <a href="rules.html">Rules</a>
+      <a href="faq.html">FAQ</a>
+      <a href="support.html">Support</a>
+      <a href="terms.html">Terms</a>
+      <a href="privacy.html">Privacy</a>
+    </div>
+  </div>
+  <p class="footer-copy">© 2026 The Funded Best. All rights reserved. Trading involves substantial risk of loss. Only trade with capital you can afford to lose.</p>
+</footer>
+
+<script>
+function showPanel(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.remove('active','purple-tab','green-tab');
+  });
+  document.getElementById('panel-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'instant') btn.classList.add('purple-tab');
+  if (id === 'twostep') btn.classList.add('green-tab');
+}
+
+// Animate rule values counting up
+function animateValue(el, target, suffix='%') {
+  const num = parseFloat(target);
+  if (isNaN(num)) return;
+  let start = 0;
+  const dur = 800;
+  const step = (timestamp) => {
+    if (!start) start = timestamp;
+    const progress = Math.min((timestamp - start) / dur, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = (num * eased).toFixed(num % 1 === 0 ? 0 : 1) + suffix;
+    if (progress < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+// Intersection observer for count-up
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const val = entry.target;
+      const text = val.textContent.trim();
+      if (text.endsWith('%')) animateValue(val, parseFloat(text), '%');
+      observer.unobserve(val);
+    }
+  });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('.rule-value').forEach(el => observer.observe(el));
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+firebase.initializeApp(FIREBASE_CONFIG);
+firebase.auth().onAuthStateChanged(user => {
+  document.getElementById('navSignIn').style.display  = user ? 'none' : '';
+  document.getElementById('navProfile').style.display = user ? '' : 'none';
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>The Funded Best — Get Funded Up to $100K</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#378ADD;--blue-dark:#185FA5;--blue-mid:#2a6fb8;
+  --blue-glow:rgba(55,138,221,.18);--blue-glow2:rgba(55,138,221,.08);
+  --green:#1D9E75;--green-glow:rgba(29,158,117,.15);
+  --amber:#f59e0b;
+  --bg:#07090f;--bg2:#0b0f1c;--bg3:#111827;
+  --border:rgba(255,255,255,.07);--border-blue:rgba(55,138,221,.3);
+  --text:#eef2ff;--muted:rgba(238,242,255,.48);--muted2:rgba(238,242,255,.28);
+  --font-display:'Space Grotesk',sans-serif;--font-body:'Inter',sans-serif;
+  --radius:16px;--radius-sm:10px;--radius-xs:6px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.6;min-height:100vh;overflow-x:hidden}
+
+/* ── CANVAS BG ── */
+#bgCanvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55}
+
+/* ── NAV ── */
+nav{
+  position:sticky;top:0;z-index:200;
+  background:rgba(7,9,15,.8);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,255,255,.05);
+  padding:0 2rem;height:64px;
+  display:flex;align-items:center;justify-content:space-between;
+  transition:background .3s;
+}
+.nav-logo{
+  font-family:var(--font-display);font-size:1.05rem;font-weight:700;
+  color:var(--text);text-decoration:none;
+  display:flex;align-items:center;gap:10px;
+}
+.nav-logo-mark{
+  width:30px;height:30px;border-radius:8px;background:var(--blue);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:#fff;
+  box-shadow:0 0 18px rgba(55,138,221,.5);
+}
+.nav-links{display:flex;align-items:center;gap:1.75rem}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-actions{display:flex;align-items:center;gap:10px}
+.nav-signin{
+  color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;
+  padding:7px 16px;border-radius:var(--radius-xs);
+  border:1px solid var(--border);transition:all .2s;
+}
+.nav-signin:hover{color:var(--text);border-color:var(--border-blue)}
+.nav-cta{
+  background:var(--blue);color:#fff;text-decoration:none;
+  padding:8px 20px;border-radius:var(--radius-xs);
+  font-size:14px;font-weight:600;font-family:var(--font-body);
+  transition:all .2s;box-shadow:0 4px 16px rgba(55,138,221,.3);
+}
+.nav-cta:hover{background:var(--blue-dark);transform:translateY(-1px);box-shadow:0 6px 20px rgba(55,138,221,.4)}
+.nav-mobile-menu{display:none;background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;padding:4px}
+.mobile-nav{
+  display:none;position:fixed;inset:0;top:64px;background:rgba(7,9,15,.97);
+  backdrop-filter:blur(20px);z-index:190;flex-direction:column;align-items:center;
+  justify-content:center;gap:2rem;
+}
+.mobile-nav.open{display:flex}
+.mobile-nav a{color:var(--text);text-decoration:none;font-size:1.3rem;font-weight:600;font-family:var(--font-display)}
+
+/* ── HERO ── */
+.hero{
+  position:relative;z-index:1;
+  padding:7rem 1.5rem 5rem;
+  text-align:center;overflow:hidden;
+}
+.hero-glow{
+  position:absolute;top:-80px;left:50%;transform:translateX(-50%);
+  width:900px;height:500px;
+  background:radial-gradient(ellipse at 50% 30%,rgba(55,138,221,.14) 0%,transparent 65%);
+  pointer-events:none;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:7px;
+  background:rgba(55,138,221,.1);border:1px solid rgba(55,138,221,.25);
+  color:#7eb8f5;font-size:12px;font-weight:600;letter-spacing:.06em;
+  padding:6px 16px;border-radius:99px;margin-bottom:2rem;
+  animation:fadeUp .6s ease both;
+}
+.hero-badge .pulse{width:6px;height:6px;background:var(--blue);border-radius:50%;animation:pulseDot 2s ease-in-out infinite}
+.hero h1{
+  font-family:var(--font-display);
+  font-size:clamp(2.6rem,7vw,4.4rem);
+  font-weight:700;line-height:1.06;letter-spacing:-.03em;
+  margin-bottom:1.4rem;
+  animation:fadeUp .7s .1s ease both;
+}
+.hero h1 .line2{display:block;color:var(--blue);
+  background:linear-gradient(135deg,var(--blue) 30%,rgba(29,158,117,.9) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-sub{
+  font-size:1.1rem;color:var(--muted);max-width:480px;
+  margin:0 auto 2.2rem;line-height:1.75;
+  animation:fadeUp .7s .2s ease both;
+}
+.hero-btns{
+  display:flex;gap:12px;justify-content:center;flex-wrap:wrap;
+  margin-bottom:3.5rem;animation:fadeUp .7s .3s ease both;
+}
+.btn-primary{
+  background:var(--blue);color:#fff;text-decoration:none;
+  padding:14px 32px;border-radius:var(--radius-sm);
+  font-size:15px;font-weight:600;font-family:var(--font-body);
+  display:inline-flex;align-items:center;gap:8px;
+  box-shadow:0 8px 28px rgba(55,138,221,.35);
+  transition:all .2s;border:none;cursor:pointer;
+}
+.btn-primary:hover{background:var(--blue-dark);transform:translateY(-2px);box-shadow:0 12px 36px rgba(55,138,221,.45)}
+.btn-ghost{
+  background:rgba(255,255,255,.04);color:var(--text);text-decoration:none;
+  padding:14px 32px;border-radius:var(--radius-sm);
+  font-size:15px;font-weight:500;font-family:var(--font-body);
+  display:inline-flex;align-items:center;gap:8px;
+  border:1px solid var(--border);transition:all .2s;cursor:pointer;
+}
+.btn-ghost:hover{border-color:var(--border-blue);background:rgba(55,138,221,.06);transform:translateY(-1px)}
+
+/* TICKER */
+.ticker-wrap{
+  overflow:hidden;max-width:720px;margin:0 auto;
+  mask-image:linear-gradient(to right,transparent,#000 12%,#000 88%,transparent);
+  -webkit-mask-image:linear-gradient(to right,transparent,#000 12%,#000 88%,transparent);
+  animation:fadeUp .8s .4s ease both;
+}
+.ticker-track{display:flex;gap:10px;width:max-content;animation:tickerMove 28s linear infinite}
+.ticker-chip{
+  display:flex;align-items:center;gap:10px;
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius-xs);padding:8px 14px;white-space:nowrap;
+  font-size:13px;font-weight:500;flex-shrink:0;
+}
+.chip-pair{color:var(--text);font-weight:600}
+.chip-val{color:var(--muted);font-size:12px}
+.chip-chg{font-size:12px;font-weight:600;padding:2px 8px;border-radius:4px}
+.chip-chg.up{color:var(--green);background:var(--green-glow)}
+.chip-chg.dn{color:#e05252;background:rgba(224,82,82,.12)}
+
+/* ── TRUST BAR ── */
+.trust-bar{
+  position:relative;z-index:1;
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  background:var(--bg2);padding:1.1rem 2rem;
+  display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:1.8rem;
+}
+.trust-item{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);font-weight:500}
+.trust-item i{color:var(--blue);font-size:15px}
+.trust-item strong{color:var(--text)}
+.trust-sep{width:1px;height:18px;background:var(--border);flex-shrink:0}
+
+/* ── SECTION SHARED ── */
+.container{max-width:1040px;margin:0 auto;position:relative;z-index:1}
+section{position:relative;z-index:1}
+.section-label{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--blue);margin-bottom:.6rem;
+}
+.section-label::before{content:'';width:16px;height:1.5px;background:var(--blue);border-radius:2px}
+.section-header{text-align:center;margin-bottom:3rem}
+.section-header h2{
+  font-family:var(--font-display);font-size:clamp(1.7rem,3.5vw,2.3rem);
+  font-weight:700;letter-spacing:-.02em;margin-bottom:.6rem;
+}
+.section-header p{color:var(--muted);font-size:15px;max-width:500px;margin:0 auto;line-height:1.75}
+
+/* ── STATS ── */
+.stats-section{padding:4rem 1.5rem}
+.stats-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.stat-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:1.6rem 1.2rem;text-align:center;
+  transition:border-color .25s,transform .25s,box-shadow .25s;
+  cursor:default;
+}
+.stat-card:hover{border-color:var(--border-blue);transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.stat-num{
+  font-family:var(--font-display);font-size:2.1rem;font-weight:700;
+  background:linear-gradient(135deg,var(--blue),rgba(29,158,117,.85));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:.3rem;line-height:1;
+}
+.stat-label{font-size:12px;color:var(--muted);font-weight:500}
+
+/* ── PLANS ── */
+.plans-section{padding:5rem 1.5rem;background:var(--bg2)}
+.plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.plan-card{
+  background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);
+  padding:2rem;position:relative;
+  transition:border-color .25s,transform .25s,box-shadow .25s;
+  display:flex;flex-direction:column;
+}
+.plan-card:hover{transform:translateY(-4px);box-shadow:0 20px 50px rgba(0,0,0,.4)}
+.plan-card.featured{
+  border-color:var(--border-blue);
+  background:linear-gradient(145deg,rgba(55,138,221,.07),rgba(7,9,15,1) 60%);
+  box-shadow:0 0 0 1px rgba(55,138,221,.2),0 24px 60px rgba(0,0,0,.5);
+}
+.plan-card.featured:hover{box-shadow:0 0 0 1px rgba(55,138,221,.35),0 28px 70px rgba(0,0,0,.55)}
+.popular-pill{
+  position:absolute;top:-13px;left:50%;transform:translateX(-50%);
+  background:linear-gradient(135deg,var(--blue),var(--blue-mid));
+  color:#fff;font-size:11px;font-weight:700;letter-spacing:.04em;
+  padding:4px 16px;border-radius:99px;white-space:nowrap;
+  box-shadow:0 4px 14px rgba(55,138,221,.4);
+}
+.plan-icon{
+  width:44px;height:44px;border-radius:var(--radius-xs);margin-bottom:1.1rem;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--blue-glow);border:1px solid var(--border-blue);
+}
+.plan-icon i{color:var(--blue);font-size:20px}
+.plan-type{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--blue);font-weight:700;margin-bottom:.3rem}
+.plan-name{font-family:var(--font-display);font-size:1.25rem;font-weight:700;margin-bottom:.4rem}
+.plan-tagline{font-size:13px;color:var(--muted);margin-bottom:1.4rem;line-height:1.5}
+.plan-divider{border:none;border-top:1px solid var(--border);margin-bottom:1.4rem}
+.plan-features{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:1.75rem;flex:1}
+.plan-features li{font-size:14px;color:var(--muted);display:flex;align-items:center;gap:9px;line-height:1.4}
+.plan-features li i{color:var(--green);font-size:14px;flex-shrink:0}
+.plan-btn{
+  width:100%;padding:13px;border-radius:var(--radius-sm);
+  font-size:14px;font-weight:600;font-family:var(--font-body);
+  cursor:pointer;text-align:center;display:block;text-decoration:none;
+  transition:all .2s;border:none;
+}
+.plan-btn-fill{background:var(--blue);color:#fff;box-shadow:0 6px 20px rgba(55,138,221,.3)}
+.plan-btn-fill:hover{background:var(--blue-dark);transform:translateY(-1px);box-shadow:0 10px 28px rgba(55,138,221,.4)}
+.plan-btn-outline{background:transparent;color:var(--text);border:1px solid var(--border)}
+.plan-btn-outline:hover{border-color:var(--border-blue);background:rgba(55,138,221,.06)}
+
+/* ── FEATURES ── */
+.features-section{padding:5rem 1.5rem}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.feat-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:1.75rem;transition:border-color .25s,transform .25s,box-shadow .25s;
+  position:relative;overflow:hidden;
+}
+.feat-card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 0% 0%,rgba(55,138,221,.06),transparent 60%);
+  opacity:0;transition:opacity .3s;
+}
+.feat-card:hover{border-color:var(--border-blue);transform:translateY(-3px);box-shadow:0 14px 40px rgba(0,0,0,.35)}
+.feat-card:hover::before{opacity:1}
+.feat-icon{
+  width:46px;height:46px;border-radius:var(--radius-xs);margin-bottom:1.2rem;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--blue-glow);border:1px solid var(--border-blue);
+  transition:transform .3s;
+}
+.feat-card:hover .feat-icon{transform:scale(1.1)}
+.feat-icon i{color:var(--blue);font-size:21px}
+.feat-card h4{font-size:15px;font-weight:600;margin-bottom:.5rem;font-family:var(--font-display)}
+.feat-card p{font-size:13.5px;color:var(--muted);line-height:1.7}
+
+/* ── HOW IT WORKS ── */
+.how-section{padding:5rem 1.5rem;background:var(--bg2)}
+.steps-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative}
+.steps-row::before{
+  content:'';position:absolute;top:28px;left:calc(12.5% + 14px);right:calc(12.5% + 14px);
+  height:1px;background:linear-gradient(to right,rgba(55,138,221,.5),rgba(29,158,117,.4));
+  z-index:0;
+}
+.step-item{padding:1.5rem 1rem;text-align:center;position:relative;z-index:1}
+.step-num-wrap{
+  width:56px;height:56px;border-radius:50%;margin:0 auto 1.2rem;
+  background:var(--bg);border:1px solid var(--border-blue);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;z-index:1;
+  box-shadow:0 0 0 6px var(--bg2);
+  transition:all .3s;
+}
+.step-item:hover .step-num-wrap{background:var(--blue-glow);border-color:var(--blue);box-shadow:0 0 0 6px var(--bg2),0 0 24px rgba(55,138,221,.3)}
+.step-digit{font-family:var(--font-display);font-size:1rem;font-weight:700;color:var(--blue)}
+.step-item h4{font-size:14px;font-weight:600;margin-bottom:.4rem;font-family:var(--font-display)}
+.step-item p{font-size:13px;color:var(--muted);line-height:1.65}
+
+/* ── TESTIMONIALS ── */
+.testimonials-section{padding:5rem 1.5rem}
+.testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.testimonial-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:1.75rem;transition:border-color .25s,transform .2s;
+  display:flex;flex-direction:column;
+}
+.testimonial-card:hover{border-color:var(--border-blue);transform:translateY(-2px)}
+.stars{
+  display:flex;gap:3px;margin-bottom:1rem;
+}
+.star{width:14px;height:14px;color:var(--amber);font-size:14px}
+.testimonial-text{font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:1.2rem;flex:1;font-style:italic}
+.testimonial-text::before{content:'\201C';font-size:1.4em;color:var(--border-blue);line-height:0;vertical-align:-.2em;margin-right:2px}
+.testimonial-author{display:flex;align-items:center;gap:10px}
+.t-avatar{
+  width:38px;height:38px;border-radius:50%;
+  background:linear-gradient(135deg,var(--blue-glow),rgba(29,158,117,.15));
+  border:1px solid var(--border-blue);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:var(--blue);flex-shrink:0;
+}
+.author-info p{font-size:14px;font-weight:600}
+.author-info span{font-size:12px;color:var(--muted)}
+
+/* ── FAQ ── */
+.faq-section{padding:5rem 1.5rem;background:var(--bg2)}
+.faq-list{max-width:740px;margin:0 auto;display:flex;flex-direction:column;gap:0}
+.faq-item{border-bottom:1px solid var(--border)}
+.faq-q{
+  width:100%;background:none;border:none;color:var(--text);
+  font-family:var(--font-body);font-size:15px;font-weight:500;
+  text-align:left;padding:1.3rem 0;cursor:pointer;
+  display:flex;justify-content:space-between;align-items:center;gap:1rem;
+  transition:color .2s;
+}
+.faq-q:hover{color:var(--blue)}
+.faq-icon{
+  width:26px;height:26px;border-radius:99px;flex-shrink:0;
+  background:rgba(255,255,255,.05);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  transition:all .25s;
+}
+.faq-icon i{font-size:14px;color:var(--muted);transition:transform .25s,color .25s}
+.faq-q.open .faq-icon{background:var(--blue-glow);border-color:var(--border-blue)}
+.faq-q.open .faq-icon i{transform:rotate(45deg);color:var(--blue)}
+.faq-a{
+  font-size:14px;color:var(--muted);line-height:1.8;
+  max-height:0;overflow:hidden;
+  transition:max-height .35s cubic-bezier(.4,0,.2,1),padding .35s;
+}
+.faq-a.open{max-height:200px;padding-bottom:1.3rem}
+
+/* ── CTA ── */
+.cta-section{
+  padding:6rem 1.5rem;text-align:center;
+  position:relative;overflow:hidden;
+}
+.cta-glow{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 60%,rgba(55,138,221,.12) 0%,transparent 65%);
+  pointer-events:none;
+}
+.cta-card{
+  max-width:680px;margin:0 auto;
+  background:linear-gradient(145deg,rgba(55,138,221,.1),rgba(55,138,221,.03));
+  border:1px solid rgba(55,138,221,.25);border-radius:24px;
+  padding:4rem 2.5rem;
+  position:relative;overflow:hidden;
+}
+.cta-card::before{
+  content:'';position:absolute;inset:-1px;border-radius:24px;
+  background:linear-gradient(115deg,transparent 25%,rgba(55,138,221,.12),transparent 75%);
+  transform:translateX(-100%);animation:cta-sheen 4s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes cta-sheen{0%{transform:translateX(-100%)}40%,100%{transform:translateX(100%)}}
+.cta-section h2{
+  font-family:var(--font-display);font-size:clamp(1.9rem,4.5vw,2.8rem);
+  font-weight:700;letter-spacing:-.02em;margin-bottom:.8rem;
+}
+.cta-section p{color:var(--muted);font-size:15.5px;margin-bottom:2.2rem;max-width:460px;margin-left:auto;margin-right:auto;line-height:1.75}
+.cta-chips{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin-bottom:2rem}
+.cta-chip{
+  display:flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.05);border:1px solid var(--border);
+  border-radius:99px;padding:5px 14px;
+  font-size:12px;font-weight:500;color:var(--muted);
+}
+.cta-chip i{color:var(--green);font-size:13px}
+
+/* ── FOOTER ── */
+footer{
+  background:var(--bg2);border-top:1px solid var(--border);
+  padding:2.5rem 1.5rem;position:relative;z-index:1;
+}
+.footer-inner{
+  max-width:1040px;margin:0 auto;
+  display:flex;flex-wrap:wrap;gap:1.5rem;
+  justify-content:space-between;align-items:center;
+}
+.footer-logo{
+  font-family:var(--font-display);font-size:.95rem;font-weight:700;
+  display:flex;align-items:center;gap:8px;
+}
+.footer-logo-mark{
+  width:24px;height:24px;border-radius:6px;background:var(--blue);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:#fff;
+}
+.footer-links{display:flex;gap:1.25rem;flex-wrap:wrap}
+.footer-links a{font-size:13px;color:var(--muted);text-decoration:none;transition:color .2s}
+.footer-links a:hover{color:var(--text)}
+.footer-copy{
+  max-width:1040px;margin:.75rem auto 0;
+  font-size:12px;color:var(--muted2);text-align:center;
+  padding-top:1.2rem;border-top:1px solid var(--border);
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulseDot{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.6}}
+@keyframes tickerMove{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .65s ease,transform .65s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:.08s}
+.reveal-delay-2{transition-delay:.16s}
+.reveal-delay-3{transition-delay:.24s}
+.reveal-delay-4{transition-delay:.32s}
+.reveal-delay-5{transition-delay:.4s}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .stats-grid{grid-template-columns:repeat(3,1fr)}
+  .plans-grid,.features-grid,.testimonials-grid{grid-template-columns:1fr 1fr}
+  .steps-row{grid-template-columns:1fr 1fr;gap:12px}
+  .steps-row::before{display:none}
+  .step-num-wrap{box-shadow:0 0 0 4px var(--bg2)}
+}
+@media(max-width:640px){
+  .nav-links{display:none}
+  .nav-mobile-menu{display:block}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .plans-grid,.features-grid,.testimonials-grid{grid-template-columns:1fr}
+  .steps-row{grid-template-columns:1fr 1fr}
+  .hero{padding:5.5rem 1.2rem 3.5rem}
+  .cta-card{padding:2.5rem 1.5rem}
+  .trust-sep{display:none}
+  nav{padding:0 1.2rem}
+
+  /* Nav: shrink logo + hide BETA pill + tighten actions */
+  .nav-logo{font-size:.92rem;gap:8px}
+  .nav-logo-mark{width:26px;height:26px;font-size:11px}
+  .nav-logo > span{display:none}
+  .nav-actions{gap:6px}
+  .nav-signin{padding:6px 10px;font-size:13px}
+  .nav-cta{padding:7px 14px;font-size:13px}
+
+  /* Hero badge: shrink on small screens */
+  .hero-badge{font-size:11px;padding:6px 12px;max-width:100%}
+
+  /* Limited-time offer banner: stack vertically */
+  .hero ~ section[style*="padding:0 1.5rem"] > .container > div{
+    flex-direction:column;align-items:stretch;text-align:center;padding:1.2rem!important;
+  }
+  .hero ~ section[style*="padding:0 1.5rem"] > .container > div > div:first-child{
+    flex-direction:column;text-align:center;
+  }
+  .hero ~ section[style*="padding:0 1.5rem"] button.nav-cta{
+    width:100%;padding:12px 20px!important;
+  }
+
+  /* Trust bar wraps cleanly */
+  .trust-bar{gap:1rem;padding:.9rem 1.2rem}
+  .trust-item{font-size:12px}
+}
+
+@media(max-width:380px){
+  .hero h1{font-size:clamp(2rem,9vw,2.6rem)}
+  .hero-badge{font-size:10px;padding:5px 10px}
+  .nav-logo{font-size:.82rem;gap:6px}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-mark">FB</div>
+    The Funded Best
+    <span style="font-family:var(--font-body);font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--blue);border:1px solid var(--border-blue);background:rgba(55,138,221,.1);border-radius:99px;padding:2px 8px;margin-left:4px;">BETA</span>
+  </a>
+  <div class="nav-links">
+    <a href="challenges.html">Challenges</a>
+    <a href="rules.html">Rules</a>
+    <a href="faq.html">FAQ</a>
+    <a href="support.html">Support</a>
+    <a href="terms.html">Terms</a>
+    <a href="privacy.html">Policy</a>
+  </div>
+  <div class="nav-actions">
+    <a href="signin.html" class="nav-signin" id="navSignIn">Sign In</a>
+    <a href="dashboard.html" class="nav-signin" id="navProfile" style="display:none"><i class="ti ti-user"></i> Account</a>
+    <a href="challenges.html" class="nav-cta">Get Funded →</a>
+    <button class="nav-mobile-menu" onclick="toggleMobileNav()" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+  </div>
+</nav>
+
+<div class="mobile-nav" id="mobileNav">
+  <a href="#plans" onclick="toggleMobileNav()">Challenges</a>
+  <a href="rules.html" onclick="toggleMobileNav()">Rules</a>
+  <a href="#faq" onclick="toggleMobileNav()">FAQ</a>
+  <a href="support.html" onclick="toggleMobileNav()">Support</a>
+  <a href="signin.html" class="nav-signin" id="navSignInMobile" style="font-size:1.1rem;padding:10px 28px">Sign In</a>
+  <a href="dashboard.html" class="nav-signin" id="navProfileMobile" style="display:none;font-size:1.1rem;padding:10px 28px"><i class="ti ti-user"></i> Account</a>
+  <a href="challenges.html" class="nav-cta" style="font-size:1.1rem;padding:12px 32px">Get Funded →</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="container">
+    <div class="hero-badge">
+      <span class="pulse"></span>
+      Early Access — India's #1 Prop Trading Firm
+    </div>
+    <h1>
+      Trade with real capital.<br>
+      <span class="line2">Keep 80% of profits.</span>
+    </h1>
+    <p class="hero-sub">No time limits. No hidden rules. Pass the challenge, get funded up to $100,000, and withdraw instantly.</p>
+    <div class="hero-btns">
+      <a href="challenges.html" class="btn-primary"><i class="ti ti-rocket"></i> Start your challenge</a>
+      <a href="#how" class="btn-ghost">How it works <i class="ti ti-arrow-down"></i></a>
+    </div>
+
+    <!-- LIVE TICKER -->
+    <div class="ticker-wrap">
+      <div class="ticker-track" id="tickerTrack"></div>
+    </div>
+  </div>
+</section>
+
+<!-- LIMITED TIME OFFER -->
+<section style="padding:0 1.5rem">
+  <div class="container">
+    <div style="
+      background:linear-gradient(135deg, rgba(55,138,221,.14), rgba(29,158,117,.10));
+      border:1px solid var(--border-blue); border-radius:var(--radius);
+      padding:1.4rem 1.6rem; margin-bottom:2.5rem;
+      display:flex; align-items:center; justify-content:space-between; gap:1.5rem;
+      flex-wrap:wrap;">
+      <div style="display:flex; align-items:center; gap:14px; flex:1; min-width:240px;">
+        <div style="font-size:28px;">🔥</div>
+        <div>
+          <div style="font-weight:700; font-family:var(--font-display); font-size:15px; margin-bottom:2px;">
+            Limited-Time Offer — $5K 3-Step for just $5
+          </div>
+          <div style="font-size:13px; color:var(--muted);">
+            Get a $5,000 3-Step challenge account at a massive discount from the regular price. Offer ends soon.
+          </div>
+        </div>
+      </div>
+      <button class="nav-cta" style="font-size:14px; padding:10px 24px; white-space:nowrap; border:none; cursor:pointer;" onclick="claimOffer()">
+        Claim Offer — $5
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- COUPON BANNER -->
+<section style="padding:0 1.5rem">
+  <div class="container">
+    <div style="
+      background:linear-gradient(135deg, rgba(29,158,117,.14), rgba(55,138,221,.10));
+      border:1px dashed var(--green); border-radius:var(--radius);
+      padding:1.4rem 1.6rem; margin-bottom:2.5rem;
+      display:flex; align-items:center; justify-content:space-between; gap:1.5rem;
+      flex-wrap:wrap;">
+      <div style="display:flex; align-items:center; gap:14px; flex:1; min-width:240px;">
+        <div style="font-size:28px;">🏷️</div>
+        <div>
+          <div style="font-weight:700; font-family:var(--font-display); font-size:15px; margin-bottom:2px;">
+            30% OFF all challenges with code <span style="color:var(--green)">FUND30</span>
+          </div>
+          <div style="font-size:13px; color:var(--muted);">
+            Applies automatically at checkout on every account size and challenge type. Excludes the $5 3-Step $5K offer.
+          </div>
+        </div>
+      </div>
+      <div style="
+        display:flex; align-items:center; gap:10px;
+        background:rgba(255,255,255,.04); border:1px solid var(--border);
+        border-radius:var(--radius-sm); padding:8px 14px;">
+        <span style="font-family:monospace; font-size:15px; font-weight:700; letter-spacing:.05em; color:var(--green);">FUND30</span>
+        <button onclick="copyCoupon(this)" style="
+          background:var(--green); color:#fff; border:none; border-radius:var(--radius-xs);
+          font-size:12px; font-weight:600; padding:6px 12px; cursor:pointer; font-family:var(--font-body);">
+          Copy
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<div class="trust-bar">
+  <div class="trust-item"><i class="ti ti-shield-check"></i> On-chain verified</div>
+  <div class="trust-sep"></div>
+  <div class="trust-item"><i class="ti ti-clock-off"></i> No time limits</div>
+  <div class="trust-sep"></div>
+  <div class="trust-item"><i class="ti ti-device-laptop"></i> MT5 supported</div>
+  <div class="trust-sep"></div>
+  <div class="trust-item"><i class="ti ti-headset"></i> 24/7 support</div>
+</div>
+
+<!-- STATS -->
+<section class="stats-section">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-card reveal">
+        <div class="stat-num" data-count="100" data-prefix="$" data-suffix="K">$0K</div>
+        <div class="stat-label">Max account size</div>
+      </div>
+      <div class="stat-card reveal reveal-delay-1">
+        <div class="stat-num" data-count="80" data-suffix="%">0%</div>
+        <div class="stat-label">Profit split</div>
+      </div>
+      <div class="stat-card reveal reveal-delay-2">
+        <div class="stat-num">1:100</div>
+        <div class="stat-label">Max leverage</div>
+      </div>
+      <div class="stat-card reveal reveal-delay-3">
+        <div class="stat-num">∞</div>
+        <div class="stat-label">Trading days</div>
+      </div>
+      <div class="stat-card reveal reveal-delay-4">
+        <div class="stat-num" data-count="0">0</div>
+        <div class="stat-label">Payout denials</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLANS -->
+<section class="plans-section" id="plans">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Account types</div>
+      <h2>Choose your challenge</h2>
+      <p>Three paths to a funded account. All with no time limits and up to 80% profit split.</p>
+    </div>
+    <div class="plans-grid">
+
+      <div class="plan-card reveal reveal-delay-1">
+        <div class="plan-icon"><i class="ti ti-bolt"></i></div>
+        <div class="plan-type">Instant</div>
+        <div class="plan-name">Instant Funding</div>
+        <div class="plan-tagline">Skip the evaluation — trade funded from day one.</div>
+        <hr class="plan-divider"/>
+        <ul class="plan-features">
+          <li><i class="ti ti-check"></i> No profit target required</li>
+          <li><i class="ti ti-check"></i> 3% daily loss limit</li>
+          <li><i class="ti ti-check"></i> 5% max drawdown</li>
+          <li><i class="ti ti-check"></i> 80% profit split</li>
+          <li><i class="ti ti-check"></i> Unlimited trading days</li>
+        </ul>
+        <a href="challenges.html" class="plan-btn plan-btn-outline">Get started</a>
+      </div>
+
+      <div class="plan-card featured reveal reveal-delay-2">
+        <div class="popular-pill">⭐ Most Popular</div>
+        <div class="plan-icon"><i class="ti ti-trending-up"></i></div>
+        <div class="plan-type">Evaluation</div>
+        <div class="plan-name">One-Step</div>
+        <div class="plan-tagline">One challenge phase then fully funded with real capital.</div>
+        <hr class="plan-divider"/>
+        <ul class="plan-features">
+          <li><i class="ti ti-check"></i> 10% profit target</li>
+          <li><i class="ti ti-check"></i> 4% daily loss limit</li>
+          <li><i class="ti ti-check"></i> 6% max drawdown</li>
+          <li><i class="ti ti-check"></i> 80% profit split</li>
+          <li><i class="ti ti-check"></i> 15% consistency rule</li>
+        </ul>
+        <a href="challenges.html" class="plan-btn plan-btn-fill">Get started</a>
+      </div>
+
+      <div class="plan-card reveal reveal-delay-3">
+        <div class="plan-icon"><i class="ti ti-stairs"></i></div>
+        <div class="plan-type">Evaluation</div>
+        <div class="plan-name">Two-Step</div>
+        <div class="plan-tagline">Lower targets and looser rules across two phases.</div>
+        <hr class="plan-divider"/>
+        <ul class="plan-features">
+          <li><i class="ti ti-check"></i> 8% + 5% profit targets</li>
+          <li><i class="ti ti-check"></i> 5% daily loss limit</li>
+          <li><i class="ti ti-check"></i> 10% max drawdown</li>
+          <li><i class="ti ti-check"></i> 80% profit split</li>
+          <li><i class="ti ti-check"></i> Unlimited trading days</li>
+        </ul>
+        <a href="challenges.html" class="plan-btn plan-btn-outline">Get started</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Why us</div>
+      <h2>Built for real traders</h2>
+    </div>
+    <div class="features-grid">
+      <div class="feat-card reveal reveal-delay-1">
+        <div class="feat-icon"><i class="ti ti-clock-off"></i></div>
+        <h4>No time limits</h4>
+        <p>Trade at your own pace. No arbitrary deadlines — pass when you're ready, not when the clock runs out.</p>
+      </div>
+      <div class="feat-card reveal reveal-delay-2">
+        <div class="feat-icon"><i class="ti ti-currency-bitcoin"></i></div>
+        <h4>On-chain payouts</h4>
+        <p>Every payout is recorded on-chain with a public transaction hash. Transparent, verifiable, instant.</p>
+      </div>
+      <div class="feat-card reveal reveal-delay-3">
+        <div class="feat-icon"><i class="ti ti-shield-check"></i></div>
+        <h4>Clear rules</h4>
+        <p>No hidden clauses designed to disqualify you. What you see in the rules page is all there is.</p>
+      </div>
+      <div class="feat-card reveal reveal-delay-1">
+        <div class="feat-icon"><i class="ti ti-device-laptop"></i></div>
+        <h4>MT5 </h4>
+        <p>Trade forex, crypto, commodities, and indices on the platforms you already know.</p>
+      </div>
+      <div class="feat-card reveal reveal-delay-2">
+        <div class="feat-icon"><i class="ti ti-user-check"></i></div>
+        <h4>Real founders</h4>
+        <p>Built by a team of experienced traders who've been in your shoes — real skin in the game.</p>
+      </div>
+      <div class="feat-card reveal reveal-delay-3">
+        <div class="feat-icon"><i class="ti ti-headset"></i></div>
+        <h4>24/7 support</h4>
+        <p>Dedicated support team available around the clock via Telegram and WhatsApp — real humans, fast replies.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section" id="how">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Process</div>
+      <h2>Four steps to funded</h2>
+      <p>The fastest path from signup to a live funded account.</p>
+    </div>
+    <div class="steps-row">
+      <div class="step-item reveal reveal-delay-1">
+        <div class="step-num-wrap"><span class="step-digit">01</span></div>
+        <h4>Pick a challenge</h4>
+        <p>Choose your account size and program — instant, one-step, or two-step.</p>
+      </div>
+      <div class="step-item reveal reveal-delay-2">
+        <div class="step-num-wrap"><span class="step-digit">02</span></div>
+        <h4>Pass evaluation</h4>
+        <p>Hit the profit target while staying within drawdown limits. No time pressure.</p>
+      </div>
+      <div class="step-item reveal reveal-delay-3">
+        <div class="step-num-wrap"><span class="step-digit">03</span></div>
+        <h4>Get funded</h4>
+        <p>Your funded account is activated same day. MT5 credentials sent immediately.</p>
+      </div>
+      <div class="step-item reveal reveal-delay-4">
+        <div class="step-num-wrap"><span class="step-digit">04</span></div>
+        <h4>Withdraw profits</h4>
+        <p>Keep 80% of what you earn. Request payouts anytime — no waiting periods.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials-section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Traders</div>
+      <h2>What our traders say</h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card reveal reveal-delay-1">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">Finally a prop firm that doesn't set you up to fail. The rules are genuinely fair and the payout was in my wallet within hours. Couldn't be happier.</p>
+        <div class="testimonial-author">
+          <div class="t-avatar">RK</div>
+          <div class="author-info"><p>Rahul K.</p><span>Forex trader · Mumbai</span></div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal reveal-delay-2">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">This community taught me how to trade, and now the firm paid me for it. The on-chain payout proof is something I haven't seen anywhere else.</p>
+        <div class="testimonial-author">
+          <div class="t-avatar">PS</div>
+          <div class="author-info"><p>Priya S.</p><span>Crypto trader · Bangalore</span></div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal reveal-delay-3">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">The one-step evaluation was straightforward. No tricks, no weird gotchas. I passed in 3 weeks trading part-time and got funded the same day.</p>
+        <div class="testimonial-author">
+          <div class="t-avatar">AM</div>
+          <div class="author-info"><p>Arjun M.</p><span>Indices trader · Delhi</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section" id="faq">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">FAQ</div>
+      <h2>Common questions</h2>
+    </div>
+    <div class="faq-list reveal">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          How quickly can I get funded?
+          <div class="faq-icon"><i class="ti ti-plus"></i></div>
+        </button>
+        <div class="faq-a">Once you pass your evaluation, your funded account is activated immediately. There are no arbitrary waiting periods — you can start trading the same day.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          What markets can I trade?
+          <div class="faq-icon"><i class="ti ti-plus"></i></div>
+        </button>
+        <div class="faq-a">You can trade forex pairs, crypto, commodities (gold, oil), and major indices.MT5 is supported on all accounts.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          What is the consistency rule?
+          <div class="faq-icon"><i class="ti ti-plus"></i></div>
+        </button>
+        <div class="faq-a">On Instant and One-Step accounts, no single trading day can account for more than 15% of your total profit. This ensures you're demonstrating consistent ability, not relying on one lucky trade.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          What happens if I violate a rule?
+          <div class="faq-icon"><i class="ti ti-plus"></i></div>
+        </button>
+        <div class="faq-a">If you breach a rule such as the daily loss limit, your account is closed for that challenge. You can purchase a new evaluation and try again — reset discounts are available.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          How are payouts verified?
+          <div class="faq-icon"><i class="ti ti-plus"></i></div>
+        </button>
+        <div class="faq-a">Every payout is processed on-chain and publicly listed with a transaction hash. Full transparency — no hiding, just verifiable proof you can check yourself anytime.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-glow"></div>
+  <div class="container">
+    <div class="cta-card reveal">
+      <h2>Ready to trade with real capital?</h2>
+      <p>Join thousands of traders already getting funded and earning with The Funded Best.</p>
+      <div class="cta-chips">
+        <div class="cta-chip"><i class="ti ti-check"></i> Up to $100K</div>
+        <div class="cta-chip"><i class="ti ti-check"></i> 80% profit split</div>
+        <div class="cta-chip"><i class="ti ti-check"></i> Instant payouts</div>
+        <div class="cta-chip"><i class="ti ti-check"></i> No time limits</div>
+      </div>
+      <div class="hero-btns" style="justify-content:center">
+        <a href="challenges.html" class="btn-primary"><i class="ti ti-rocket"></i> Start your challenge</a>
+        <a href="#faq" class="btn-ghost">Read the FAQ</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">
+      <div class="footer-logo-mark">FB</div>
+      The Funded Best
+    </div>
+    <div class="footer-links">
+      <a href="challenges.html">Challenges</a>
+      <a href="rules.html">Rules</a>
+      <a href="support.html">Support</a>
+      <a href="faq.html">FAQ</a>
+      <a href="terms.html">Terms</a>
+      <a href="privacy.html">Privacy</a>
+    </div>
+  </div>
+  <p class="footer-copy">© 2026 The Funded Best. All rights reserved. Trading involves substantial risk of loss — only trade capital you can afford to lose.</p>
+</footer>
+
+<script>
+// ── CANVAS PARTICLE GRID ────────────────────────────────────────
+(function() {
+  const canvas = document.getElementById('bgCanvas');
+  const ctx = canvas.getContext('2d');
+  let w, h, particles = [], mouse = { x: -999, y: -999 };
+  const COLS = 18, ROWS = 12, PARTICLE_COUNT = 55;
+
+  function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+
+  function initParticles() {
+    particles = [];
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      particles.push({
+        x: Math.random() * w, y: Math.random() * h,
+        vx: (Math.random() - .5) * .4, vy: (Math.random() - .5) * .4,
+        r: Math.random() * 1.5 + .5, alpha: Math.random() * .5 + .1
+      });
+    }
+  }
+
+  function drawGrid() {
+    const cw = w / COLS, ch = h / ROWS;
+    ctx.strokeStyle = 'rgba(55,138,221,0.045)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let c = 0; c <= COLS; c++) { const x = c * cw; ctx.moveTo(x, 0); ctx.lineTo(x, h); }
+    for (let r = 0; r <= ROWS; r++) { const y = r * ch; ctx.moveTo(0, y); ctx.lineTo(w, y); }
+    ctx.stroke();
+  }
+
+  function drawParticles() {
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0 || p.x > w) p.vx *= -1;
+      if (p.y < 0 || p.y > h) p.vy *= -1;
+      const dx = p.x - mouse.x, dy = p.y - mouse.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const glow = dist < 140 ? (1 - dist / 140) * .6 : 0;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(55,138,221,${p.alpha + glow})`;
+      ctx.fill();
+    });
+
+    // connection lines
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d < 120) {
+          ctx.beginPath();
+          ctx.strokeStyle = `rgba(55,138,221,${.12 * (1 - d / 120)})`;
+          ctx.lineWidth = .8;
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+  }
+
+  function loop() {
+    ctx.clearRect(0, 0, w, h);
+    drawGrid();
+    drawParticles();
+    requestAnimationFrame(loop);
+  }
+
+  window.addEventListener('resize', () => { resize(); initParticles(); });
+  window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+  resize(); initParticles(); loop();
+})();
+
+// ── TICKER ─────────────────────────────────────────────────────
+const TICKS = [
+  { pair:'EUR/USD', val:'1.0843', chg:'+0.12%', up:true },
+  { pair:'XAU/USD', val:'2,341.5', chg:'+0.34%', up:true },
+  { pair:'BTC/USD', val:'67,421', chg:'-0.55%', up:false },
+  { pair:'GBP/USD', val:'1.2718', chg:'+0.08%', up:true },
+  { pair:'NAS100',  val:'18,204', chg:'+0.61%', up:true },
+  { pair:'ETH/USD', val:'3,198', chg:'-0.22%', up:false },
+  { pair:'US30',    val:'39,120', chg:'+0.18%', up:true },
+  { pair:'AUD/USD', val:'0.6523', chg:'+0.05%', up:true },
+  { pair:'Oil/WTI', val:'82.4',   chg:'-0.41%', up:false },
+];
+const track = document.getElementById('tickerTrack');
+const doubled = [...TICKS, ...TICKS];
+track.innerHTML = doubled.map(t => `
+  <div class="ticker-chip">
+    <span class="chip-pair">${t.pair}</span>
+    <span class="chip-val">${t.val}</span>
+    <span class="chip-chg ${t.up?'up':'dn'}">${t.chg}</span>
+  </div>`).join('');
+
+// Randomize changes every 4s for live effect
+setInterval(() => {
+  document.querySelectorAll('.chip-chg').forEach((el, i) => {
+    const pct = (Math.random() * 1.2 - .4).toFixed(2);
+    const up = pct >= 0;
+    el.textContent = (up?'+':'')+pct+'%';
+    el.className = 'chip-chg ' + (up?'up':'dn');
+  });
+}, 4000);
+
+// ── SCROLL REVEAL ───────────────────────────────────────────────
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); } });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+// ── COUNT-UP ────────────────────────────────────────────────────
+function countUp(el) {
+  const target = parseInt(el.dataset.count);
+  const prefix = el.dataset.prefix || '';
+  const suffix = el.dataset.suffix || '';
+  if (isNaN(target)) return;
+  let start = 0;
+  const duration = 1400;
+  const step = timestamp => {
+    if (!start) start = timestamp;
+    const pct = Math.min((timestamp - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - pct, 3);
+    el.textContent = prefix + Math.round(ease * target) + suffix;
+    if (pct < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+const countObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { countUp(e.target); countObs.unobserve(e.target); } });
+}, { threshold: .5 });
+document.querySelectorAll('[data-count]').forEach(el => countObs.observe(el));
+
+// ── FAQ ─────────────────────────────────────────────────────────
+function toggleFaq(btn) {
+  const answer = btn.nextElementSibling;
+  const isOpen = answer.classList.contains('open');
+  document.querySelectorAll('.faq-a.open').forEach(a => a.classList.remove('open'));
+  document.querySelectorAll('.faq-q.open').forEach(q => q.classList.remove('open'));
+  if (!isOpen) { answer.classList.add('open'); btn.classList.add('open'); }
+}
+
+// ── MOBILE NAV ──────────────────────────────────────────────────
+function toggleMobileNav() {
+  document.getElementById('mobileNav').classList.toggle('open');
+}
+
+// ── TIME GREETING ───────────────────────────────────────────────
+const h = new Date().getHours();
+// (no greeting needed on landing page)
+</script>
+<!-- LIMITED-TIME OFFER MODAL -->
+<div id="offerModalOverlay" style="
+  display:none; position:fixed; inset:0; z-index:1000;
+  background:rgba(5,7,13,.75); backdrop-filter:blur(6px);
+  align-items:center; justify-content:center; padding:20px;"
+  onclick="if(event.target===this) closeOfferModal()">
+
+  <div style="
+    background:var(--bg2); border:1px solid var(--border-blue); border-radius:var(--radius);
+    max-width:560px; width:100%; max-height:88vh; overflow-y:auto;
+    padding:1.8rem; box-shadow:0 30px 80px rgba(0,0,0,.5);">
+
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:.4rem;">
+      <div style="font-size:24px;">🔥</div>
+      <h2 style="font-family:var(--font-display); font-size:19px; font-weight:700;">
+        $5K 3-Step Challenge — Rules
+      </h2>
+    </div>
+    <p style="font-size:13px; color:var(--muted); margin-bottom:1.2rem;">
+      Before you claim this $5 offer, review how the 3-Step evaluation works.
+    </p>
+
+    <!-- Evaluation Phases -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius-sm); padding:1rem 1.1rem; margin-bottom:.9rem;">
+      <div style="font-weight:700; font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:var(--blue); margin-bottom:.6rem;">
+        Evaluation Phases
+      </div>
+      <ul style="font-size:13px; color:var(--muted); line-height:1.7; padding-left:1.1rem;">
+        <li><strong style="color:var(--text)">Phase 1 &amp; Phase 2</strong> — 6% profit target each phase.</li>
+        <li><strong style="color:var(--text)">Phase 3</strong> — Final 6% target to prove consistent profitability before going live.</li>
+        <li><strong style="color:var(--text)">Funded</strong> — 15% consistency rule applies (no single day &gt; 15% of total profit).</li>
+      </ul>
+    </div>
+
+    <!-- Risk Management -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius-sm); padding:1rem 1.1rem; margin-bottom:.9rem;">
+      <div style="font-weight:700; font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:var(--blue); margin-bottom:.6rem;">
+        Risk Management
+      </div>
+      <ul style="font-size:13px; color:var(--muted); line-height:1.7; padding-left:1.1rem;">
+        <li><strong style="color:var(--text)">Daily Drawdown:</strong> 3% of starting balance.</li>
+        <li><strong style="color:var(--text)">Max Total Drawdown:</strong> 7% of initial balance.</li>
+        <li><strong style="color:var(--text)">Minimum Trading Days:</strong> 3 separate days per step.</li>
+        <li><strong style="color:var(--text)">Profit Split:</strong> 50%.</li>
+      </ul>
+    </div>
+
+    <!-- Entry Requirements -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius-sm); padding:1rem 1.1rem; margin-bottom:1.3rem;">
+      <div style="font-weight:700; font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:var(--blue); margin-bottom:.6rem;">
+        Entry Requirements
+      </div>
+      <p style="font-size:13px; color:var(--muted); margin-bottom:.8rem;">
+        Join our community channels to unlock checkout for this offer:
+      </p>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <label style="display:flex; align-items:center; gap:10px; font-size:13px; cursor:pointer; padding:8px 10px; border:1px solid var(--border); border-radius:var(--radius-xs);">
+          <input type="checkbox" id="joinedDiscord" onchange="updateClaimBtn()" style="width:16px; height:16px;"/>
+          <a href="https://discord.gg/hYSrP85H" target="_blank" rel="noopener" style="color:var(--blue); text-decoration:none;" onclick="event.stopPropagation()">
+            <i class="ti ti-brand-discord"></i> Join our Discord
+          </a>
+        </label>
+        <label style="display:flex; align-items:center; gap:10px; font-size:13px; cursor:pointer; padding:8px 10px; border:1px solid var(--border); border-radius:var(--radius-xs);">
+          <input type="checkbox" id="joinedTelegram" onchange="updateClaimBtn()" style="width:16px; height:16px;"/>
+          <a href="https://t.me/+OhhSq6i38605ZDNl" target="_blank" rel="noopener" style="color:var(--blue); text-decoration:none;" onclick="event.stopPropagation()">
+            <i class="ti ti-brand-telegram"></i> Join our Telegram
+          </a>
+        </label>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:10px;">
+      <button class="btn-ghost" style="flex:1; text-align:center;" onclick="closeOfferModal()">Cancel</button>
+      <button class="nav-cta" id="confirmClaimBtn" style="flex:1; opacity:.5; cursor:not-allowed; border:none; text-align:center;" disabled onclick="confirmClaimOffer()">
+        Continue to Checkout — $5
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+firebase.initializeApp(FIREBASE_CONFIG);
+firebase.auth().onAuthStateChanged(user => {
+  const signedIn = !!user;
+  document.getElementById('navSignIn').style.display = signedIn ? 'none' : '';
+  document.getElementById('navProfile').style.display = signedIn ? '' : 'none';
+  document.getElementById('navSignInMobile').style.display = signedIn ? 'none' : '';
+  document.getElementById('navProfileMobile').style.display = signedIn ? '' : 'none';
+});
+
+// ── COUPON COPY ──────────────────────────────────────────────
+function copyCoupon(btn) {
+  navigator.clipboard.writeText('FUND30').then(() => {
+    const original = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = original; }, 1500);
+  });
+}
+
+// ── LIMITED-TIME OFFER ─────────────────────────────────────────
+function claimOffer() {
+  document.getElementById('joinedDiscord').checked = false;
+  document.getElementById('joinedTelegram').checked = false;
+  updateClaimBtn();
+  document.getElementById('offerModalOverlay').style.display = 'flex';
+}
+
+function closeOfferModal() {
+  document.getElementById('offerModalOverlay').style.display = 'none';
+}
+
+function updateClaimBtn() {
+  const ok = document.getElementById('joinedDiscord').checked &&
+             document.getElementById('joinedTelegram').checked;
+  const btn = document.getElementById('confirmClaimBtn');
+  btn.disabled = !ok;
+  btn.style.opacity = ok ? '1' : '.5';
+  btn.style.cursor = ok ? 'pointer' : 'not-allowed';
+}
+
+function confirmClaimOffer() {
+  if (document.getElementById('confirmClaimBtn').disabled) return;
+
+  sessionStorage.removeItem('fb_payment_order_id');
+  sessionStorage.removeItem('fb_payment_just_submitted');
+
+  localStorage.setItem('challengeType', '3-Step');
+  localStorage.setItem('accountSize', '$5,000');
+  localStorage.setItem('entryFee', '$5');
+  localStorage.setItem('paymentMethod', 'UPI');
+  localStorage.setItem('offerTag', 'Limited-Time $5 Offer');
+
+  window.location.href = 'checkout.html';
+}
+</script>
+</body>
+</html>
