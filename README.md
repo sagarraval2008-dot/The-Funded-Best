@@ -71,16 +71,21 @@ firebase.json
 1. Clone the repository.
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/the-funded-best.git
+git clone https://github.com/sagarraval2008-dot/The-Funded-Best.git
 ```
 
-2. Open the project folder.
+2. Navigate to the project directory.
 
-3. Configure your Firebase project.
+```bash
+cd The-Funded-Best
+```
 
-4. Run locally using a web server.
+3. Configure your Firebase project by updating the Firebase configuration.
 
----
+4. Serve the project locally using a web server (such as Live Server in VS Code).
+
+5. Explore the application and start building!
+
 
 ## 📸 Screenshots
 
